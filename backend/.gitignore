@@ -30,3 +30,6 @@ target/
 
 ### Local secrets ###
 src/main/resources/application-local.properties
+
+### Local Maven repository ###
+.mvn/repository/
