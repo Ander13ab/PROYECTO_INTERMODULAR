@@ -125,3 +125,103 @@ Debe devolver `404 Not Found` con mensaje descriptivo cuando el `id` no exista.
 ### Conflicto por email duplicado
 
 Debe devolver `409 Conflict` si se intenta crear o actualizar un usuario con un email ya registrado.
+
+### Clases
+
+#### Listar clases
+
+```http
+GET /api/classes
+```
+
+#### Obtener clase por id
+
+```http
+GET /api/classes/1
+```
+
+#### Crear clase
+
+```http
+POST /api/classes
+Content-Type: application/json
+
+{
+  "nombre": "Pilates",
+  "descripcion": "Clase dirigida orientada a movilidad y control corporal.",
+  "duracion": 45,
+  "entrenadorId": 3,
+  "activa": true
+}
+```
+
+#### Actualizar clase
+
+```http
+PUT /api/classes/1
+Content-Type: application/json
+
+{
+  "nombre": "Spinning avanzado",
+  "descripcion": "Sesion de mayor intensidad para usuarios con experiencia.",
+  "duracion": 50,
+  "entrenadorId": 3,
+  "activa": true
+}
+```
+
+#### Eliminar clase
+
+```http
+DELETE /api/classes/2
+```
+
+### Rutinas
+
+#### Listar rutinas
+
+```http
+GET /api/routines
+```
+
+#### Obtener rutina por id
+
+```http
+GET /api/routines/1
+```
+
+#### Crear rutina
+
+```http
+POST /api/routines
+Content-Type: application/json
+
+{
+  "nombre": "Rutina tren superior",
+  "descripcion": "Trabajo de empuje y traccion en tres dias semanales.",
+  "entrenadorId": 3
+}
+```
+
+#### Actualizar rutina
+
+```http
+PUT /api/routines/1
+Content-Type: application/json
+
+{
+  "nombre": "Rutina full body intermedia",
+  "descripcion": "Plan de tres dias con progresion de cargas.",
+  "entrenadorId": 3
+}
+```
+
+#### Eliminar rutina
+
+```http
+DELETE /api/routines/1
+```
+
+### Validacion de entrenador
+
+En `clases` y `rutinas`, si el `entrenadorId` pertenece a un usuario que no tiene rol `TRAINER`, la API debe rechazar la operacion.

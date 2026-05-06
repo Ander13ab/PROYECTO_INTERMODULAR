@@ -170,14 +170,14 @@ Con esta base, la API ya puede devolver respuestas estructuradas para:
 
 - `usuarios`
 - `maquinas`
+- `clases`
+- `rutinas`
 
 ### Entidades modeladas pero aun sin CRUD expuesto
 
-- `clases`
 - `sesiones_clase`
 - `codigos_qr`
 - `asistencias`
-- `rutinas`
 - `rutinas_clientes`
 - `cuotas`
 
@@ -216,11 +216,52 @@ cd backend
 
 Si falla en tu maquina, ya no esperaria un fallo del script, sino uno de dependencias, versionado o compilacion real del proyecto.
 
+## Ampliacion posterior en esta misma fecha
+
+Despues de este bloque inicial se ha ampliado la API REST con soporte completo para `clases` y `rutinas`.
+
+### CRUD de clases
+
+Se han anadido los siguientes archivos:
+
+- [backend/src/main/java/com/hazelgym/controller/GymClassController.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/controller/GymClassController.java)
+- [backend/src/main/java/com/hazelgym/service/GymClassService.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/service/GymClassService.java)
+- [backend/src/main/java/com/hazelgym/service/impl/GymClassServiceImpl.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/service/impl/GymClassServiceImpl.java)
+- [backend/src/main/java/com/hazelgym/dto/request/GymClassRequest.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/dto/request/GymClassRequest.java)
+- [backend/src/main/java/com/hazelgym/dto/response/GymClassResponse.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/dto/response/GymClassResponse.java)
+
+La logica de negocio anade una restriccion funcional concreta: el campo `entrenadorId` solo se acepta si el usuario asociado tiene rol `TRAINER`.
+
+### CRUD de rutinas
+
+Se han anadido los siguientes archivos:
+
+- [backend/src/main/java/com/hazelgym/controller/RoutineController.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/controller/RoutineController.java)
+- [backend/src/main/java/com/hazelgym/service/RoutineService.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/service/RoutineService.java)
+- [backend/src/main/java/com/hazelgym/service/impl/RoutineServiceImpl.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/service/impl/RoutineServiceImpl.java)
+- [backend/src/main/java/com/hazelgym/dto/request/RoutineRequest.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/dto/request/RoutineRequest.java)
+- [backend/src/main/java/com/hazelgym/dto/response/RoutineResponse.java](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/src/main/java/com/hazelgym/dto/response/RoutineResponse.java)
+
+Tambien aqui se valida que la rutina solo pueda quedar vinculada a un entrenador real del sistema.
+
+### Nuevos endpoints disponibles
+
+- `GET /api/classes`
+- `GET /api/classes/{id}`
+- `POST /api/classes`
+- `PUT /api/classes/{id}`
+- `DELETE /api/classes/{id}`
+- `GET /api/routines`
+- `GET /api/routines/{id}`
+- `POST /api/routines`
+- `PUT /api/routines/{id}`
+- `DELETE /api/routines/{id}`
+
 ## Siguiente bloque recomendado
 
 El siguiente tramo con mejor retorno para la entrega es:
 
-1. CRUD de `clases`
-2. CRUD de `rutinas`
-3. Primer bloque de autenticacion y login
+1. Primer bloque de autenticacion y login
+2. JWT y proteccion por rol
+3. Swagger / OpenAPI
 4. Documentacion de pruebas con Postman
