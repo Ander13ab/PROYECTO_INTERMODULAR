@@ -6,6 +6,40 @@ Documento preparado para registrar pruebas reales en cuanto el backend quede eje
 
 ## Endpoints ya preparados para prueba
 
+### Autenticacion
+
+#### Registro
+
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "nombre": "Nuevo cliente",
+  "email": "nuevo@hazelgym.com",
+  "password": "hazel123"
+}
+```
+
+#### Login
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@hazelgym.com",
+  "password": "admin123"
+}
+```
+
+#### Usuario autenticado
+
+```http
+GET /api/auth/me
+Authorization: Bearer TU_TOKEN
+```
+
 ### Usuarios
 
 #### Listar usuarios

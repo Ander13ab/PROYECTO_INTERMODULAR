@@ -32,10 +32,20 @@ El backend utiliza:
 - Spring Boot
 - Spring Web
 - Spring Data JPA
+- Spring Security
 - MySQL Driver
 - Bean Validation
+- JWT
+- Swagger / OpenAPI
 
 La contrasena de MySQL no se guarda en el repositorio. Debe definirse mediante la variable de entorno `MYSQL_PASSWORD`.
+
+Variables previstas para desarrollo y despliegue:
+
+- `MYSQL_PASSWORD`
+- `JWT_SECRET`
+- `JWT_EXPIRATION_MS`
+- `APP_CORS_ALLOWED_ORIGINS`
 
 Ejemplo en PowerShell:
 
@@ -54,4 +64,4 @@ La documentacion viva del proyecto se mantiene en dos sitios:
 
 ## Siguiente objetivo
 
-Implementar entidades JPA, repositorios, servicios y CRUD basicos para empezar a probar la API REST.
+Completar autenticacion, autorizacion por roles, documentacion Swagger y dejar la API preparada para consumo desde app movil y cliente web.

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.hazelgym.dto.request.UserCreateRequest;
 import com.hazelgym.dto.request.UserUpdateRequest;
@@ -22,10 +23,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -54,7 +57,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setNombre(request.getNombre());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(role);
         user.setActivo(request.getActivo() != null ? request.getActivo() : Boolean.TRUE);
 
@@ -75,7 +78,7 @@ public class UserServiceImpl implements UserService {
         user.setActivo(request.getActivo());
 
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
-            user.setPassword(request.getPassword());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
         return toResponse(userRepository.save(user));
