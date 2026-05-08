@@ -17,10 +17,15 @@ import com.hazelgym.dto.request.GymClassRequest;
 import com.hazelgym.dto.response.GymClassResponse;
 import com.hazelgym.service.GymClassService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/classes")
+@Tag(name = "Clases", description = "Consulta y gestion de clases dirigidas")
+@SecurityRequirement(name = "bearerAuth")
 public class GymClassController {
 
     private final GymClassService gymClassService;
@@ -30,28 +35,33 @@ public class GymClassController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar clases")
     public List<GymClassResponse> findAll() {
         return gymClassService.findAll();
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener clase por id")
     public GymClassResponse findById(@PathVariable Long id) {
         return gymClassService.findById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Crear clase")
     public GymClassResponse create(@Valid @RequestBody GymClassRequest request) {
         return gymClassService.create(request);
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar clase")
     public GymClassResponse update(@PathVariable Long id, @Valid @RequestBody GymClassRequest request) {
         return gymClassService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Eliminar clase")
     public void delete(@PathVariable Long id) {
         gymClassService.delete(id);
     }

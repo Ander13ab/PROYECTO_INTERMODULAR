@@ -1,0 +1,242 @@
+{
+  "info": {
+    "_postman_id": "0e18f1db-61bd-4d70-90f3-6c3d3ca7f3b2",
+    "name": "Hazel Gym API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Coleccion base para probar autenticacion y CRUD principales de Hazel Gym."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticacion",
+      "item": [
+        {
+          "name": "Registro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Nuevo cliente\",\n  \"email\": \"nuevo@hazelgym.com\",\n  \"password\": \"hazel123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) {",
+                  "  pm.collectionVariables.set('token', json.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@hazelgym.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Usuario autenticado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/users"
+          }
+        },
+        {
+          "name": "Crear usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Usuario de prueba\",\n  \"email\": \"prueba@hazelgym.com\",\n  \"password\": \"hazel123\",\n  \"roleId\": 1,\n  \"activo\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/users"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Maquinas",
+      "item": [
+        {
+          "name": "Listar maquinas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/machines"
+          }
+        },
+        {
+          "name": "Crear maquina",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prensa de piernas\",\n  \"descripcion\": \"Maquina guiada para tren inferior\",\n  \"grupoMuscular\": \"Cuadriceps, gluteos\",\n  \"instrucciones\": \"Ajusta el asiento y controla el movimiento.\",\n  \"nivel\": \"Medio\",\n  \"advertenciaSeguridad\": \"Evitar sobrecarga lumbar.\",\n  \"imagenUrl\": \"https://example.com/prensa.jpg\",\n  \"estado\": \"ACTIVA\"\n}"
+            },
+            "url": "{{baseUrl}}/api/machines"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clases",
+      "item": [
+        {
+          "name": "Listar clases",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/classes"
+          }
+        },
+        {
+          "name": "Crear clase",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Pilates\",\n  \"descripcion\": \"Clase dirigida orientada a movilidad y control corporal.\",\n  \"duracion\": 45,\n  \"entrenadorId\": 3,\n  \"activa\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/classes"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Rutinas",
+      "item": [
+        {
+          "name": "Listar rutinas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/api/routines"
+          }
+        },
+        {
+          "name": "Crear rutina",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Rutina tren superior\",\n  \"descripcion\": \"Trabajo de empuje y traccion en tres dias semanales.\",\n  \"entrenadorId\": 3\n}"
+            },
+            "url": "{{baseUrl}}/api/routines"
+          }
+        }
+      ]
+    }
+  ]
+}
