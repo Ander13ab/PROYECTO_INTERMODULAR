@@ -175,11 +175,7 @@ Con esta base, la API ya puede devolver respuestas estructuradas para:
 
 ### Entidades modeladas pero aun sin CRUD expuesto
 
-- `sesiones_clase`
-- `codigos_qr`
-- `asistencias`
-- `rutinas_clientes`
-- `cuotas`
+En el estado actual ya no quedan entidades principales sin API propia. El backend dispone de controladores, servicios y DTOs para todas las entidades principales del alcance actual.
 
 ## Validacion del wrapper de Maven
 
@@ -265,3 +261,15 @@ El siguiente tramo con mejor retorno para la entrega es:
 2. JWT y proteccion por rol
 3. Swagger / OpenAPI
 4. Documentacion de pruebas con Postman
+
+## Cierre del backend funcional
+
+En la iteracion posterior se ha completado tambien la API de:
+
+- `sesiones_clase`
+- `codigos_qr`
+- `asistencias`
+- `rutinas_clientes`
+- `cuotas`
+
+Con esto, el backend cubre ya todo el conjunto principal de entidades definido en la base de datos del proyecto.

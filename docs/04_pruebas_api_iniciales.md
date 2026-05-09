@@ -259,3 +259,103 @@ DELETE /api/routines/1
 ### Validacion de entrenador
 
 En `clases` y `rutinas`, si el `entrenadorId` pertenece a un usuario que no tiene rol `TRAINER`, la API debe rechazar la operacion.
+
+### Sesiones de clase
+
+```http
+GET /api/class-sessions
+POST /api/class-sessions
+```
+
+Ejemplo de creacion:
+
+```http
+POST /api/class-sessions
+Content-Type: application/json
+
+{
+  "gymClassId": 1,
+  "fecha": "2026-05-20",
+  "horaInicio": "18:00:00",
+  "horaFin": "18:50:00"
+}
+```
+
+### Codigos QR
+
+```http
+GET /api/qr-codes
+POST /api/qr-codes
+```
+
+Ejemplo QR de maquina:
+
+```http
+POST /api/qr-codes
+Content-Type: application/json
+
+{
+  "tipo": "MACHINE",
+  "esEntradaGimnasio": false,
+  "maquinaId": 1,
+  "sesionClaseId": null
+}
+```
+
+### Asistencias
+
+```http
+GET /api/attendances
+POST /api/attendances
+```
+
+Ejemplo de registro:
+
+```http
+POST /api/attendances
+Content-Type: application/json
+
+{
+  "usuarioId": 2,
+  "qrCodeId": 1
+}
+```
+
+### Asignaciones de rutina
+
+```http
+GET /api/routine-assignments
+POST /api/routine-assignments
+```
+
+Ejemplo de creacion:
+
+```http
+POST /api/routine-assignments
+Content-Type: application/json
+
+{
+  "routineId": 1,
+  "clientId": 2
+}
+```
+
+### Cuotas
+
+```http
+GET /api/membership-fees
+POST /api/membership-fees
+```
+
+Ejemplo de creacion:
+
+```http
+POST /api/membership-fees
+Content-Type: application/json
+
+{
+  "nombre": "Premium Mensual Plus",
+  "descripcion": "Acceso ilimitado y clases dirigidas.",
+  "precio": 59.90
+}
+```
