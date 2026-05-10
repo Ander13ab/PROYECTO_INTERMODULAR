@@ -11,9 +11,10 @@ Proyecto intermodular DAM orientado a la gestion de un gimnasio con backend en S
 
 ## Estado actual
 
-- Base de datos creada y documentada.
-- Backend Maven inicial configurado.
-- En curso: analisis inicial formal y plan de implementacion del backend.
+- Base de datos MySQL creada y documentada.
+- Backend Spring Boot con API REST, JWT, roles y Swagger.
+- Pruebas de arranque con Maven funcionando.
+- En curso: validacion funcional de la API y preparacion para cliente web/movil.
 
 ## Base de datos
 
@@ -55,6 +56,14 @@ cd backend
 .\mvnw.cmd spring-boot:run
 ```
 
+Con el backend arrancado, se puede ejecutar una prueba rapida de API:
+
+```powershell
+.\scripts\smoke-test.ps1
+```
+
+La prueba comprueba OpenAPI, registro, JWT, permisos basicos, asistencia y CRUD de maquinas con usuario admin.
+
 ## Documentacion
 
 La documentacion viva del proyecto se mantiene en dos sitios:
@@ -64,4 +73,4 @@ La documentacion viva del proyecto se mantiene en dos sitios:
 
 ## Siguiente objetivo
 
-Completar autenticacion, autorizacion por roles, documentacion Swagger y dejar la API preparada para consumo desde app movil y cliente web.
+Validar los flujos funcionales principales y ampliar tests automatizados antes de empezar el frontend o despliegue.

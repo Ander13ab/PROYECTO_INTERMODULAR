@@ -1,6 +1,8 @@
 package com.hazelgym.security;
 
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import javax.crypto.SecretKey;
@@ -66,9 +68,22 @@ public class JwtService {
     private SecretKey buildKey(String secret) {
         try {
             byte[] keyBytes = Decoders.BASE64.decode(secret);
-            return Keys.hmacShaKeyFor(keyBytes);
+            if (keyBytes.length >= 32) {
+                return Keys.hmacShaKeyFor(keyBytes);
+            }
         } catch (IllegalArgumentException | DecodingException ex) {
-            return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+            // Fall back to deriving a stable 256-bit key from plain text secrets.
+        }
+
+        return Keys.hmacShaKeyFor(deriveSecureKey(secret));
+    }
+
+    private byte[] deriveSecureKey(String secret) {
+        try {
+            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+            return sha256.digest(secret.getBytes(StandardCharsets.UTF_8));
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalStateException("SHA-256 algorithm not available", ex);
         }
     }
 }

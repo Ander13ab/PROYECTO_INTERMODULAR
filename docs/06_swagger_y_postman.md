@@ -97,6 +97,27 @@ Orden recomendado:
 7. Probar `GET /api/auth/me`
 8. Probar despues los CRUD protegidos
 
+Tambien se ha anadido una prueba automatizada de humo en:
+
+- [backend/scripts/smoke-test.ps1](/C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/backend/scripts/smoke-test.ps1)
+
+Con el backend arrancado, ejecutar:
+
+```powershell
+.\scripts\smoke-test.ps1
+```
+
+Esta prueba valida:
+
+- disponibilidad de `/api-docs`
+- registro de cliente
+- uso de token JWT en `/api/auth/me`
+- acceso autenticado a maquinas
+- registro de asistencia
+- bloqueo de endpoints admin para cliente
+- login admin con `admin@hazelgym.com` / `admin123`
+- CRUD minimo de maquinas con rol admin
+
 ## Estado actual
 
-Swagger queda preparado a nivel de configuracion y anotaciones, pero su validacion real sigue pendiente de ejecutar el backend con Maven en una maquina con acceso a internet para descargar dependencias.
+Swagger y `/api-docs` abren correctamente con Spring Boot 4 tras actualizar `springdoc-openapi` a la rama 3.x.

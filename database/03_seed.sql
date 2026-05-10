@@ -7,11 +7,11 @@ INSERT INTO roles (nombre) VALUES
 ('TRAINER'),
 ('ADMIN');
 
--- Users (password hash corresponds to "admin123" as placeholder)
+-- Users (password hash corresponds to "admin123")
 INSERT INTO usuarios (nombre, email, password, rol_id, activo) VALUES
-('Administrador', 'admin@hazelgym.com', '$2a$10$N9qo8uLOickgx2ZMRZoMye0GXPqBv/kcZxJuPvdgB9zKZ1wYj0VTu', 3, TRUE),
-('Carlos Martinez', 'carlos@hazelgym.com', '$2a$10$N9qo8uLOickgx2ZMRZoMye0GXPqBv/kcZxJuPvdgB9zKZ1wYj0VTu', 1, TRUE),
-('Laura Rodriguez', 'laura@hazelgym.com', '$2a$10$N9qo8uLOickgx2ZMRZoMye0GXPqBv/kcZxJuPvdgB9zKZ1wYj0VTu', 2, TRUE);
+('Administrador', 'admin@hazelgym.com', '$2a$10$QGPQcQUiVHrYxmmc7tcrdOmDjrnH0ayQdjyzrZzo6DJqtVJN33Bmy', 3, TRUE),
+('Carlos Martinez', 'carlos@hazelgym.com', '$2a$10$QGPQcQUiVHrYxmmc7tcrdOmDjrnH0ayQdjyzrZzo6DJqtVJN33Bmy', 1, TRUE),
+('Laura Rodriguez', 'laura@hazelgym.com', '$2a$10$QGPQcQUiVHrYxmmc7tcrdOmDjrnH0ayQdjyzrZzo6DJqtVJN33Bmy', 2, TRUE);
 
 -- Machines
 INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel, advertencia_seguridad, estado) VALUES
