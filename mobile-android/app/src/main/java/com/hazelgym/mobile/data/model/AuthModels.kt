@@ -101,3 +101,9 @@ data class AttendanceResponse(
     val qrType: String,
     val fechaHora: String? = null
 )
+
+@Serializable
+data class AttendanceCreateRequest(
+    val usuarioId: Long,
+    val qrCodeId: Long
+)

@@ -1,6 +1,7 @@
 package com.hazelgym.mobile.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -97,9 +99,10 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = uiState.email,
                     onValueChange = onEmailChange,
-                    label = { Text("Email") },
+                    label = { Text("Email", color = Color.White.copy(alpha = 0.8f)) },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
+                    colors = loginFieldColors()
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -107,9 +110,10 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = onPasswordChange,
-                    label = { Text("Contrasena") },
+                    label = { Text("Contrasena", color = Color.White.copy(alpha = 0.8f)) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
+                    colors = loginFieldColors(),
                     visualTransformation = if (isPasswordVisible) {
                         VisualTransformation.None
                     } else {
@@ -128,7 +132,7 @@ fun LoginScreen(
                                 } else {
                                     "Mostrar contrasena"
                                 },
-                                tint = Color(0xFF97A0AF)
+                                tint = Color.White
                             )
                         }
                     }
@@ -196,13 +200,29 @@ private fun RoleTag(
     Box(
         modifier = Modifier
             .clickable(onClick = onClick)
+            .border(
+                width = if (isSelected) 2.dp else 0.dp,
+                color = if (isSelected) Color.White else Color.Transparent,
+                shape = RoundedCornerShape(14.dp)
+            )
             .background(background, RoundedCornerShape(14.dp))
-            .padding(horizontal = 14.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         Text(
             text = label,
-            color = content,
+            color = if (isSelected) Color.White else content,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold
         )
     }
 }
+
+@Composable
+private fun loginFieldColors() = OutlinedTextFieldDefaults.colors(
+    focusedTextColor = Color.White,
+    unfocusedTextColor = Color.White,
+    focusedBorderColor = Color(0xFFFF4D2E),
+    unfocusedBorderColor = Color.White.copy(alpha = 0.35f),
+    focusedLabelColor = Color(0xFFFFB09B),
+    unfocusedLabelColor = Color.White.copy(alpha = 0.75f),
+    cursorColor = Color.White
+)

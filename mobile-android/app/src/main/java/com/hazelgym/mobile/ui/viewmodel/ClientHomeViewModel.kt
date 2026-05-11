@@ -5,10 +5,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.hazelgym.mobile.data.model.AttendanceResponse
 import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.MachineResponse
 import com.hazelgym.mobile.data.model.RoutineResponse
 import com.hazelgym.mobile.data.remote.ApiClient
+import com.hazelgym.mobile.data.repository.AttendanceRepository
 import com.hazelgym.mobile.data.repository.GymClassRepository
 import com.hazelgym.mobile.data.repository.MachineRepository
 import com.hazelgym.mobile.data.repository.RoutineRepository
@@ -24,16 +26,21 @@ import kotlinx.coroutines.launch
 
 data class ClientHomeUiState(
     val userName: String = "",
+    val email: String = "",
     val role: String = "",
     val machines: List<MachineResponse> = emptyList(),
     val routines: List<RoutineResponse> = emptyList(),
     val classes: List<GymClassResponse> = emptyList(),
+    val qrCodeInput: String = "",
+    val attendanceMessage: String? = null,
+    val isSubmittingAttendance: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
 
 class ClientHomeViewModel(application: Application) : AndroidViewModel(application) {
     private val sessionStorage = SessionStorage(application.applicationContext)
+    private val attendanceRepository = AttendanceRepository(ApiClient.attendanceApi)
     private val machineRepository = MachineRepository(ApiClient.machineApi)
     private val routineRepository = RoutineRepository(ApiClient.routineApi)
     private val gymClassRepository = GymClassRepository(ApiClient.gymClassApi)
@@ -47,6 +54,7 @@ class ClientHomeViewModel(application: Application) : AndroidViewModel(applicati
             _uiState.update {
                 it.copy(
                     userName = session.nombre,
+                    email = session.email,
                     role = session.role
                 )
             }
@@ -81,6 +89,41 @@ class ClientHomeViewModel(application: Application) : AndroidViewModel(applicati
                     it.copy(
                         isLoading = false,
                         errorMessage = error.message ?: "No se pudieron cargar los datos del panel cliente"
+                    )
+                }
+            }
+        }
+    }
+
+    fun updateQrCodeInput(value: String) {
+        _uiState.update { it.copy(qrCodeInput = value, attendanceMessage = null) }
+    }
+
+    fun registerAttendance() {
+        viewModelScope.launch {
+            val qrCodeId = uiState.value.qrCodeInput.toLongOrNull()
+            if (qrCodeId == null) {
+                _uiState.update { it.copy(attendanceMessage = "Introduce un identificador QR valido.") }
+                return@launch
+            }
+
+            _uiState.update { it.copy(isSubmittingAttendance = true, attendanceMessage = null) }
+            val session = sessionStorage.session.filterNotNull().first()
+            runCatching {
+                attendanceRepository.createAttendance(session, qrCodeId)
+            }.onSuccess { attendance ->
+                _uiState.update {
+                    it.copy(
+                        isSubmittingAttendance = false,
+                        qrCodeInput = "",
+                        attendanceMessage = "Asistencia registrada correctamente con QR #${attendance.qrCodeId}."
+                    )
+                }
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isSubmittingAttendance = false,
+                        attendanceMessage = error.message ?: "No se pudo registrar la asistencia."
                     )
                 }
             }

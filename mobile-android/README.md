@@ -13,6 +13,9 @@ Base Android nativa para Hazel Gym usando Kotlin + Jetpack Compose.
 - Panel admin con consumo real de `GET /api/users` y `GET /api/machines`
 - Panel cliente conectado a `GET /api/routines`, `GET /api/classes` y `GET /api/machines`
 - Panel entrenador conectado a `GET /api/classes`, `GET /api/routine-assignments` y `GET /api/attendances`
+- Estructura visual de los tres paneles acercada al lenguaje de Figma: hero, métricas y accesos rápidos
+- Navegacion interna real en cliente y entrenador con pestañas de inicio, actividad/QR y perfil
+- Registro de asistencia desde cliente mediante QR manual contra `POST /api/attendances`
 - Conexion local del emulador usando `http://10.0.2.2:8080/`
 - Configuracion de red preparada para permitir HTTP local en desarrollo
 
@@ -56,7 +59,7 @@ Si pruebas la app en un movil fisico, tendras que cambiar esa URL por la IP loca
 
 ## Siguiente paso recomendado
 
-1. Conectar QR, perfil y acciones de asistencia
-2. Añadir navegacion interna inferior o lateral segun el rol
-3. Ajustar detalles visuales del header y del layout
-4. Acercar cada panel al prototipo de Figma
+1. Añadir escaneo QR real o lectura de codigo desde camara
+2. Extender la navegacion interna al panel admin
+3. Ajustar detalles visuales finos del layout y spacing
+4. Rematar la fidelidad con los prototipos de Figma pantalla por pantalla

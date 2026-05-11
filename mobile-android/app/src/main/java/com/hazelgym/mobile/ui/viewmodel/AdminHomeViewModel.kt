@@ -5,9 +5,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.MachineResponse
 import com.hazelgym.mobile.data.model.UserSummaryResponse
 import com.hazelgym.mobile.data.remote.ApiClient
+import com.hazelgym.mobile.data.repository.GymClassRepository
 import com.hazelgym.mobile.data.repository.MachineRepository
 import com.hazelgym.mobile.data.repository.UserRepository
 import com.hazelgym.mobile.data.session.SessionStorage
@@ -23,6 +25,7 @@ import kotlinx.coroutines.launch
 data class AdminHomeUiState(
     val userName: String = "",
     val role: String = "",
+    val classes: List<GymClassResponse> = emptyList(),
     val machines: List<MachineResponse> = emptyList(),
     val users: List<UserSummaryResponse> = emptyList(),
     val isLoading: Boolean = false,
@@ -31,6 +34,7 @@ data class AdminHomeUiState(
 
 class AdminHomeViewModel(application: Application) : AndroidViewModel(application) {
     private val sessionStorage = SessionStorage(application.applicationContext)
+    private val gymClassRepository = GymClassRepository(ApiClient.gymClassApi)
     private val machineRepository = MachineRepository(ApiClient.machineApi)
     private val userRepository = UserRepository(ApiClient.userApi)
 
@@ -55,12 +59,18 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             val session = sessionStorage.session.filterNotNull().first()
             runCatching {
+                val classesDeferred = async { gymClassRepository.getClasses(session) }
                 val machinesDeferred = async { machineRepository.getMachines(session) }
                 val usersDeferred = async { userRepository.getUsers(session) }
-                machinesDeferred.await() to usersDeferred.await()
-            }.onSuccess { (machines, users) ->
+                Triple(
+                    classesDeferred.await(),
+                    machinesDeferred.await(),
+                    usersDeferred.await()
+                )
+            }.onSuccess { (classes, machines, users) ->
                 _uiState.update {
                     it.copy(
+                        classes = classes,
                         machines = machines,
                         users = users,
                         isLoading = false

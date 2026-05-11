@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 
 data class TrainerHomeUiState(
     val userName: String = "",
+    val email: String = "",
     val role: String = "",
     val classes: List<GymClassResponse> = emptyList(),
     val routineAssignments: List<RoutineAssignmentResponse> = emptyList(),
@@ -47,6 +48,7 @@ class TrainerHomeViewModel(application: Application) : AndroidViewModel(applicat
             _uiState.update {
                 it.copy(
                     userName = session.nombre,
+                    email = session.email,
                     role = session.role
                 )
             }

@@ -83,7 +83,9 @@ fun HazelGymMobileApp() {
                 secondaryMetricLabel = "Clases",
                 secondaryMetricValue = "Cliente",
                 onRefresh = clientHomeViewModel::refresh,
-                onLogout = rootViewModel::logout
+                onLogout = rootViewModel::logout,
+                onQrCodeChange = clientHomeViewModel::updateQrCodeInput,
+                onRegisterAttendance = clientHomeViewModel::registerAttendance
             )
         }
         composable(Routes.TrainerHome) {
