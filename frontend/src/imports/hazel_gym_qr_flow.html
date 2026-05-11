@@ -1,0 +1,330 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+  .wrap { font-family: 'DM Sans', sans-serif; padding: 1.5rem 0; }
+  .flow-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-tertiary); margin: 0 0 10px; }
+  .flow-arrow { display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: 18px; padding: 0 4px; align-self: center; margin-top: -18px; }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; align-items: flex-start; }
+  .col { display: flex; flex-direction: column; align-items: center; }
+  .phone-lbl { font-size: 10px; color: var(--color-text-tertiary); text-align: center; margin-top: 7px; max-width: 150px; line-height: 1.4; }
+
+  .phone { width: 152px; border-radius: 26px; border: 1.5px solid var(--color-border-secondary); overflow: hidden; flex-shrink: 0; }
+
+  /* shared */
+  .sb { display: flex; justify-content: space-between; align-items: center; padding: 9px 13px 3px; font-size: 9px; font-weight: 500; }
+  .dark-screen { background: #0D0D14; }
+  .dark-screen .sb { color: #ffffff55; }
+
+  /* ── SCREEN 1: SCANNER ── */
+  .sc1-head { padding: 8px 14px 6px; display: flex; align-items: center; gap: 8px; }
+  .back-btn { width: 26px; height: 26px; background: #1C1C28; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sc1-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #fff; }
+  .sc1-tabs { display: flex; gap: 5px; margin: 0 14px 10px; }
+  .tab { flex: 1; text-align: center; padding: 6px 2px; border-radius: 9px; font-size: 9px; font-weight: 500; }
+  .tab-active { background: #FF4D2E; color: #fff; }
+  .tab-off { background: #1C1C28; color: #ffffff44; }
+  .viewfinder { margin: 0 14px; background: #1C1C28; border-radius: 16px; height: 155px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .corner { position: absolute; width: 20px; height: 20px; border-color: #FF4D2E; border-style: solid; }
+  .corner.tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; border-radius: 3px 0 0 0; }
+  .corner.tr { top: 10px; right: 10px; border-width: 2px 2px 0 0; border-radius: 0 3px 0 0; }
+  .corner.bl { bottom: 10px; left: 10px; border-width: 0 0 2px 2px; border-radius: 0 0 0 3px; }
+  .corner.br { bottom: 10px; right: 10px; border-width: 0 2px 2px 0; border-radius: 0 0 3px 0; }
+  .scan-line { position: absolute; width: 70%; height: 1.5px; background: linear-gradient(90deg, transparent, #FF4D2E, transparent); }
+  .sc1-hint { text-align: center; font-size: 9px; color: #ffffff33; margin: 8px 14px 10px; }
+  .sc1-stats { display: flex; gap: 6px; margin: 0 14px 10px; }
+  .sc1-stat { flex: 1; background: #1C1C28; border-radius: 10px; padding: 8px 6px; text-align: center; }
+  .sc1-stat-n { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #fff; }
+  .sc1-stat-l { font-size: 8px; color: #ffffff33; }
+  .sc1-torch { margin: 0 14px; background: #1C1C28; border-radius: 10px; padding: 8px; text-align: center; font-size: 9px; color: #ffffff44; display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+  /* ── SCREEN 2: PROCESSING ── */
+  .processing-body { padding: 24px 16px; text-align: center; }
+  .spinner-ring { width: 52px; height: 52px; border: 2.5px solid #1C1C28; border-top-color: #FF4D2E; border-radius: 50%; margin: 0 auto 16px; }
+  .proc-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 5px; }
+  .proc-sub { font-size: 10px; color: #ffffff33; margin: 0 0 20px; }
+  .proc-dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 24px; }
+  .proc-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .pd1 { background: #FF4D2E; }
+  .pd2 { background: #FF4D2E88; }
+  .pd3 { background: #FF4D2E33; }
+  .proc-qr-preview { background: #1C1C28; border-radius: 12px; margin: 0 0; padding: 10px 12px; display: flex; align-items: center; gap: 8px; }
+  .proc-qr-icon { width: 30px; height: 30px; background: #FF4D2E22; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .proc-qr-text { text-align: left; }
+  .proc-qr-t { font-size: 10px; color: #ffffff88; }
+  .proc-qr-s { font-size: 9px; color: #ffffff33; }
+
+  /* ── SCREEN 3a: SUCCESS ENTRADA ── */
+  .success-screen { background: #0A1A0E; }
+  .success-body { padding: 18px 16px; text-align: center; }
+  .success-circle { width: 56px; height: 56px; background: #22CC6622; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 1.5px solid #22CC6644; }
+  .success-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; color: #fff; margin: 0 0 4px; }
+  .success-sub { font-size: 10px; color: #ffffff44; margin: 0 0 14px; }
+  .success-card { background: #1A2E1E; border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; border: 0.5px solid #22CC6633; }
+  .sc-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+  .sc-label { font-size: 9px; color: #ffffff44; }
+  .sc-value { font-size: 10px; color: #fff; font-weight: 500; }
+  .sc-streak { display: inline-flex; align-items: center; gap: 4px; background: #FF4D2E22; border-radius: 20px; padding: 3px 8px; border: 0.5px solid #FF4D2E44; }
+  .sc-streak span { font-size: 9px; color: #FF6B50; font-weight: 500; }
+  .success-btn { background: #22CC66; border-radius: 10px; padding: 10px; text-align: center; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: #0A1A0E; margin-top: 2px; }
+
+  /* ── SCREEN 3b: SUCCESS MÁQUINA ── */
+  .machine-screen { background: #0D0D14; }
+  .machine-body { padding: 12px 14px; }
+  .machine-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .machine-icon { width: 36px; height: 36px; background: #2266FF22; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .machine-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #fff; }
+  .machine-muscle { font-size: 9px; color: #2266FF; }
+  .machine-img { background: #1C1C28; border-radius: 12px; height: 85px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+  .machine-img-label { font-size: 9px; color: #ffffff22; }
+  .machine-tag { display: inline-block; background: #2266FF22; color: #5588FF; font-size: 8px; padding: 2px 7px; border-radius: 20px; margin: 0 3px 5px 0; border: 0.5px solid #2266FF33; }
+  .machine-steps { }
+  .step-item { display: flex; gap: 7px; align-items: flex-start; margin-bottom: 6px; }
+  .step-num { width: 16px; height: 16px; background: #2266FF; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 9px; color: #ffffff66; line-height: 1.4; }
+
+  /* ── SCREEN 3c: SUCCESS CLASE (trainer) ── */
+  .clase-screen { background: #0A0F20; }
+  .clase-body { padding: 14px 14px; text-align: center; }
+  .clase-circle { width: 52px; height: 52px; background: #2266FF22; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; border: 1.5px solid #2266FF44; }
+  .clase-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: #fff; margin: 0 0 3px; }
+  .clase-sub { font-size: 9px; color: #ffffff33; margin: 0 0 12px; }
+  .clase-card { background: #1A2040; border-radius: 12px; padding: 10px 12px; text-align: left; margin-bottom: 8px; border: 0.5px solid #2266FF33; }
+  .cc-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
+  .cc-label { font-size: 9px; color: #ffffff44; }
+  .cc-value { font-size: 10px; color: #fff; font-weight: 500; }
+  .clase-progress { background: #1A2040; border-radius: 12px; padding: 10px 12px; margin-bottom: 8px; border: 0.5px solid #2266FF22; }
+  .cp-label { font-size: 9px; color: #ffffff44; margin-bottom: 5px; }
+  .cp-bar-bg { background: #0A0F20; border-radius: 20px; height: 6px; }
+  .cp-bar { background: #2266FF; border-radius: 20px; height: 6px; width: 73%; }
+  .cp-nums { display: flex; justify-content: space-between; margin-top: 3px; }
+  .cp-n { font-size: 8px; color: #ffffff33; }
+  .clase-btn { background: #2266FF; border-radius: 10px; padding: 9px; text-align: center; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: #fff; }
+
+  /* ── SCREEN 4: ERROR ── */
+  .error-screen { background: #160A0A; }
+  .error-body { padding: 22px 16px; text-align: center; }
+  .error-circle { width: 52px; height: 52px; background: #E24B4A22; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 1.5px solid #E24B4A44; }
+  .error-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; color: #fff; margin: 0 0 4px; }
+  .error-sub { font-size: 10px; color: #ffffff33; margin: 0 0 14px; line-height: 1.5; }
+  .error-reasons { text-align: left; background: #1C1010; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; border: 0.5px solid #E24B4A22; }
+  .er-label { font-size: 9px; color: #E24B4A88; margin-bottom: 6px; font-weight: 500; }
+  .er-item { display: flex; align-items: center; gap: 6px; padding: 3px 0; }
+  .er-dot { width: 4px; height: 4px; background: #E24B4A55; border-radius: 50%; flex-shrink: 0; }
+  .er-text { font-size: 9px; color: #ffffff44; }
+  .error-btn-retry { background: #E24B4A; border-radius: 10px; padding: 9px; text-align: center; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .error-btn-home { border: 0.5px solid #ffffff22; border-radius: 10px; padding: 8px; text-align: center; font-size: 10px; color: #ffffff44; }
+
+  .divider { width: 100%; height: 0.5px; background: var(--color-border-tertiary); margin: 0.5rem 0 1.5rem; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 1.5rem; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--color-text-secondary); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Flujo de escaneo QR para Hazel Gym: escáner, procesando, éxito en 3 tipos y error.</h2>
+
+  <p class="flow-label">Flujo principal — escaneo QR</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#FF4D2E;"></div>Cliente — entrada</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2266FF;"></div>Cliente — máquina</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2266FF;"></div>Entrenador — clase</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#E24B4A;"></div>Error</div>
+  </div>
+
+  <!-- FILA 1: scanner + processing -->
+  <div class="row">
+
+    <!-- 1. SCANNER -->
+    <div class="col">
+      <div class="phone dark-screen">
+        <div class="sb"><span>9:41</span><div style="display:flex;gap:2px;"><div style="width:3px;height:3px;background:#fff5;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff5;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff5;border-radius:50%;"></div></div></div>
+        <div class="sc1-head">
+          <div class="back-btn"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <span class="sc1-title">Escanear QR</span>
+        </div>
+        <div class="sc1-tabs">
+          <div class="tab tab-active">Entrada</div>
+          <div class="tab tab-off">Máquina</div>
+          <div class="tab tab-off">Clase</div>
+        </div>
+        <div class="viewfinder">
+          <div class="corner tl"></div><div class="corner tr"></div>
+          <div class="corner bl"></div><div class="corner br"></div>
+          <div class="scan-line"></div>
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#ffffff22" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#ffffff22" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#ffffff22" stroke-width="1.5"/><rect x="5" y="5" width="3" height="3" fill="#ffffff22"/><rect x="16" y="5" width="3" height="3" fill="#ffffff22"/><rect x="5" y="16" width="3" height="3" fill="#ffffff22"/><path d="M14 14h2v2h-2zM16 16h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z" fill="#ffffff22"/></svg>
+        </div>
+        <div class="sc1-hint">Apunta al código QR para registrar tu entrada</div>
+        <div class="sc1-stats">
+          <div class="sc1-stat"><div class="sc1-stat-n">47</div><div class="sc1-stat-l">Visitas</div></div>
+          <div class="sc1-stat"><div class="sc1-stat-n">14</div><div class="sc1-stat-l">Racha</div></div>
+          <div class="sc1-stat"><div class="sc1-stat-n">3</div><div class="sc1-stat-l">Logros</div></div>
+        </div>
+        <div class="sc1-torch">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none"><path d="M9 2h6l1 7H8L9 2z" stroke="#ffffff44" stroke-width="1.5"/><path d="M8 9l-1 13h10L16 9" stroke="#ffffff44" stroke-width="1.5"/><path d="M12 12v6" stroke="#ffffff44" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span>Linterna</span>
+        </div>
+        <div style="height:10px;"></div>
+      </div>
+      <div class="phone-lbl">1. Escáner activo<br><span style="color:#FF4D2E;">tab: Entrada</span></div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- 2. PROCESSING -->
+    <div class="col">
+      <div class="phone dark-screen">
+        <div class="sb"><span>9:41</span><div style="display:flex;gap:2px;"><div style="width:3px;height:3px;background:#fff5;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff5;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff5;border-radius:50%;"></div></div></div>
+        <div class="processing-body">
+          <div style="height:20px;"></div>
+          <div class="spinner-ring"></div>
+          <div class="proc-title">Verificando QR</div>
+          <div class="proc-sub">Comprobando datos del usuario...</div>
+          <div class="proc-dots">
+            <div class="proc-dot pd1"></div>
+            <div class="proc-dot pd2"></div>
+            <div class="proc-dot pd3"></div>
+          </div>
+          <div class="proc-qr-preview">
+            <div class="proc-qr-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#FF4D2E" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#FF4D2E" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#FF4D2E" stroke-width="1.5"/><rect x="5" y="5" width="3" height="3" fill="#FF4D2E"/><rect x="16" y="5" width="3" height="3" fill="#FF4D2E"/><rect x="5" y="16" width="3" height="3" fill="#FF4D2E"/></svg>
+            </div>
+            <div class="proc-qr-text">
+              <div class="proc-qr-t">QR de entrada detectado</div>
+              <div class="proc-qr-s">Hazel Gym · Sede principal</div>
+            </div>
+          </div>
+          <div style="height:30px;"></div>
+          <div style="font-size:9px;color:#ffffff22;text-align:center;">No cierres la aplicación</div>
+        </div>
+      </div>
+      <div class="phone-lbl">2. Procesando<br><span style="color:#ffffff66;">validación servidor</span></div>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <!-- 3a. SUCCESS ENTRADA -->
+    <div class="col">
+      <div class="phone success-screen">
+        <div class="sb" style="color:#ffffff55;"><span>9:41</span><div style="display:flex;gap:2px;"><div style="width:3px;height:3px;background:#fff4;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff4;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff4;border-radius:50%;"></div></div></div>
+        <div class="success-body">
+          <div style="height:8px;"></div>
+          <div class="success-circle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#22CC66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="success-title">¡Entrada registrada!</div>
+          <div class="success-sub">Bienvenido a Hazel Gym</div>
+          <div class="success-card">
+            <div class="sc-row"><span class="sc-label">Usuario</span><span class="sc-value">Carlos M.</span></div>
+            <div class="sc-row"><span class="sc-label">Hora</span><span class="sc-value">09:41</span></div>
+            <div class="sc-row"><span class="sc-label">Fecha</span><span class="sc-value">19 abr 2026</span></div>
+            <div class="sc-row"><span class="sc-label">Visita nº</span><span class="sc-value" style="color:#22CC66;">48</span></div>
+          </div>
+          <div class="sc-streak"><span>🔥 Racha: 15 días seguidos</span></div>
+          <div style="height:10px;"></div>
+          <div class="success-btn">Volver al inicio</div>
+        </div>
+      </div>
+      <div class="phone-lbl">3a. Éxito — Entrada<br><span style="color:#22CC66;">cliente</span></div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+  <p class="flow-label">Resultados alternativos — tipo máquina y clase</p>
+
+  <div class="row">
+
+    <!-- 3b. SUCCESS MÁQUINA -->
+    <div class="col">
+      <div class="phone machine-screen">
+        <div class="sb" style="color:#ffffff55;"><span>9:41</span><div style="display:flex;gap:2px;"><div style="width:3px;height:3px;background:#fff4;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff4;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff4;border-radius:50%;"></div></div></div>
+        <div class="machine-body">
+          <div class="machine-header">
+            <div class="machine-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 4v16M18 4v16M6 8h12M6 16h12" stroke="#2266FF" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="machine-name">Press banca</div>
+              <div class="machine-muscle">Pectoral · Tríceps · Hombro</div>
+            </div>
+          </div>
+          <div class="machine-img">
+            <span class="machine-img-label">Imagen/vídeo de la máquina</span>
+            <div style="position:absolute;top:8px;right:8px;background:#2266FF;border-radius:6px;padding:2px 7px;font-size:8px;color:#fff;font-weight:500;">Nivel medio</div>
+          </div>
+          <div style="margin-bottom:7px;">
+            <span class="machine-tag">Fuerza</span>
+            <span class="machine-tag">Compuesto</span>
+            <span class="machine-tag">Pectoral</span>
+          </div>
+          <div class="machine-steps">
+            <div class="step-item"><div class="step-num">1</div><div class="step-text">Ajusta el banco a posición horizontal y selecciona el peso.</div></div>
+            <div class="step-item"><div class="step-num">2</div><div class="step-text">Agarre a la anchura de hombros, codos a 45°.</div></div>
+            <div class="step-item"><div class="step-num">3</div><div class="step-text">Baja controlado hasta el pecho, empuja sin bloquear codos.</div></div>
+          </div>
+          <div style="background:#E24B4A11;border-radius:8px;padding:7px 8px;margin-top:6px;border:0.5px solid #E24B4A22;">
+            <div style="font-size:8px;color:#E24B4A88;margin-bottom:2px;font-weight:500;">Aviso de seguridad</div>
+            <div style="font-size:9px;color:#ffffff44;">No realices este ejercicio sin un compañero si usas cargas elevadas.</div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-lbl">3b. QR Máquina<br><span style="color:#2266FF;">ficha técnica</span></div>
+    </div>
+
+    <!-- 3c. SUCCESS CLASE -->
+    <div class="col">
+      <div class="phone clase-screen">
+        <div class="sb" style="color:#ffffff55;"><span>9:41</span><div style="display:flex;gap:2px;"><div style="width:3px;height:3px;background:#fff4;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff4;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff4;border-radius:50%;"></div></div></div>
+        <div class="clase-body">
+          <div style="height:6px;"></div>
+          <div class="clase-circle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 12l5 5L20 7" stroke="#2266FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="clase-title">Clase registrada</div>
+          <div class="clase-sub">Sesión confirmada correctamente</div>
+          <div class="clase-card">
+            <div class="cc-row"><span class="cc-label">Clase</span><span class="cc-value">Spinning</span></div>
+            <div class="cc-row"><span class="cc-label">Entrenador</span><span class="cc-value">Laura R.</span></div>
+            <div class="cc-row"><span class="cc-label">Inicio</span><span class="cc-value">08:30</span></div>
+            <div class="cc-row"><span class="cc-label">Duración</span><span class="cc-value">50 min</span></div>
+          </div>
+          <div class="clase-progress">
+            <div class="cp-label">Clases este mes</div>
+            <div class="cp-bar-bg"><div class="cp-bar"></div></div>
+            <div class="cp-nums"><span class="cp-n">22 impartidas</span><span class="cp-n">objetivo: 30</span></div>
+          </div>
+          <div class="clase-btn">Ver agenda del día</div>
+        </div>
+      </div>
+      <div class="phone-lbl">3c. QR Clase<br><span style="color:#2266FF;">entrenador</span></div>
+    </div>
+
+    <div class="flow-arrow">o bien</div>
+
+    <!-- 4. ERROR -->
+    <div class="col">
+      <div class="phone error-screen">
+        <div class="sb" style="color:#ffffff44;"><span>9:41</span><div style="display:flex;gap:2px;"><div style="width:3px;height:3px;background:#fff3;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff3;border-radius:50%;"></div><div style="width:3px;height:3px;background:#fff3;border-radius:50%;"></div></div></div>
+        <div class="error-body">
+          <div style="height:10px;"></div>
+          <div class="error-circle">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="error-title">QR no válido</div>
+          <div class="error-sub">No se pudo registrar<br>la entrada en este momento</div>
+          <div class="error-reasons">
+            <div class="er-label">Posibles causas</div>
+            <div class="er-item"><div class="er-dot"></div><div class="er-text">QR caducado o ya usado hoy</div></div>
+            <div class="er-item"><div class="er-dot"></div><div class="er-text">El QR no pertenece a esta sede</div></div>
+            <div class="er-item"><div class="er-dot"></div><div class="er-text">Sin conexión al servidor</div></div>
+            <div class="er-item"><div class="er-dot"></div><div class="er-text">Cuenta inactiva o suspendida</div></div>
+          </div>
+          <div class="error-btn-retry">Intentar de nuevo</div>
+          <div class="error-btn-home">Volver al inicio</div>
+        </div>
+      </div>
+      <div class="phone-lbl">4. Error<br><span style="color:#E24B4A;">QR inválido o expirado</span></div>
+    </div>
+
+  </div>
+</div>

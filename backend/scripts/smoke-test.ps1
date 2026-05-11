@@ -91,7 +91,7 @@ $adminAuth = Invoke-Json -Method "POST" -Path "/api/auth/login" -Body @{
 }
 
 if ([string]::IsNullOrWhiteSpace($adminAuth.token)) {
-    throw "Admin login did not return a JWT token. Run database/06_fix_seed_passwords.sql if this fails."
+    throw "Admin login did not return a JWT token. Check the seeded admin credentials in database/03_seed.sql."
 }
 
 $adminHeaders = @{ Authorization = "Bearer $($adminAuth.token)" }
@@ -99,6 +99,12 @@ Write-Host "[OK] Admin login returned token"
 
 $users = Invoke-Json -Method "GET" -Path "/api/users" -Headers $adminHeaders
 Write-Host "[OK] Admin can list users ($($users.Count))"
+
+$classes = Invoke-Json -Method "GET" -Path "/api/classes" -Headers $clientHeaders
+Write-Host "[OK] Client can list classes ($($classes.Count))"
+
+$routines = Invoke-Json -Method "GET" -Path "/api/routines" -Headers $clientHeaders
+Write-Host "[OK] Client can list routines ($($routines.Count))"
 
 $createdMachine = Invoke-Json -Method "POST" -Path "/api/machines" -Headers $adminHeaders -Body @{
     nombre = "Smoke Test Machine"
@@ -111,6 +117,82 @@ $createdMachine = Invoke-Json -Method "POST" -Path "/api/machines" -Headers $adm
     estado = "ACTIVA"
 }
 Write-Host "[OK] Admin can create machine id=$($createdMachine.id)"
+
+$createdFee = Invoke-Json -Method "POST" -Path "/api/membership-fees" -Headers $adminHeaders -Body @{
+    nombre = "Smoke Test Fee"
+    descripcion = "Temporary membership fee"
+    precio = 19.99
+}
+Write-Host "[OK] Admin can create membership fee id=$($createdFee.id)"
+
+$createdClass = Invoke-Json -Method "POST" -Path "/api/classes" -Headers $adminHeaders -Body @{
+    nombre = "Smoke Test Class"
+    descripcion = "Temporary class for API verification"
+    duracion = 45
+    entrenadorId = 3
+    activa = $true
+}
+Write-Host "[OK] Admin can create class id=$($createdClass.id)"
+
+$createdSession = Invoke-Json -Method "POST" -Path "/api/class-sessions" -Headers $adminHeaders -Body @{
+    gymClassId = $createdClass.id
+    fecha = "2026-12-31"
+    horaInicio = "10:00:00"
+    horaFin = "10:45:00"
+}
+Write-Host "[OK] Admin can create class session id=$($createdSession.id)"
+
+$createdClassQr = Invoke-Json -Method "POST" -Path "/api/qr-codes" -Headers $adminHeaders -Body @{
+    tipo = "CLASS_SESSION"
+    esEntradaGimnasio = $false
+    maquinaId = $null
+    sesionClaseId = $createdSession.id
+}
+Write-Host "[OK] Admin can create class QR id=$($createdClassQr.id)"
+
+$createdRoutine = Invoke-Json -Method "POST" -Path "/api/routines" -Headers $adminHeaders -Body @{
+    nombre = "Smoke Test Routine"
+    descripcion = "Temporary routine for API verification"
+    entrenadorId = 3
+}
+Write-Host "[OK] Admin can create routine id=$($createdRoutine.id)"
+
+$createdAssignment = Invoke-Json -Method "POST" -Path "/api/routine-assignments" -Headers $adminHeaders -Body @{
+    routineId = $createdRoutine.id
+    clientId = $clientAuth.userId
+}
+Write-Host "[OK] Admin can assign routine id=$($createdAssignment.id)"
+
+Assert-Status -Label "Client access to routine assignments endpoint" -ExpectedStatus 403 -Call {
+    Invoke-Json -Method "GET" -Path "/api/routine-assignments" -Headers $clientHeaders
+}
+
+Invoke-Json -Method "GET" -Path "/api/routine-assignments" -Headers $adminHeaders | Out-Null
+Write-Host "[OK] Admin can list routine assignments"
+
+Invoke-Json -Method "GET" -Path "/api/qr-codes" -Headers $adminHeaders | Out-Null
+Write-Host "[OK] Admin can list QR codes"
+
+Invoke-Json -Method "GET" -Path "/api/membership-fees" -Headers $clientHeaders | Out-Null
+Write-Host "[OK] Client can list membership fees"
+
+Invoke-Json -Method "DELETE" -Path "/api/routine-assignments/$($createdAssignment.id)" -Headers $adminHeaders | Out-Null
+Write-Host "[OK] Admin can delete routine assignment"
+
+Invoke-Json -Method "DELETE" -Path "/api/qr-codes/$($createdClassQr.id)" -Headers $adminHeaders | Out-Null
+Write-Host "[OK] Admin can delete class QR"
+
+Invoke-Json -Method "DELETE" -Path "/api/class-sessions/$($createdSession.id)" -Headers $adminHeaders | Out-Null
+Write-Host "[OK] Admin can delete class session"
+
+Invoke-Json -Method "DELETE" -Path "/api/classes/$($createdClass.id)" -Headers $adminHeaders | Out-Null
+Write-Host "[OK] Admin can delete class"
+
+Invoke-Json -Method "DELETE" -Path "/api/routines/$($createdRoutine.id)" -Headers $adminHeaders | Out-Null
+Write-Host "[OK] Admin can delete routine"
+
+Invoke-Json -Method "DELETE" -Path "/api/membership-fees/$($createdFee.id)" -Headers $adminHeaders | Out-Null
+Write-Host "[OK] Admin can delete membership fee"
 
 Invoke-Json -Method "DELETE" -Path "/api/machines/$($createdMachine.id)" -Headers $adminHeaders | Out-Null
 Write-Host "[OK] Admin can delete test machine"

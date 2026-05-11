@@ -1,0 +1,355 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+  .gym-wrap { font-family: 'DM Sans', sans-serif; padding: 1.5rem 0; }
+  .section-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-tertiary); margin: 0 0 1rem; }
+  .screens-row { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 2.5rem; }
+  .phone { width: 175px; border-radius: 28px; border: 1.5px solid var(--color-border-secondary); overflow: hidden; flex-shrink: 0; }
+  .phone-label { font-size: 11px; color: var(--color-text-tertiary); text-align: center; margin-top: 8px; font-family: 'DM Sans', sans-serif; }
+
+  /* Status bar */
+  .sb { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px 4px; font-size: 10px; font-weight: 500; }
+  .sb-dots { display: flex; gap: 2px; align-items: center; }
+  .sb-dot { width: 4px; height: 4px; border-radius: 50%; }
+
+  /* LOGIN SCREEN */
+  .s-login { background: #0D0D14; min-height: 360px; }
+  .s-login .sb { color: #ffffff88; }
+  .s-login .sb-dot { background: #ffffff66; }
+  .login-hero { padding: 20px 18px 0; }
+  .login-icon { width: 42px; height: 42px; background: #FF4D2E; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .login-icon svg { width: 22px; height: 22px; }
+  .login-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; color: #fff; line-height: 1.15; margin: 0 0 4px; }
+  .login-sub { font-size: 12px; color: #ffffff55; margin: 0 0 24px; }
+  .login-field { background: #1A1A26; border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+  .login-field-label { font-size: 9px; color: #ffffff44; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+  .login-field-val { font-size: 13px; color: #ffffffcc; }
+  .login-btn { background: #FF4D2E; border-radius: 10px; padding: 12px; text-align: center; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #fff; margin: 14px 0 10px; letter-spacing: 0.03em; }
+  .login-forgot { text-align: center; font-size: 11px; color: #ffffff33; }
+  .login-roles { display: flex; gap: 6px; margin-top: 14px; }
+  .role-pill { flex: 1; text-align: center; padding: 6px 4px; border-radius: 8px; font-size: 9px; font-weight: 500; letter-spacing: 0.04em; }
+  .rp-client { background: #FF4D2E22; color: #FF6B50; border: 0.5px solid #FF4D2E44; }
+  .rp-trainer { background: #2266FF22; color: #5588FF; border: 0.5px solid #2266FF44; }
+  .rp-admin { background: #22CC8822; color: #44DD99; border: 0.5px solid #22CC8844; }
+
+  /* CLIENT HOME */
+  .s-client { background: #F5F4F0; min-height: 360px; }
+  .s-client .sb { color: #00000066; }
+  .s-client .sb-dot { background: #00000033; }
+  .client-header { background: #0D0D14; padding: 14px 16px 18px; border-radius: 0 0 20px 20px; }
+  .client-greeting { font-size: 10px; color: #ffffff55; margin-bottom: 3px; }
+  .client-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: #fff; margin: 0; }
+  .client-badge { display: inline-flex; align-items: center; gap: 4px; background: #FF4D2E; border-radius: 20px; padding: 3px 8px; margin-top: 8px; }
+  .client-badge span { font-size: 9px; color: #fff; font-weight: 500; }
+  .client-dot { width: 5px; height: 5px; background: #FFD0C5; border-radius: 50%; }
+  .client-body { padding: 14px 14px 0; }
+  .c-section { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #00000055; margin: 0 0 8px; }
+  .qr-card { background: #fff; border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; border: 0.5px solid #0000000f; }
+  .qr-icon { width: 36px; height: 36px; background: #0D0D14; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .qr-icon svg { width: 18px; height: 18px; }
+  .qr-text { }
+  .qr-title { font-size: 12px; font-weight: 500; color: #0D0D14; margin: 0; }
+  .qr-sub { font-size: 10px; color: #00000055; margin: 0; }
+  .stats-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .stat-box { flex: 1; background: #fff; border-radius: 12px; padding: 10px 10px 8px; border: 0.5px solid #0000000f; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: #0D0D14; }
+  .stat-lbl { font-size: 9px; color: #00000055; }
+  .nav-bar { display: flex; justify-content: space-around; padding: 10px 0 12px; background: #fff; border-top: 0.5px solid #0000000f; margin-top: 12px; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .nav-dot { width: 4px; height: 4px; background: #FF4D2E; border-radius: 50%; }
+  .nav-lbl { font-size: 8px; color: #00000044; }
+  .nav-lbl.active { color: #FF4D2E; }
+  .nav-icon { width: 18px; height: 18px; }
+
+  /* TRAINER HOME */
+  .s-trainer { background: #F0F4FF; min-height: 360px; }
+  .s-trainer .sb { color: #00000066; }
+  .s-trainer .sb-dot { background: #00000033; }
+  .trainer-header { background: #0A1A4A; padding: 14px 16px 18px; border-radius: 0 0 20px 20px; }
+  .t-greeting { font-size: 10px; color: #ffffff44; margin-bottom: 3px; }
+  .t-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: #fff; }
+  .t-role { display: inline-block; background: #2266FF; border-radius: 20px; padding: 3px 8px; margin-top: 6px; font-size: 9px; color: #C5D5FF; font-weight: 500; }
+  .trainer-body { padding: 12px 14px 0; }
+  .t-card { background: #fff; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; border: 0.5px solid #0000000f; }
+  .t-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .t-card-title { font-size: 12px; font-weight: 500; color: #0A1A4A; }
+  .t-badge { background: #EEF2FF; color: #2266FF; font-size: 9px; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+  .t-badge-orange { background: #FFF0EC; color: #FF4D2E; }
+  .session-list { }
+  .session-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 0.5px solid #0000000a; }
+  .session-item:last-child { border-bottom: none; }
+  .session-time { font-size: 9px; color: #00000044; width: 30px; flex-shrink: 0; }
+  .session-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .sd-blue { background: #2266FF; }
+  .sd-orange { background: #FF4D2E; }
+  .sd-gray { background: #cccccc; }
+  .session-name { font-size: 11px; color: #0A1A4A; }
+  .t-qr-btn { background: #2266FF; border-radius: 10px; padding: 10px; text-align: center; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: #fff; margin-top: 4px; letter-spacing: 0.03em; }
+
+  /* ADMIN HOME */
+  .s-admin { background: #F2F5F2; min-height: 360px; }
+  .s-admin .sb { color: #00000066; }
+  .s-admin .sb-dot { background: #00000033; }
+  .admin-header { background: #0D2010; padding: 14px 16px 18px; border-radius: 0 0 20px 20px; }
+  .a-greeting { font-size: 10px; color: #ffffff44; margin-bottom: 3px; }
+  .a-name { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: #fff; }
+  .a-role { display: inline-block; background: #22CC66; border-radius: 20px; padding: 3px 8px; margin-top: 6px; font-size: 9px; color: #0D2010; font-weight: 700; }
+  .admin-body { padding: 12px 14px 0; }
+  .a-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .a-stat { background: #fff; border-radius: 12px; padding: 10px; border: 0.5px solid #0000000f; }
+  .a-stat-num { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: #0D2010; }
+  .a-stat-lbl { font-size: 9px; color: #00000055; }
+  .a-menu { display: flex; flex-direction: column; gap: 6px; }
+  .a-menu-item { background: #fff; border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; border: 0.5px solid #0000000f; }
+  .a-menu-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ami-green { background: #22CC6622; }
+  .ami-blue { background: #2266FF22; }
+  .ami-orange { background: #FF4D2E22; }
+  .a-menu-text { flex: 1; }
+  .a-menu-title { font-size: 12px; font-weight: 500; color: #0D2010; }
+  .a-menu-sub { font-size: 9px; color: #00000055; }
+  .a-menu-arrow { font-size: 12px; color: #00000033; }
+
+  /* QR SCAN */
+  .s-qr { background: #0D0D14; min-height: 360px; }
+  .s-qr .sb { color: #ffffff66; }
+  .s-qr .sb-dot { background: #ffffff44; }
+  .qr-screen-header { padding: 10px 16px 6px; display: flex; align-items: center; gap: 8px; }
+  .qr-back { width: 28px; height: 28px; background: #1A1A26; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .qr-header-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: #fff; }
+  .qr-viewfinder { margin: 10px 18px; background: #1A1A26; border-radius: 18px; height: 170px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+  .qr-corner { position: absolute; width: 24px; height: 24px; border-color: #FF4D2E; border-style: solid; }
+  .qr-corner.tl { top: 12px; left: 12px; border-width: 2.5px 0 0 2.5px; border-radius: 4px 0 0 0; }
+  .qr-corner.tr { top: 12px; right: 12px; border-width: 2.5px 2.5px 0 0; border-radius: 0 4px 0 0; }
+  .qr-corner.bl { bottom: 12px; left: 12px; border-width: 0 0 2.5px 2.5px; border-radius: 0 0 0 4px; }
+  .qr-corner.br { bottom: 12px; right: 12px; border-width: 0 2.5px 2.5px 0; border-radius: 0 0 4px 0; }
+  .qr-scan-line { position: absolute; width: 70%; height: 1.5px; background: #FF4D2E88; top: 50%; transform: translateY(-50%); }
+  .qr-center-icon { }
+  .qr-tabs { display: flex; gap: 6px; margin: 12px 18px 8px; }
+  .qr-tab { flex: 1; text-align: center; padding: 8px 4px; border-radius: 10px; font-size: 10px; font-weight: 500; }
+  .qr-tab.active { background: #FF4D2E; color: #fff; }
+  .qr-tab.inactive { background: #1A1A26; color: #ffffff55; }
+  .qr-info { margin: 0 18px; background: #1A1A26; border-radius: 12px; padding: 10px 12px; }
+  .qr-info-title { font-size: 11px; color: #ffffff88; margin-bottom: 6px; }
+  .qr-info-row { display: flex; gap: 6px; }
+  .qr-info-item { flex: 1; text-align: center; }
+  .qr-info-num { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: #fff; }
+  .qr-info-lbl { font-size: 9px; color: #ffffff44; }
+</style>
+
+<div class="gym-wrap">
+  <h2 class="sr-only">Mockups de pantallas Android para app de gimnasio: login, cliente, entrenador, administrador y escáner QR</h2>
+
+  <p class="section-label">Login & onboarding</p>
+  <div class="screens-row">
+
+    <!-- LOGIN -->
+    <div>
+      <div class="phone s-login">
+        <div class="sb">
+          <span>9:41</span>
+          <div class="sb-dots">
+            <div class="sb-dot"></div><div class="sb-dot"></div><div class="sb-dot"></div>
+          </div>
+        </div>
+        <div style="padding: 0 18px 18px;">
+          <div class="login-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h10M4 18h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="17" r="3.5" stroke="#fff" stroke-width="1.5"/><path d="M21 20.5l1.5 1.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <p class="login-title">Bienvenido<br>de vuelta</p>
+          <p class="login-sub">Accede a tu gimnasio</p>
+          <div class="login-field">
+            <div class="login-field-label">Email</div>
+            <div class="login-field-val">usuario@gym.es</div>
+          </div>
+          <div class="login-field">
+            <div class="login-field-label">Contraseña</div>
+            <div class="login-field-val">••••••••</div>
+          </div>
+          <div class="login-btn">Entrar</div>
+          <div class="login-forgot">¿Olvidaste tu contraseña?</div>
+          <div style="font-size: 9px; color: #ffffff22; text-align: center; margin: 10px 0 6px;">Acceso según rol</div>
+          <div class="login-roles">
+            <div class="role-pill rp-client">Cliente</div>
+            <div class="role-pill rp-trainer">Entrenador</div>
+            <div class="role-pill rp-admin">Admin</div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Login</div>
+    </div>
+
+    <!-- CLIENT HOME -->
+    <div>
+      <div class="phone s-client">
+        <div class="sb">
+          <span style="color:#00000066;">9:41</span>
+          <div class="sb-dots">
+            <div class="sb-dot" style="background:#00000033;"></div><div class="sb-dot" style="background:#00000033;"></div><div class="sb-dot" style="background:#00000033;"></div>
+          </div>
+        </div>
+        <div class="client-header">
+          <div class="client-greeting">Hola de nuevo</div>
+          <div class="client-name">Carlos M.</div>
+          <div class="client-badge"><div class="client-dot"></div><span>14 días seguidos</span></div>
+        </div>
+        <div class="client-body">
+          <div class="stats-row">
+            <div class="stat-box"><div class="stat-num">47</div><div class="stat-lbl">Visitas totales</div></div>
+            <div class="stat-box"><div class="stat-num">14</div><div class="stat-lbl">Racha actual</div></div>
+            <div class="stat-box"><div class="stat-num">3</div><div class="stat-lbl">Logros</div></div>
+          </div>
+          <div class="c-section">Acciones rápidas</div>
+          <div class="qr-card">
+            <div class="qr-icon">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#FF4D2E" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#FF4D2E" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#FF4D2E" stroke-width="1.5"/><rect x="5" y="5" width="3" height="3" fill="#FF4D2E"/><rect x="16" y="5" width="3" height="3" fill="#FF4D2E"/><rect x="5" y="16" width="3" height="3" fill="#FF4D2E"/><path d="M14 14h2v2h-2zM16 16h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z" fill="#FF4D2E"/></svg>
+            </div>
+            <div class="qr-text"><div class="qr-title">Escanear entrada</div><div class="qr-sub">Registra tu visita de hoy</div></div>
+          </div>
+          <div class="qr-card">
+            <div class="qr-icon" style="background:#F5F4F0;">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 4h12M6 20h12M8 4v16M16 4v16M8 10h8M8 14h8" stroke="#0D0D14" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="qr-text"><div class="qr-title" style="color:#0D0D14;">Mis rutinas</div><div class="qr-sub">Ver entrenamiento asignado</div></div>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 4l9 8" stroke="#FF4D2E" stroke-width="1.5"/><path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="#FF4D2E" stroke-width="1.5"/></svg><div class="nav-lbl active">Inicio</div><div class="nav-dot"></div></div>
+          <div class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#ccc" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#ccc" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#ccc" stroke-width="1.5"/><rect x="5" y="5" width="3" height="3" fill="#ccc"/><rect x="16" y="5" width="3" height="3" fill="#ccc"/><rect x="5" y="16" width="3" height="3" fill="#ccc"/></svg><div class="nav-lbl">QR</div></div>
+          <div class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none"><path d="M3 17l4-8 4 5 3-3 4 6H3z" stroke="#ccc" stroke-width="1.5" stroke-linejoin="round"/></svg><div class="nav-lbl">Máquinas</div></div>
+          <div class="nav-item"><svg class="nav-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#ccc" stroke-width="1.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/></svg><div class="nav-lbl">Perfil</div></div>
+        </div>
+      </div>
+      <div class="phone-label">Home — Cliente</div>
+    </div>
+
+  </div>
+
+  <p class="section-label">Roles profesionales</p>
+  <div class="screens-row">
+
+    <!-- TRAINER HOME -->
+    <div>
+      <div class="phone s-trainer">
+        <div class="sb">
+          <span style="color:#00000066;">9:41</span>
+          <div class="sb-dots">
+            <div class="sb-dot" style="background:#00000033;"></div><div class="sb-dot" style="background:#00000033;"></div><div class="sb-dot" style="background:#00000033;"></div>
+          </div>
+        </div>
+        <div class="trainer-header">
+          <div class="t-greeting">Panel de entrenador</div>
+          <div class="t-name">Laura R.</div>
+          <div class="t-role">Entrenadora certificada</div>
+        </div>
+        <div class="trainer-body">
+          <div class="t-card">
+            <div class="t-card-header"><span class="t-card-title">Clases de hoy</span><span class="t-badge">3 sesiones</span></div>
+            <div class="session-list">
+              <div class="session-item"><span class="session-time">08:30</span><div class="session-dot sd-blue"></div><span class="session-name">Spinning</span></div>
+              <div class="session-item"><span class="session-time">10:00</span><div class="session-dot sd-orange"></div><span class="session-name">HIIT</span></div>
+              <div class="session-item"><span class="session-time">18:00</span><div class="session-dot sd-gray"></div><span class="session-name">Yoga</span></div>
+            </div>
+            <div class="t-qr-btn">Escanear QR de sesión</div>
+          </div>
+          <div class="t-card">
+            <div class="t-card-header"><span class="t-card-title">Mis clientes</span><span class="t-badge t-badge-orange">12 activos</span></div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <div style="font-size:10px;background:#EEF2FF;color:#2266FF;padding:3px 8px;border-radius:20px;">Ana G.</div>
+              <div style="font-size:10px;background:#EEF2FF;color:#2266FF;padding:3px 8px;border-radius:20px;">Marcos T.</div>
+              <div style="font-size:10px;background:#EEF2FF;color:#2266FF;padding:3px 8px;border-radius:20px;">Elena S.</div>
+              <div style="font-size:10px;background:#F5F5F5;color:#888;padding:3px 8px;border-radius:20px;">+9 más</div>
+            </div>
+          </div>
+          <div class="t-card" style="margin-bottom:0;">
+            <div class="t-card-header"><span class="t-card-title">Clases este mes</span></div>
+            <div style="display:flex;align-items:baseline;gap:6px;"><span style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#0A1A4A;">22</span><span style="font-size:11px;color:#00000055;">/ 30 objetivo</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Home — Entrenador</div>
+    </div>
+
+    <!-- ADMIN HOME -->
+    <div>
+      <div class="phone s-admin">
+        <div class="sb">
+          <span style="color:#00000066;">9:41</span>
+          <div class="sb-dots">
+            <div class="sb-dot" style="background:#00000033;"></div><div class="sb-dot" style="background:#00000033;"></div><div class="sb-dot" style="background:#00000033;"></div>
+          </div>
+        </div>
+        <div class="admin-header">
+          <div class="a-greeting">Panel de administración</div>
+          <div class="a-name">GymApp</div>
+          <div class="a-role">Administrador</div>
+        </div>
+        <div class="admin-body">
+          <div class="a-stats">
+            <div class="a-stat"><div class="a-stat-num">148</div><div class="a-stat-lbl">Socios activos</div></div>
+            <div class="a-stat"><div class="a-stat-num">12</div><div class="a-stat-lbl">Entrenadores</div></div>
+            <div class="a-stat"><div class="a-stat-num">31</div><div class="a-stat-lbl">Máquinas</div></div>
+            <div class="a-stat"><div class="a-stat-num">7</div><div class="a-stat-lbl">Clases hoy</div></div>
+          </div>
+          <div class="a-menu">
+            <div class="a-menu-item">
+              <div class="a-menu-icon ami-blue"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.5" stroke="#2266FF" stroke-width="1.5"/><path d="M3 19c0-3.3 2.7-6 6-6h.5" stroke="#2266FF" stroke-width="1.5" stroke-linecap="round"/><path d="M15 13h6M18 10v6" stroke="#2266FF" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+              <div class="a-menu-text"><div class="a-menu-title">Gestión de usuarios</div><div class="a-menu-sub">Roles, altas y bajas</div></div>
+              <div class="a-menu-arrow">›</div>
+            </div>
+            <div class="a-menu-item">
+              <div class="a-menu-icon ami-green"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#22CC66" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#22CC66" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#22CC66" stroke-width="1.5"/><rect x="5" y="5" width="3" height="3" fill="#22CC66"/><rect x="16" y="5" width="3" height="3" fill="#22CC66"/><rect x="5" y="16" width="3" height="3" fill="#22CC66"/></svg></div>
+              <div class="a-menu-text"><div class="a-menu-title">Generar QR</div><div class="a-menu-sub">Entrada, máquinas y clases</div></div>
+              <div class="a-menu-arrow">›</div>
+            </div>
+            <div class="a-menu-item">
+              <div class="a-menu-icon ami-orange"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 4h12M6 20h12M8 4v16M16 4v16M8 10h8M8 14h8" stroke="#FF4D2E" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+              <div class="a-menu-text"><div class="a-menu-title">Máquinas</div><div class="a-menu-sub">Catálogo y estado</div></div>
+              <div class="a-menu-arrow">›</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Home — Admin</div>
+    </div>
+
+    <!-- QR SCAN -->
+    <div>
+      <div class="phone s-qr">
+        <div class="sb">
+          <span>9:41</span>
+          <div class="sb-dots">
+            <div class="sb-dot"></div><div class="sb-dot"></div><div class="sb-dot"></div>
+          </div>
+        </div>
+        <div class="qr-screen-header">
+          <div class="qr-back"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M15 19l-7-7 7-7" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <span class="qr-header-title">Escanear QR</span>
+        </div>
+        <div class="qr-viewfinder">
+          <div class="qr-corner tl"></div>
+          <div class="qr-corner tr"></div>
+          <div class="qr-corner bl"></div>
+          <div class="qr-corner br"></div>
+          <div class="qr-scan-line"></div>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="#ffffff33" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="#ffffff33" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="#ffffff33" stroke-width="1.5"/><rect x="5" y="5" width="3" height="3" fill="#ffffff33"/><rect x="16" y="5" width="3" height="3" fill="#ffffff33"/><rect x="5" y="16" width="3" height="3" fill="#ffffff33"/><path d="M14 14h2v2h-2zM16 16h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z" fill="#ffffff33"/></svg>
+        </div>
+        <div class="qr-tabs">
+          <div class="qr-tab active">Entrada</div>
+          <div class="qr-tab inactive">Máquina</div>
+          <div class="qr-tab inactive">Clase</div>
+        </div>
+        <div class="qr-info">
+          <div class="qr-info-title">Tu actividad</div>
+          <div class="qr-info-row">
+            <div class="qr-info-item"><div class="qr-info-num">47</div><div class="qr-info-lbl">Visitas</div></div>
+            <div class="qr-info-item"><div class="qr-info-num">14</div><div class="qr-info-lbl">Racha</div></div>
+            <div class="qr-info-item"><div class="qr-info-num">3</div><div class="qr-info-lbl">Logros</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label">Escáner QR</div>
+    </div>
+
+  </div>
+</div>
