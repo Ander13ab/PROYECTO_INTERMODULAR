@@ -14,9 +14,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+enum class LoginRole(
+    val label: String,
+    private vararg val backendAliases: String
+) {
+    CLIENTE("Cliente", "CLIENTE", "CLIENT"),
+    ENTRENADOR("Entrenador", "ENTRENADOR", "TRAINER"),
+    ADMIN("Admin", "ADMIN");
+
+    fun matchesBackendRole(role: String): Boolean {
+        return backendAliases.any { alias ->
+            alias.equals(role, ignoreCase = true)
+        }
+    }
+}
+
 data class LoginUiState(
     val email: String = "admin@hazelgym.com",
     val password: String = "admin123",
+    val selectedRole: LoginRole = LoginRole.ADMIN,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
@@ -36,6 +52,15 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.update { it.copy(password = password) }
     }
 
+    fun selectRole(role: LoginRole) {
+        _uiState.update {
+            it.copy(
+                selectedRole = role,
+                errorMessage = null
+            )
+        }
+    }
+
     fun login() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
@@ -45,6 +70,17 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                     password = uiState.value.password
                 )
             }.onSuccess { session ->
+                val selectedRole = uiState.value.selectedRole
+                if (!selectedRole.matchesBackendRole(session.role)) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = "Has elegido ${selectedRole.label}, pero esta cuenta pertenece al rol ${session.role}."
+                        )
+                    }
+                    return@onSuccess
+                }
+
                 sessionStorage.save(session)
                 _uiState.update { it.copy(isLoading = false) }
             }.onFailure { error ->

@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,12 +28,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.MachineResponse
+import com.hazelgym.mobile.data.model.RoutineResponse
 import com.hazelgym.mobile.ui.viewmodel.ClientHomeUiState
 
 @Composable
 fun ClientHomeScreen(
     uiState: ClientHomeUiState,
+    heroLabel: String,
+    sectionTitle: String,
+    primaryMetricLabel: String,
+    secondaryMetricLabel: String,
+    secondaryMetricValue: String,
     onRefresh: () -> Unit,
     onLogout: () -> Unit
 ) {
@@ -61,7 +68,7 @@ fun ClientHomeScreen(
                     ) {
                         Column {
                             Text(
-                                text = "Hola de nuevo",
+                                text = heroLabel,
                                 color = Color.White.copy(alpha = 0.8f)
                             )
                             Spacer(modifier = Modifier.height(6.dp))
@@ -74,8 +81,8 @@ fun ClientHomeScreen(
                         }
                         IconButton(onClick = onLogout) {
                             Icon(
-                                imageVector = Icons.Default.ExitToApp,
-                                contentDescription = "Cerrar sesion",
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Volver al login",
                                 tint = Color.White
                             )
                         }
@@ -97,8 +104,8 @@ fun ClientHomeScreen(
                         .padding(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    DashboardMetric("Maquinas", uiState.machines.size.toString())
-                    DashboardMetric("Estado", if (uiState.isLoading) "..." else "OK")
+                    DashboardMetric(primaryMetricLabel, uiState.routines.size.toString())
+                    DashboardMetric(secondaryMetricLabel, uiState.classes.size.toString())
                 }
             }
 
@@ -110,7 +117,7 @@ fun ClientHomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Maquinas del gimnasio",
+                        text = sectionTitle,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -118,6 +125,38 @@ fun ClientHomeScreen(
                         Text("Recargar")
                     }
                 }
+            }
+
+            item {
+                Text(
+                    text = "Rutinas disponibles",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+
+            items(uiState.routines) { routine ->
+                RoutineCard(
+                    routine = routine,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+
+            item {
+                Text(
+                    text = "Clases activas",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+
+            items(uiState.classes) { gymClass ->
+                GymClassCard(
+                    gymClass = gymClass,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
             }
 
             if (uiState.errorMessage != null) {
@@ -151,6 +190,79 @@ private fun DashboardMetric(label: String, value: String) {
             Text(text = value, fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = label, color = Color(0xFF667085))
+        }
+    }
+}
+
+@Composable
+private fun RoutineCard(routine: RoutineResponse, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text(
+                text = routine.nombre,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
+            if (!routine.descripcion.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = routine.descripcion,
+                    color = Color(0xFF667085)
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Entrenador: ${routine.entrenadorNombre}",
+                color = Color(0xFF0F172A),
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@Composable
+private fun GymClassCard(gymClass: GymClassResponse, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text(
+                text = gymClass.nombre,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
+            if (!gymClass.descripcion.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(
+                    text = gymClass.descripcion,
+                    color = Color(0xFF667085)
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Entrenador: ${gymClass.entrenadorNombre}",
+                color = Color(0xFF0F172A),
+                fontWeight = FontWeight.SemiBold
+            )
+            gymClass.duracion?.let { duration ->
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Duracion: $duration min",
+                    color = Color(0xFF667085)
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = if (gymClass.activa) "Activa" else "Inactiva",
+                color = if (gymClass.activa) Color(0xFF16A34A) else Color(0xFFD92D20),
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }

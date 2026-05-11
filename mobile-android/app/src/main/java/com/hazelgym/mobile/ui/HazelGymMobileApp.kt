@@ -18,15 +18,22 @@ import com.hazelgym.mobile.data.remote.ApiClient
 import com.hazelgym.mobile.data.repository.AuthRepository
 import com.hazelgym.mobile.data.repository.MachineRepository
 import com.hazelgym.mobile.data.session.SessionStorage
+import com.hazelgym.mobile.ui.screens.AdminHomeScreen
 import com.hazelgym.mobile.ui.screens.ClientHomeScreen
 import com.hazelgym.mobile.ui.screens.LoginScreen
+import com.hazelgym.mobile.ui.screens.TrainerHomeScreen
+import com.hazelgym.mobile.ui.viewmodel.AdminHomeViewModel
 import com.hazelgym.mobile.ui.viewmodel.ClientHomeViewModel
+import com.hazelgym.mobile.ui.viewmodel.LoginRole
 import com.hazelgym.mobile.ui.viewmodel.LoginViewModel
+import com.hazelgym.mobile.ui.viewmodel.TrainerHomeViewModel
 import kotlinx.coroutines.launch
 
 private object Routes {
     const val Login = "login"
     const val ClientHome = "client_home"
+    const val TrainerHome = "trainer_home"
+    const val AdminHome = "admin_home"
 }
 
 @Composable
@@ -38,7 +45,13 @@ fun HazelGymMobileApp() {
     val sessionState by rootViewModel.session.collectAsState(initial = null)
 
     LaunchedEffect(sessionState) {
-        val targetRoute = if (sessionState == null) Routes.Login else Routes.ClientHome
+        val currentSession = sessionState
+        val targetRoute = when {
+            currentSession == null -> Routes.Login
+            LoginRole.ADMIN.matchesBackendRole(currentSession.role) -> Routes.AdminHome
+            LoginRole.ENTRENADOR.matchesBackendRole(currentSession.role) -> Routes.TrainerHome
+            else -> Routes.ClientHome
+        }
         navController.navigateToRoot(targetRoute)
     }
 
@@ -54,6 +67,7 @@ fun HazelGymMobileApp() {
                 uiState = loginViewModel.uiState.collectAsState().value,
                 onEmailChange = loginViewModel::updateEmail,
                 onPasswordChange = loginViewModel::updatePassword,
+                onRoleSelected = loginViewModel::selectRole,
                 onLoginClick = loginViewModel::login
             )
         }
@@ -63,7 +77,32 @@ fun HazelGymMobileApp() {
             )
             ClientHomeScreen(
                 uiState = clientHomeViewModel.uiState.collectAsState().value,
+                heroLabel = "Tu zona de entrenamiento",
+                sectionTitle = "Maquinas para tu rutina",
+                primaryMetricLabel = "Rutinas",
+                secondaryMetricLabel = "Clases",
+                secondaryMetricValue = "Cliente",
                 onRefresh = clientHomeViewModel::refresh,
+                onLogout = rootViewModel::logout
+            )
+        }
+        composable(Routes.TrainerHome) {
+            val trainerHomeViewModel: TrainerHomeViewModel = viewModel(
+                factory = TrainerHomeViewModel.factory()
+            )
+            TrainerHomeScreen(
+                uiState = trainerHomeViewModel.uiState.collectAsState().value,
+                onRefresh = trainerHomeViewModel::refresh,
+                onLogout = rootViewModel::logout
+            )
+        }
+        composable(Routes.AdminHome) {
+            val adminHomeViewModel: AdminHomeViewModel = viewModel(
+                factory = AdminHomeViewModel.factory()
+            )
+            AdminHomeScreen(
+                uiState = adminHomeViewModel.uiState.collectAsState().value,
+                onRefresh = adminHomeViewModel::refresh,
                 onLogout = rootViewModel::logout
             )
         }

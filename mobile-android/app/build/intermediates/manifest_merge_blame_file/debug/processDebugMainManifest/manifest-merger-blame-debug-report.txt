@@ -24,7 +24,7 @@
 17-->[androidx.core:core:1.15.0] C:\Users\ander\.gradle\caches\8.9\transforms\b49aa9e551912ea674412c2c83aab36e\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
 18
 19    <application
-19-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:6:5-21:19
+19-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:6:5-23:19
 20        android:allowBackup="true"
 20-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:7:9-35
 21        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
@@ -35,108 +35,112 @@
 24-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:8:9-58
 25        android:label="Hazel Gym"
 25-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:9:9-34
-26        android:supportsRtl="true"
-26-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:10:9-35
-27        android:testOnly="true"
-28        android:theme="@android:style/Theme.Material.Light.NoActionBar" >
-28-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:11:9-72
-29        <activity
-29-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:12:9-20:20
-30            android:name="com.hazelgym.mobile.MainActivity"
-30-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:13:13-41
-31            android:exported="true" >
-31-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:14:13-36
-32            <intent-filter>
-32-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:15:13-19:29
-33                <action android:name="android.intent.action.MAIN" />
-33-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:16:17-69
-33-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:16:25-66
-34
-35                <category android:name="android.intent.category.LAUNCHER" />
-35-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:18:17-77
-35-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:18:27-74
-36            </intent-filter>
-37        </activity>
-38        <activity
-38-->[androidx.compose.ui:ui-tooling-android:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\cd6efb4c8e2450043523950e1a4aa473\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
-39            android:name="androidx.compose.ui.tooling.PreviewActivity"
-39-->[androidx.compose.ui:ui-tooling-android:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\cd6efb4c8e2450043523950e1a4aa473\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
-40            android:exported="true" />
-40-->[androidx.compose.ui:ui-tooling-android:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\cd6efb4c8e2450043523950e1a4aa473\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
-41        <activity
-41-->[androidx.compose.ui:ui-test-manifest:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\d425bf517439caa06737da64a0c296b2\transformed\ui-test-manifest-1.8.0\AndroidManifest.xml:23:9-26:79
-42            android:name="androidx.activity.ComponentActivity"
-42-->[androidx.compose.ui:ui-test-manifest:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\d425bf517439caa06737da64a0c296b2\transformed\ui-test-manifest-1.8.0\AndroidManifest.xml:24:13-63
-43            android:exported="true"
-43-->[androidx.compose.ui:ui-test-manifest:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\d425bf517439caa06737da64a0c296b2\transformed\ui-test-manifest-1.8.0\AndroidManifest.xml:25:13-36
-44            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
-44-->[androidx.compose.ui:ui-test-manifest:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\d425bf517439caa06737da64a0c296b2\transformed\ui-test-manifest-1.8.0\AndroidManifest.xml:26:13-76
-45
-46        <provider
-46-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:24:9-32:20
-47            android:name="androidx.startup.InitializationProvider"
-47-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:25:13-67
-48            android:authorities="com.hazelgym.mobile.androidx-startup"
-48-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:26:13-68
-49            android:exported="false" >
-49-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:27:13-37
-50            <meta-data
-50-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:29:13-31:52
-51                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-51-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:30:17-75
-52                android:value="androidx.startup" />
-52-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:31:17-49
-53            <meta-data
-53-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\ander\.gradle\caches\8.9\transforms\91ebb6f4cd2963d2f83ffae2513f39ad\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
-54                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-54-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\ander\.gradle\caches\8.9\transforms\91ebb6f4cd2963d2f83ffae2513f39ad\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
-55                android:value="androidx.startup" />
-55-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\ander\.gradle\caches\8.9\transforms\91ebb6f4cd2963d2f83ffae2513f39ad\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
-56            <meta-data
-56-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
-57                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-57-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
-58                android:value="androidx.startup" />
-58-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
-59        </provider>
-60
-61        <receiver
-61-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
-62            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-62-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
-63            android:directBootAware="false"
-63-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
-64            android:enabled="true"
-64-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
-65            android:exported="true"
-65-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
-66            android:permission="android.permission.DUMP" >
-66-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
-67            <intent-filter>
-67-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
-68                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-68-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
-68-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
-69            </intent-filter>
-70            <intent-filter>
-70-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
-71                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-71-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
-71-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
-72            </intent-filter>
-73            <intent-filter>
-73-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
-74                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-74-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
-74-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
-75            </intent-filter>
-76            <intent-filter>
-76-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
-77                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-77-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
-77-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
-78            </intent-filter>
-79        </receiver>
-80    </application>
-81
-82</manifest>
+26        android:networkSecurityConfig="@xml/network_security_config"
+26-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:10:9-69
+27        android:supportsRtl="true"
+27-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:12:9-35
+28        android:testOnly="true"
+29        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+29-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:13:9-72
+30        android:usesCleartextTraffic="true" >
+30-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:11:9-44
+31        <activity
+31-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:14:9-22:20
+32            android:name="com.hazelgym.mobile.MainActivity"
+32-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:15:13-41
+33            android:exported="true" >
+33-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:16:13-36
+34            <intent-filter>
+34-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:17:13-21:29
+35                <action android:name="android.intent.action.MAIN" />
+35-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:18:17-69
+35-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:18:25-66
+36
+37                <category android:name="android.intent.category.LAUNCHER" />
+37-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:20:17-77
+37-->C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android\app\src\main\AndroidManifest.xml:20:27-74
+38            </intent-filter>
+39        </activity>
+40        <activity
+40-->[androidx.compose.ui:ui-tooling-android:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\cd6efb4c8e2450043523950e1a4aa473\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+41            android:name="androidx.compose.ui.tooling.PreviewActivity"
+41-->[androidx.compose.ui:ui-tooling-android:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\cd6efb4c8e2450043523950e1a4aa473\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+42            android:exported="true" />
+42-->[androidx.compose.ui:ui-tooling-android:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\cd6efb4c8e2450043523950e1a4aa473\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+43        <activity
+43-->[androidx.compose.ui:ui-test-manifest:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\d425bf517439caa06737da64a0c296b2\transformed\ui-test-manifest-1.8.0\AndroidManifest.xml:23:9-26:79
+44            android:name="androidx.activity.ComponentActivity"
+44-->[androidx.compose.ui:ui-test-manifest:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\d425bf517439caa06737da64a0c296b2\transformed\ui-test-manifest-1.8.0\AndroidManifest.xml:24:13-63
+45            android:exported="true"
+45-->[androidx.compose.ui:ui-test-manifest:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\d425bf517439caa06737da64a0c296b2\transformed\ui-test-manifest-1.8.0\AndroidManifest.xml:25:13-36
+46            android:theme="@android:style/Theme.Material.Light.NoActionBar" />
+46-->[androidx.compose.ui:ui-test-manifest:1.8.0] C:\Users\ander\.gradle\caches\8.9\transforms\d425bf517439caa06737da64a0c296b2\transformed\ui-test-manifest-1.8.0\AndroidManifest.xml:26:13-76
+47
+48        <provider
+48-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:24:9-32:20
+49            android:name="androidx.startup.InitializationProvider"
+49-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:25:13-67
+50            android:authorities="com.hazelgym.mobile.androidx-startup"
+50-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:26:13-68
+51            android:exported="false" >
+51-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:27:13-37
+52            <meta-data
+52-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:29:13-31:52
+53                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+53-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:30:17-75
+54                android:value="androidx.startup" />
+54-->[androidx.emoji2:emoji2:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\e5a17efbb5866a01a9c65cad17ef2a3d\transformed\emoji2-1.4.0\AndroidManifest.xml:31:17-49
+55            <meta-data
+55-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\ander\.gradle\caches\8.9\transforms\91ebb6f4cd2963d2f83ffae2513f39ad\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
+56                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+56-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\ander\.gradle\caches\8.9\transforms\91ebb6f4cd2963d2f83ffae2513f39ad\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
+57                android:value="androidx.startup" />
+57-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\ander\.gradle\caches\8.9\transforms\91ebb6f4cd2963d2f83ffae2513f39ad\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
+58            <meta-data
+58-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
+59                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+59-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
+60                android:value="androidx.startup" />
+60-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
+61        </provider>
+62
+63        <receiver
+63-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
+64            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+64-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
+65            android:directBootAware="false"
+65-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
+66            android:enabled="true"
+66-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
+67            android:exported="true"
+67-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
+68            android:permission="android.permission.DUMP" >
+68-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
+69            <intent-filter>
+69-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
+70                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+70-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
+70-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
+71            </intent-filter>
+72            <intent-filter>
+72-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
+73                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+73-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
+73-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
+74            </intent-filter>
+75            <intent-filter>
+75-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
+76                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+76-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
+76-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
+77            </intent-filter>
+78            <intent-filter>
+78-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
+79                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+79-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
+79-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\ander\.gradle\caches\8.9\transforms\0693d757b38201f86f149c4aaadfe498\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
+80            </intent-filter>
+81        </receiver>
+82    </application>
+83
+84</manifest>
