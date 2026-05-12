@@ -58,7 +58,10 @@ private enum class TrainerTab(val label: String, val icon: ImageVector) {
 fun TrainerHomeScreen(
     uiState: TrainerHomeUiState,
     onRefresh: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToClasses: () -> Unit,
+    onNavigateToAssignments: () -> Unit,
+    onNavigateToAttendances: () -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(TrainerTab.HOME) }
 
@@ -73,8 +76,9 @@ fun TrainerHomeScreen(
                         uiState = uiState,
                         onRefresh = onRefresh,
                         onLogout = onLogout,
-                        onNavigateToActivity = { selectedTab = TrainerTab.ACTIVITY },
-                        onNavigateToProfile = { selectedTab = TrainerTab.PROFILE }
+                        onNavigateToClasses = onNavigateToClasses,
+                        onNavigateToAssignments = onNavigateToAssignments,
+                        onNavigateToAttendances = onNavigateToAttendances
                     )
                     TrainerTab.ACTIVITY -> TrainerActivityTab(
                         uiState = uiState,
@@ -107,8 +111,9 @@ private fun TrainerHomeTab(
     uiState: TrainerHomeUiState,
     onRefresh: () -> Unit,
     onLogout: () -> Unit,
-    onNavigateToActivity: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onNavigateToClasses: () -> Unit,
+    onNavigateToAssignments: () -> Unit,
+    onNavigateToAttendances: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -160,21 +165,21 @@ private fun TrainerHomeTab(
                     subtitle = "${uiState.classes.count { it.activa }} clases activas para dirigir",
                     icon = Icons.Default.EventAvailable,
                     accent = Color(0xFFDCE8FF),
-                    onClick = onNavigateToActivity
+                    onClick = onNavigateToClasses
                 )
                 QuickActionCard(
                     title = "Mis clientes",
                     subtitle = "${uiState.routineAssignments.size} asignaciones con clientes",
                     icon = Icons.Default.Groups,
                     accent = Color(0xFFDDF8E6),
-                    onClick = onNavigateToActivity
+                    onClick = onNavigateToAssignments
                 )
                 QuickActionCard(
                     title = "Clases este mes",
                     subtitle = "${uiState.attendances.size} registros asociados a tu seguimiento",
                     icon = Icons.Default.Badge,
                     accent = Color(0xFFFFE1DA),
-                    onClick = onNavigateToProfile
+                    onClick = onNavigateToAttendances
                 )
             }
         }

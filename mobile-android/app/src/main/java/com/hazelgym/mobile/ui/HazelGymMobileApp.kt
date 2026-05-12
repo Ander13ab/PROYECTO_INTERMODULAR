@@ -19,21 +19,46 @@ import com.hazelgym.mobile.data.repository.AuthRepository
 import com.hazelgym.mobile.data.repository.MachineRepository
 import com.hazelgym.mobile.data.session.SessionStorage
 import com.hazelgym.mobile.ui.screens.AdminHomeScreen
+import com.hazelgym.mobile.ui.screens.AdminActivityDetailScreen
+import com.hazelgym.mobile.ui.screens.AdminMachinesDetailScreen
+import com.hazelgym.mobile.ui.screens.AdminQrDetailScreen
+import com.hazelgym.mobile.ui.screens.AdminUsersDetailScreen
+import com.hazelgym.mobile.ui.screens.ClientAttendancesDetailScreen
 import com.hazelgym.mobile.ui.screens.ClientHomeScreen
+import com.hazelgym.mobile.ui.screens.ClientClassesDetailScreen
+import com.hazelgym.mobile.ui.screens.ClientMachinesDetailScreen
+import com.hazelgym.mobile.ui.screens.ClientRoutinesDetailScreen
 import com.hazelgym.mobile.ui.screens.LoginScreen
+import com.hazelgym.mobile.ui.screens.TrainerAssignmentsDetailScreen
+import com.hazelgym.mobile.ui.screens.TrainerAttendancesDetailScreen
+import com.hazelgym.mobile.ui.screens.TrainerClassesDetailScreen
 import com.hazelgym.mobile.ui.screens.TrainerHomeScreen
 import com.hazelgym.mobile.ui.viewmodel.AdminHomeViewModel
 import com.hazelgym.mobile.ui.viewmodel.ClientHomeViewModel
 import com.hazelgym.mobile.ui.viewmodel.LoginRole
 import com.hazelgym.mobile.ui.viewmodel.LoginViewModel
 import com.hazelgym.mobile.ui.viewmodel.TrainerHomeViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 private object Routes {
     const val Login = "login"
     const val ClientHome = "client_home"
+    const val ClientRoutines = "client_routines"
+    const val ClientClasses = "client_classes"
+    const val ClientMachines = "client_machines"
+    const val ClientAttendances = "client_attendances"
     const val TrainerHome = "trainer_home"
+    const val TrainerClasses = "trainer_classes"
+    const val TrainerAssignments = "trainer_assignments"
+    const val TrainerAttendances = "trainer_attendances"
     const val AdminHome = "admin_home"
+    const val AdminMachines = "admin_machines"
+    const val AdminUsers = "admin_users"
+    const val AdminQr = "admin_qr"
+    const val AdminActivity = "admin_activity"
 }
 
 @Composable
@@ -43,8 +68,10 @@ fun HazelGymMobileApp() {
         factory = RootViewModel.factory()
     )
     val sessionState by rootViewModel.session.collectAsState(initial = null)
+    val isReady by rootViewModel.isReady.collectAsState()
 
-    LaunchedEffect(sessionState) {
+    LaunchedEffect(isReady, sessionState) {
+        if (!isReady) return@LaunchedEffect
         val currentSession = sessionState
         val targetRoute = when {
             currentSession == null -> Routes.Login
@@ -81,12 +108,43 @@ fun HazelGymMobileApp() {
                 sectionTitle = "Máquinas para tu rutina",
                 primaryMetricLabel = "Rutinas",
                 secondaryMetricLabel = "Clases",
-                secondaryMetricValue = "Cliente",
                 onRefresh = clientHomeViewModel::refresh,
                 onLogout = rootViewModel::logout,
                 onQrCodeChange = clientHomeViewModel::updateQrCodeInput,
                 onQrScanned = clientHomeViewModel::registerScannedAttendance,
-                onRegisterAttendance = clientHomeViewModel::registerAttendance
+                onRegisterAttendance = clientHomeViewModel::registerAttendance,
+                onNavigateToRoutines = { navController.navigate(Routes.ClientRoutines) },
+                onNavigateToClasses = { navController.navigate(Routes.ClientClasses) },
+                onNavigateToMachines = { navController.navigate(Routes.ClientMachines) },
+                onNavigateToAttendances = { navController.navigate(Routes.ClientAttendances) }
+            )
+        }
+        composable(Routes.ClientRoutines) {
+            val clientHomeViewModel: ClientHomeViewModel = viewModel(factory = ClientHomeViewModel.factory())
+            ClientRoutinesDetailScreen(
+                uiState = clientHomeViewModel.uiState.collectAsState().value,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.ClientClasses) {
+            val clientHomeViewModel: ClientHomeViewModel = viewModel(factory = ClientHomeViewModel.factory())
+            ClientClassesDetailScreen(
+                uiState = clientHomeViewModel.uiState.collectAsState().value,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.ClientMachines) {
+            val clientHomeViewModel: ClientHomeViewModel = viewModel(factory = ClientHomeViewModel.factory())
+            ClientMachinesDetailScreen(
+                uiState = clientHomeViewModel.uiState.collectAsState().value,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.ClientAttendances) {
+            val clientHomeViewModel: ClientHomeViewModel = viewModel(factory = ClientHomeViewModel.factory())
+            ClientAttendancesDetailScreen(
+                uiState = clientHomeViewModel.uiState.collectAsState().value,
+                onBack = { navController.popBackStack() }
             )
         }
         composable(Routes.TrainerHome) {
@@ -96,7 +154,31 @@ fun HazelGymMobileApp() {
             TrainerHomeScreen(
                 uiState = trainerHomeViewModel.uiState.collectAsState().value,
                 onRefresh = trainerHomeViewModel::refresh,
-                onLogout = rootViewModel::logout
+                onLogout = rootViewModel::logout,
+                onNavigateToClasses = { navController.navigate(Routes.TrainerClasses) },
+                onNavigateToAssignments = { navController.navigate(Routes.TrainerAssignments) },
+                onNavigateToAttendances = { navController.navigate(Routes.TrainerAttendances) }
+            )
+        }
+        composable(Routes.TrainerClasses) {
+            val trainerHomeViewModel: TrainerHomeViewModel = viewModel(factory = TrainerHomeViewModel.factory())
+            TrainerClassesDetailScreen(
+                uiState = trainerHomeViewModel.uiState.collectAsState().value,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.TrainerAssignments) {
+            val trainerHomeViewModel: TrainerHomeViewModel = viewModel(factory = TrainerHomeViewModel.factory())
+            TrainerAssignmentsDetailScreen(
+                uiState = trainerHomeViewModel.uiState.collectAsState().value,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.TrainerAttendances) {
+            val trainerHomeViewModel: TrainerHomeViewModel = viewModel(factory = TrainerHomeViewModel.factory())
+            TrainerAttendancesDetailScreen(
+                uiState = trainerHomeViewModel.uiState.collectAsState().value,
+                onBack = { navController.popBackStack() }
             )
         }
         composable(Routes.AdminHome) {
@@ -111,7 +193,56 @@ fun HazelGymMobileApp() {
                 onCreateEntryQr = adminHomeViewModel::createEntryQrCode,
                 onCreateClassSessionQr = adminHomeViewModel::createClassSessionQrCode,
                 onCreateMachineQr = adminHomeViewModel::createMachineQrCode,
-                onLogout = rootViewModel::logout
+                onLogout = rootViewModel::logout,
+                onNavigateToUsers = { navController.navigate(Routes.AdminUsers) },
+                onNavigateToQr = { navController.navigate(Routes.AdminQr) },
+                onNavigateToMachines = { navController.navigate(Routes.AdminMachines) },
+                onNavigateToActivity = { navController.navigate(Routes.AdminActivity) }
+            )
+        }
+        composable(Routes.AdminMachines) {
+            val adminHomeViewModel: AdminHomeViewModel = viewModel(factory = AdminHomeViewModel.factory())
+            AdminMachinesDetailScreen(
+                uiState = adminHomeViewModel.uiState.collectAsState().value,
+                onMachineNameChange = adminHomeViewModel::updateMachineNameInput,
+                onMachineDescriptionChange = adminHomeViewModel::updateMachineDescriptionInput,
+                onMachineMuscleGroupChange = adminHomeViewModel::updateMachineMuscleGroupInput,
+                onMachineStatusChange = adminHomeViewModel::updateMachineStatusInput,
+                onSaveMachine = adminHomeViewModel::saveMachine,
+                onDeleteMachine = adminHomeViewModel::deleteEditingMachine,
+                onStartNewMachine = adminHomeViewModel::startNewMachine,
+                onEditMachine = adminHomeViewModel::editMachine,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.AdminUsers) {
+            val adminHomeViewModel: AdminHomeViewModel = viewModel(factory = AdminHomeViewModel.factory())
+            AdminUsersDetailScreen(
+                uiState = adminHomeViewModel.uiState.collectAsState().value,
+                onUserNameChange = adminHomeViewModel::updateUserNameInput,
+                onUserEmailChange = adminHomeViewModel::updateUserEmailInput,
+                onUserPasswordChange = adminHomeViewModel::updateUserPasswordInput,
+                onUserRoleChange = adminHomeViewModel::updateUserRoleInput,
+                onUserActiveChange = adminHomeViewModel::updateUserActiveInput,
+                onSaveUser = adminHomeViewModel::saveUser,
+                onDeleteUser = adminHomeViewModel::deleteEditingUser,
+                onStartNewUser = adminHomeViewModel::startNewUser,
+                onEditUser = adminHomeViewModel::editUser,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.AdminQr) {
+            val adminHomeViewModel: AdminHomeViewModel = viewModel(factory = AdminHomeViewModel.factory())
+            AdminQrDetailScreen(
+                uiState = adminHomeViewModel.uiState.collectAsState().value,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.AdminActivity) {
+            val adminHomeViewModel: AdminHomeViewModel = viewModel(factory = AdminHomeViewModel.factory())
+            AdminActivityDetailScreen(
+                uiState = adminHomeViewModel.uiState.collectAsState().value,
+                onBack = { navController.popBackStack() }
             )
         }
     }
@@ -138,6 +269,15 @@ abstract class ContainerAndroidViewModel(application: Application) : AndroidView
 
 class RootViewModel(application: Application) : ContainerAndroidViewModel(application) {
     val session = container.sessionStorage.session
+    private val _isReady = MutableStateFlow(false)
+    val isReady: StateFlow<Boolean> = _isReady.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            container.sessionStorage.clear()
+            _isReady.value = true
+        }
+    }
 
     fun logout() {
         viewModelScope.launch {

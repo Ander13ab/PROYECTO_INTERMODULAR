@@ -12,6 +12,7 @@ import com.hazelgym.dto.response.UserResponse;
 import com.hazelgym.exception.DuplicateResourceException;
 import com.hazelgym.exception.ResourceNotFoundException;
 import com.hazelgym.model.Role;
+import com.hazelgym.model.RoleName;
 import com.hazelgym.model.User;
 import com.hazelgym.repository.RoleRepository;
 import com.hazelgym.repository.UserRepository;
@@ -52,7 +53,7 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateResourceException("Ya existe un usuario con el email indicado");
         }
 
-        Role role = getRoleById(request.getRoleId());
+        Role role = resolveRole(request.getRoleId(), request.getRoleName());
 
         User user = new User();
         user.setNombre(request.getNombre());
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
         user.setNombre(request.getNombre());
         user.setEmail(request.getEmail());
-        user.setRole(getRoleById(request.getRoleId()));
+        user.setRole(resolveRole(request.getRoleId(), request.getRoleName()));
         user.setActivo(request.getActivo());
 
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
@@ -98,6 +99,21 @@ public class UserServiceImpl implements UserService {
     private Role getRoleById(Long id) {
         return roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con id " + id));
+    }
+
+    private Role getRoleByName(RoleName roleName) {
+        return roleRepository.findByName(roleName)
+                .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado con nombre " + roleName));
+    }
+
+    private Role resolveRole(Long roleId, RoleName roleName) {
+        if (roleId != null) {
+            return getRoleById(roleId);
+        }
+        if (roleName != null) {
+            return getRoleByName(roleName);
+        }
+        throw new ResourceNotFoundException("Debes indicar un roleId o un roleName valido");
     }
 
     private UserResponse toResponse(User user) {

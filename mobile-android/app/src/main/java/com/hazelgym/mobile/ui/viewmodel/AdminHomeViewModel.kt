@@ -8,10 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.hazelgym.mobile.data.model.ClassSessionResponse
 import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.MachineResponse
+import com.hazelgym.mobile.data.model.MachineUpsertRequest
 import com.hazelgym.mobile.data.model.QrCodeResponse
 import com.hazelgym.mobile.data.model.SessionUser
 import com.hazelgym.mobile.data.model.AttendanceResponse
 import com.hazelgym.mobile.data.model.UserSummaryResponse
+import com.hazelgym.mobile.data.model.UserUpsertRequest
 import com.hazelgym.mobile.data.remote.ApiClient
 import com.hazelgym.mobile.data.repository.AttendanceRepository
 import com.hazelgym.mobile.data.repository.ClassSessionRepository
@@ -38,8 +40,23 @@ data class AdminHomeUiState(
     val qrCodes: List<QrCodeResponse> = emptyList(),
     val attendances: List<AttendanceResponse> = emptyList(),
     val users: List<UserSummaryResponse> = emptyList(),
+    val userEditingId: Long? = null,
+    val userNameInput: String = "",
+    val userEmailInput: String = "",
+    val userPasswordInput: String = "",
+    val userRoleInput: String = "CLIENT",
+    val userActiveInput: Boolean = true,
+    val userSaveMessage: String? = null,
+    val isSavingUser: Boolean = false,
     val qrClassSessionIdInput: String = "",
     val qrMachineIdInput: String = "",
+    val machineEditingId: Long? = null,
+    val machineNameInput: String = "",
+    val machineDescriptionInput: String = "",
+    val machineMuscleGroupInput: String = "",
+    val machineStatusInput: String = "ACTIVA",
+    val machineSaveMessage: String? = null,
+    val isSavingMachine: Boolean = false,
     val qrCreateMessage: String? = null,
     val isCreatingQr: Boolean = false,
     val isLoading: Boolean = false,
@@ -120,6 +137,285 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
         _uiState.update { it.copy(qrMachineIdInput = value, qrCreateMessage = null) }
     }
 
+    fun startNewUser() {
+        _uiState.update {
+            it.copy(
+                userEditingId = null,
+                userNameInput = "",
+                userEmailInput = "",
+                userPasswordInput = "",
+                userRoleInput = "CLIENT",
+                userActiveInput = true,
+                userSaveMessage = null
+            )
+        }
+    }
+
+    fun editUser(user: UserSummaryResponse) {
+        _uiState.update {
+            it.copy(
+                userEditingId = user.id,
+                userNameInput = user.nombre,
+                userEmailInput = user.email,
+                userPasswordInput = "",
+                userRoleInput = user.role,
+                userActiveInput = user.activo,
+                userSaveMessage = "Editando usuario #${user.id}"
+            )
+        }
+    }
+
+    fun updateUserNameInput(value: String) {
+        _uiState.update { it.copy(userNameInput = value, userSaveMessage = null) }
+    }
+
+    fun updateUserEmailInput(value: String) {
+        _uiState.update { it.copy(userEmailInput = value, userSaveMessage = null) }
+    }
+
+    fun updateUserPasswordInput(value: String) {
+        _uiState.update { it.copy(userPasswordInput = value, userSaveMessage = null) }
+    }
+
+    fun updateUserRoleInput(value: String) {
+        _uiState.update { it.copy(userRoleInput = value, userSaveMessage = null) }
+    }
+
+    fun updateUserActiveInput(value: Boolean) {
+        _uiState.update { it.copy(userActiveInput = value, userSaveMessage = null) }
+    }
+
+    fun saveUser() {
+        val name = uiState.value.userNameInput.trim()
+        val email = uiState.value.userEmailInput.trim()
+        val password = uiState.value.userPasswordInput.trim()
+        val editingId = uiState.value.userEditingId
+
+        if (name.isBlank()) {
+            _uiState.update { it.copy(userSaveMessage = "Introduce un nombre para el usuario.") }
+            return
+        }
+        if (email.isBlank()) {
+            _uiState.update { it.copy(userSaveMessage = "Introduce un email para el usuario.") }
+            return
+        }
+        if (editingId == null && password.length < 6) {
+            _uiState.update { it.copy(userSaveMessage = "La contrasena debe tener al menos 6 caracteres.") }
+            return
+        }
+
+        val request = UserUpsertRequest(
+            nombre = name,
+            email = email,
+            password = password.ifBlank { null },
+            roleName = normalizeRole(uiState.value.userRoleInput),
+            activo = uiState.value.userActiveInput
+        )
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSavingUser = true, userSaveMessage = null) }
+            val session = sessionStorage.session.filterNotNull().first()
+            runCatching {
+                if (editingId == null) {
+                    userRepository.createUser(session, request)
+                } else {
+                    userRepository.updateUser(session, editingId, request)
+                }
+            }.onSuccess { user ->
+                _uiState.update {
+                    it.copy(
+                        isSavingUser = false,
+                        userEditingId = null,
+                        userNameInput = "",
+                        userEmailInput = "",
+                        userPasswordInput = "",
+                        userRoleInput = "CLIENT",
+                        userActiveInput = true,
+                        userSaveMessage = "Usuario #${user.id} guardado correctamente."
+                    )
+                }
+                refresh()
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isSavingUser = false,
+                        userSaveMessage = error.message ?: "No se pudo guardar el usuario."
+                    )
+                }
+            }
+        }
+    }
+
+    fun deleteEditingUser() {
+        val userId = uiState.value.userEditingId
+        if (userId == null) {
+            _uiState.update { it.copy(userSaveMessage = "Selecciona un usuario para eliminarlo.") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSavingUser = true, userSaveMessage = null) }
+            val session = sessionStorage.session.filterNotNull().first()
+            runCatching {
+                userRepository.deleteUser(session, userId)
+            }.onSuccess {
+                _uiState.update {
+                    it.copy(
+                        isSavingUser = false,
+                        userEditingId = null,
+                        userNameInput = "",
+                        userEmailInput = "",
+                        userPasswordInput = "",
+                        userRoleInput = "CLIENT",
+                        userActiveInput = true,
+                        userSaveMessage = "Usuario eliminado correctamente."
+                    )
+                }
+                refresh()
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isSavingUser = false,
+                        userSaveMessage = error.message ?: "No se pudo eliminar el usuario."
+                    )
+                }
+            }
+        }
+    }
+
+    fun startNewMachine() {
+        _uiState.update {
+            it.copy(
+                machineEditingId = null,
+                machineNameInput = "",
+                machineDescriptionInput = "",
+                machineMuscleGroupInput = "",
+                machineStatusInput = "ACTIVA",
+                machineSaveMessage = null
+            )
+        }
+    }
+
+    fun editMachine(machine: MachineResponse) {
+        _uiState.update {
+            it.copy(
+                machineEditingId = machine.id,
+                machineNameInput = machine.nombre,
+                machineDescriptionInput = machine.descripcion.orEmpty(),
+                machineMuscleGroupInput = machine.grupoMuscular.orEmpty(),
+                machineStatusInput = machine.estado,
+                machineSaveMessage = "Editando maquina #${machine.id}"
+            )
+        }
+    }
+
+    fun updateMachineNameInput(value: String) {
+        _uiState.update { it.copy(machineNameInput = value, machineSaveMessage = null) }
+    }
+
+    fun updateMachineDescriptionInput(value: String) {
+        _uiState.update { it.copy(machineDescriptionInput = value, machineSaveMessage = null) }
+    }
+
+    fun updateMachineMuscleGroupInput(value: String) {
+        _uiState.update { it.copy(machineMuscleGroupInput = value, machineSaveMessage = null) }
+    }
+
+    fun updateMachineStatusInput(value: String) {
+        _uiState.update { it.copy(machineStatusInput = value, machineSaveMessage = null) }
+    }
+
+    fun saveMachine() {
+        val name = uiState.value.machineNameInput.trim()
+        if (name.isBlank()) {
+            _uiState.update { it.copy(machineSaveMessage = "Introduce un nombre para la maquina.") }
+            return
+        }
+
+        val status = if (uiState.value.machineStatusInput.equals("FUERA_DE_SERVICIO", ignoreCase = true)) {
+            "FUERA_DE_SERVICIO"
+        } else {
+            "ACTIVA"
+        }
+
+        val request = MachineUpsertRequest(
+            nombre = name,
+            descripcion = uiState.value.machineDescriptionInput.trim().ifBlank { null },
+            grupoMuscular = uiState.value.machineMuscleGroupInput.trim().ifBlank { null },
+            estado = status
+        )
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSavingMachine = true, machineSaveMessage = null) }
+            val session = sessionStorage.session.filterNotNull().first()
+            val editingId = uiState.value.machineEditingId
+
+            runCatching {
+                if (editingId == null) {
+                    machineRepository.createMachine(session, request)
+                } else {
+                    machineRepository.updateMachine(session, editingId, request)
+                }
+            }.onSuccess { machine ->
+                _uiState.update {
+                    it.copy(
+                        isSavingMachine = false,
+                        machineEditingId = null,
+                        machineNameInput = "",
+                        machineDescriptionInput = "",
+                        machineMuscleGroupInput = "",
+                        machineStatusInput = "ACTIVA",
+                        machineSaveMessage = "Maquina #${machine.id} guardada correctamente."
+                    )
+                }
+                refresh()
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isSavingMachine = false,
+                        machineSaveMessage = error.message ?: "No se pudo guardar la maquina."
+                    )
+                }
+            }
+        }
+    }
+
+    fun deleteEditingMachine() {
+        val machineId = uiState.value.machineEditingId
+        if (machineId == null) {
+            _uiState.update { it.copy(machineSaveMessage = "Selecciona una maquina para eliminarla.") }
+            return
+        }
+
+        viewModelScope.launch {
+            _uiState.update { it.copy(isSavingMachine = true, machineSaveMessage = null) }
+            val session = sessionStorage.session.filterNotNull().first()
+            runCatching {
+                machineRepository.deleteMachine(session, machineId)
+            }.onSuccess {
+                _uiState.update {
+                    it.copy(
+                        isSavingMachine = false,
+                        machineEditingId = null,
+                        machineNameInput = "",
+                        machineDescriptionInput = "",
+                        machineMuscleGroupInput = "",
+                        machineStatusInput = "ACTIVA",
+                        machineSaveMessage = "Maquina eliminada correctamente."
+                    )
+                }
+                refresh()
+            }.onFailure { error ->
+                _uiState.update {
+                    it.copy(
+                        isSavingMachine = false,
+                        machineSaveMessage = error.message ?: "No se pudo eliminar la maquina."
+                    )
+                }
+            }
+        }
+    }
+
     fun createEntryQrCode() {
         createQrCode {
             qrCodeRepository.createEntryQrCode(it)
@@ -129,7 +425,7 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
     fun createMachineQrCode() {
         val machineId = uiState.value.qrMachineIdInput.toLongOrNull()
         if (machineId == null) {
-            _uiState.update { it.copy(qrCreateMessage = "Introduce un ID de máquina válido.") }
+            _uiState.update { it.copy(qrCreateMessage = "Introduce un ID de maquina valido.") }
             return
         }
 
@@ -141,7 +437,7 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
     fun createClassSessionQrCode() {
         val classSessionId = uiState.value.qrClassSessionIdInput.toLongOrNull()
         if (classSessionId == null) {
-            _uiState.update { it.copy(qrCreateMessage = "Introduce un ID de sesión válido.") }
+            _uiState.update { it.copy(qrCreateMessage = "Introduce un ID de sesion valido.") }
             return
         }
 
@@ -172,7 +468,7 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
                 _uiState.update {
                     it.copy(
                         isCreatingQr = false,
-                        qrCreateMessage = error.message ?: "No se pudo crear el código QR."
+                        qrCreateMessage = error.message ?: "No se pudo crear el codigo QR."
                     )
                 }
             }
@@ -188,6 +484,14 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
         val users: List<UserSummaryResponse>
     )
 
+    private fun normalizeRole(role: String): String {
+        return when (role.trim().uppercase()) {
+            "ADMIN" -> "ADMIN"
+            "TRAINER", "ENTRENADOR" -> "TRAINER"
+            else -> "CLIENT"
+        }
+    }
+
     companion object {
         fun factory(): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -198,3 +502,4 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 }
+

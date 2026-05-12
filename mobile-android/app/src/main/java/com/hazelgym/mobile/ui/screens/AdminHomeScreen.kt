@@ -67,7 +67,11 @@ fun AdminHomeScreen(
     onCreateEntryQr: () -> Unit,
     onCreateClassSessionQr: () -> Unit,
     onCreateMachineQr: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToUsers: () -> Unit,
+    onNavigateToQr: () -> Unit,
+    onNavigateToMachines: () -> Unit,
+    onNavigateToActivity: () -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(AdminTab.HOME) }
 
@@ -82,9 +86,10 @@ fun AdminHomeScreen(
                         uiState = uiState,
                         onRefresh = onRefresh,
                         onLogout = onLogout,
-                        onNavigateToUsers = { selectedTab = AdminTab.USERS },
-                        onNavigateToQr = { selectedTab = AdminTab.QR },
-                        onNavigateToActivity = { selectedTab = AdminTab.ACTIVITY }
+                        onNavigateToUsers = onNavigateToUsers,
+                        onNavigateToQr = onNavigateToQr,
+                        onNavigateToMachines = onNavigateToMachines,
+                        onNavigateToActivity = onNavigateToActivity
                     )
 
                     AdminTab.USERS -> AdminUsersTab(
@@ -138,6 +143,7 @@ private fun AdminHomeTab(
     onLogout: () -> Unit,
     onNavigateToUsers: () -> Unit,
     onNavigateToQr: () -> Unit,
+    onNavigateToMachines: () -> Unit,
     onNavigateToActivity: () -> Unit
 ) {
     val activeMembers = uiState.users.count { it.activo && it.role.isClientRole() }
@@ -208,7 +214,7 @@ private fun AdminHomeTab(
                     subtitle = "$machines maquinas registradas",
                     icon = Icons.Default.SportsGymnastics,
                     accent = Color(0xFFFFE1DA),
-                    onClick = onNavigateToActivity
+                    onClick = onNavigateToMachines
                 )
             }
         }

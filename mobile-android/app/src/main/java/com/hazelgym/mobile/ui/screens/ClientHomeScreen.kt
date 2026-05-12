@@ -69,6 +69,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.hazelgym.mobile.data.model.AttendanceResponse
 import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.RoutineResponse
 import com.hazelgym.mobile.ui.viewmodel.ClientHomeUiState
@@ -88,12 +89,15 @@ fun ClientHomeScreen(
     sectionTitle: String,
     primaryMetricLabel: String,
     secondaryMetricLabel: String,
-    secondaryMetricValue: String,
     onRefresh: () -> Unit,
     onLogout: () -> Unit,
     onQrCodeChange: (String) -> Unit,
     onQrScanned: (String) -> Unit,
-    onRegisterAttendance: () -> Unit
+    onRegisterAttendance: () -> Unit,
+    onNavigateToRoutines: () -> Unit,
+    onNavigateToClasses: () -> Unit,
+    onNavigateToMachines: () -> Unit,
+    onNavigateToAttendances: () -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(ClientTab.HOME) }
 
@@ -110,12 +114,13 @@ fun ClientHomeScreen(
                         sectionTitle = sectionTitle,
                         primaryMetricLabel = primaryMetricLabel,
                         secondaryMetricLabel = secondaryMetricLabel,
-                        secondaryMetricValue = secondaryMetricValue,
                         onRefresh = onRefresh,
                         onLogout = onLogout,
                         onNavigateToQr = { selectedTab = ClientTab.QR },
-                        onNavigateToMachines = { selectedTab = ClientTab.MACHINES },
-                        onNavigateToProfile = { selectedTab = ClientTab.PROFILE }
+                        onNavigateToRoutines = onNavigateToRoutines,
+                        onNavigateToClasses = onNavigateToClasses,
+                        onNavigateToMachines = onNavigateToMachines,
+                        onNavigateToAttendances = onNavigateToAttendances
                     )
 
                     ClientTab.QR -> ClientQrTab(
@@ -160,12 +165,13 @@ private fun ClientHomeTab(
     sectionTitle: String,
     primaryMetricLabel: String,
     secondaryMetricLabel: String,
-    secondaryMetricValue: String,
     onRefresh: () -> Unit,
     onLogout: () -> Unit,
     onNavigateToQr: () -> Unit,
+    onNavigateToRoutines: () -> Unit,
+    onNavigateToClasses: () -> Unit,
     onNavigateToMachines: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onNavigateToAttendances: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -195,7 +201,7 @@ private fun ClientHomeTab(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     MetricCard("Maquinas", uiState.machines.size.toString(), Modifier.weight(1f))
-                    MetricCard("Perfil", secondaryMetricValue, Modifier.weight(1f))
+                    MetricCard("Asistencias", uiState.attendances.size.toString(), Modifier.weight(1f))
                 }
             }
         }
@@ -224,7 +230,7 @@ private fun ClientHomeTab(
                     subtitle = "${uiState.routines.size} planes disponibles para entrenar",
                     icon = Icons.Default.TaskAlt,
                     accent = Color(0xFFFFE1DA),
-                    onClick = onNavigateToProfile
+                    onClick = onNavigateToRoutines
                 )
                 QuickActionCard(
                     title = sectionTitle,
@@ -238,7 +244,14 @@ private fun ClientHomeTab(
                     subtitle = "${uiState.classes.count { it.activa }} clases activas para reservar",
                     icon = Icons.Default.CalendarMonth,
                     accent = Color(0xFFDCE8FF),
-                    onClick = onNavigateToProfile
+                    onClick = onNavigateToClasses
+                )
+                QuickActionCard(
+                    title = "Mi historial",
+                    subtitle = "${uiState.attendances.size} asistencias registradas en la app",
+                    icon = Icons.Default.Person,
+                    accent = Color(0xFFE8E3FF),
+                    onClick = onNavigateToAttendances
                 )
             }
         }
@@ -285,6 +298,29 @@ private fun ClientHomeTab(
 
         items(uiState.classes.take(3)) { gymClass ->
             GymClassCard(gymClass = gymClass, modifier = Modifier.padding(horizontal = 18.dp))
+        }
+
+        item {
+            Text(
+                text = "Ultimas asistencias",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 18.dp)
+            )
+        }
+
+        if (uiState.attendances.isEmpty()) {
+            item {
+                Text(
+                    text = "Aun no hay asistencias registradas para este cliente.",
+                    color = Color(0xFF667085),
+                    modifier = Modifier.padding(horizontal = 18.dp)
+                )
+            }
+        } else {
+            items(uiState.attendances.take(3)) { attendance ->
+                ClientAttendanceCard(attendance = attendance, modifier = Modifier.padding(horizontal = 18.dp))
+            }
         }
     }
 }
@@ -840,6 +876,27 @@ private fun GymClassCard(gymClass: GymClassResponse, modifier: Modifier = Modifi
             gymClass.duracion?.let { duration ->
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = "Duracion: $duration min", color = Color(0xFF667085))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ClientAttendanceCard(attendance: AttendanceResponse, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text(text = attendance.usuarioNombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(text = "Tipo QR: ${attendance.qrType}", color = Color(0xFF667085))
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = "QR #${attendance.qrCodeId}", color = Color(0xFF667085))
+            if (attendance.fechaHora != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Fecha: ${attendance.fechaHora}", color = Color(0xFF667085))
             }
         }
     }

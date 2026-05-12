@@ -53,11 +53,32 @@ data class MachineResponse(
 )
 
 @Serializable
+data class MachineUpsertRequest(
+    val nombre: String,
+    val descripcion: String? = null,
+    val grupoMuscular: String? = null,
+    val instrucciones: String? = null,
+    val nivel: String? = null,
+    val advertenciaSeguridad: String? = null,
+    val imagenUrl: String? = null,
+    val estado: String
+)
+
+@Serializable
 data class UserSummaryResponse(
     val id: Long,
     val nombre: String,
     val email: String,
     val role: String,
+    val activo: Boolean
+)
+
+@Serializable
+data class UserUpsertRequest(
+    val nombre: String,
+    val email: String,
+    val password: String? = null,
+    val roleName: String,
     val activo: Boolean
 )
 

@@ -1,5 +1,7 @@
 package com.hazelgym.dto.request;
 
+import com.hazelgym.model.RoleName;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,8 +21,9 @@ public class UserUpdateRequest {
     @Size(min = 6, max = 255)
     private String password;
 
-    @NotNull
     private Long roleId;
+
+    private RoleName roleName;
 
     @NotNull
     private Boolean activo;
@@ -55,6 +58,14 @@ public class UserUpdateRequest {
 
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
+    }
+
+    public RoleName getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(RoleName roleName) {
+        this.roleName = roleName;
     }
 
     public Boolean getActivo() {

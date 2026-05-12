@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.hazelgym.mobile.data.model.AttendanceResponse
 import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.MachineResponse
 import com.hazelgym.mobile.data.model.RoutineResponse
@@ -30,6 +31,7 @@ data class ClientHomeUiState(
     val machines: List<MachineResponse> = emptyList(),
     val routines: List<RoutineResponse> = emptyList(),
     val classes: List<GymClassResponse> = emptyList(),
+    val attendances: List<AttendanceResponse> = emptyList(),
     val qrCodeInput: String = "",
     val attendanceMessage: String? = null,
     val isSubmittingAttendance: Boolean = false,
@@ -69,17 +71,23 @@ class ClientHomeViewModel(application: Application) : AndroidViewModel(applicati
                 val machinesDeferred = async { machineRepository.getMachines(session) }
                 val routinesDeferred = async { routineRepository.getRoutines(session) }
                 val classesDeferred = async { gymClassRepository.getClasses(session) }
-                Triple(
+                val attendancesDeferred = async {
+                    runCatching { attendanceRepository.getAttendances(session) }
+                        .getOrDefault(uiState.value.attendances)
+                }
+                ClientDashboardPayload(
                     machinesDeferred.await(),
                     routinesDeferred.await(),
-                    classesDeferred.await()
+                    classesDeferred.await(),
+                    attendancesDeferred.await()
                 )
-            }.onSuccess { (machines, routines, classes) ->
+            }.onSuccess { (machines, routines, classes, attendances) ->
                 _uiState.update {
                     it.copy(
                         machines = machines,
                         routines = routines,
                         classes = classes,
+                        attendances = attendances,
                         isLoading = false
                     )
                 }
@@ -138,6 +146,7 @@ class ClientHomeViewModel(application: Application) : AndroidViewModel(applicati
             }.onSuccess { attendance ->
                 _uiState.update {
                     it.copy(
+                        attendances = listOf(attendance) + it.attendances.filterNot { saved -> saved.id == attendance.id },
                         isSubmittingAttendance = false,
                         qrCodeInput = if (clearInput) "" else it.qrCodeInput,
                         attendanceMessage = if (scanned) {
@@ -147,6 +156,7 @@ class ClientHomeViewModel(application: Application) : AndroidViewModel(applicati
                         }
                     )
                 }
+                refresh()
             }.onFailure { error ->
                 _uiState.update {
                     it.copy(
@@ -162,6 +172,13 @@ class ClientHomeViewModel(application: Application) : AndroidViewModel(applicati
         return rawValue.trim().toLongOrNull()
             ?: Regex("\\d+").find(rawValue)?.value?.toLongOrNull()
     }
+
+    private data class ClientDashboardPayload(
+        val machines: List<MachineResponse>,
+        val routines: List<RoutineResponse>,
+        val classes: List<GymClassResponse>,
+        val attendances: List<AttendanceResponse>
+    )
 
     companion object {
         fun factory(): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
