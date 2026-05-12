@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.hazelgym.mobile.app-mergeDebugResources-51:/values-v30/values-v30.xml",
+            "outputFile": "com.hazelgym.mobile.app-mergeDebugResources-65:/values-v30/values-v30.xml",
             "map": [
                 {
                     "source": "C:\\Users\\ander\\.gradle\\caches\\8.9\\transforms\\750844ed05433974bb7f07d6672f7e6a\\transformed\\material3-release\\res\\values-v30\\values-v30.xml",

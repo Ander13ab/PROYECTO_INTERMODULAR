@@ -7,15 +7,20 @@ Base Android nativa para Hazel Gym usando Kotlin + Jetpack Compose.
 - Proyecto Android creado dentro de `mobile-android`
 - Login conectado a `POST /api/auth/login`
 - Selector de rol funcional en login con validacion contra el rol real devuelto por backend, aceptando aliases como `CLIENT`, `TRAINER` y `ADMIN`
+- Contrasena oculta por defecto con icono de ojo para mostrarla o esconderla
 - Sesion guardada con DataStore
-- Panel inicial conectado a `GET /api/machines`
 - Navegacion inicial diferenciada por rol: cliente, entrenador y admin
-- Panel admin con consumo real de `GET /api/users` y `GET /api/machines`
-- Panel cliente conectado a `GET /api/routines`, `GET /api/classes` y `GET /api/machines`
-- Panel entrenador conectado a `GET /api/classes`, `GET /api/routine-assignments` y `GET /api/attendances`
-- Estructura visual de los tres paneles acercada al lenguaje de Figma: hero, métricas y accesos rápidos
-- Navegacion interna real en cliente y entrenador con pestañas de inicio, actividad/QR y perfil
-- Registro de asistencia desde cliente mediante QR manual contra `POST /api/attendances`
+- Panel admin con consumo real de usuarios, maquinas, sesiones, QR y asistencias
+- Panel admin con pestanas internas de inicio, usuarios, QR, actividad y perfil
+- Panel admin con creacion de QR de entrada, maquina y sesion de clase contra `POST /api/qr-codes`
+- Panel cliente conectado a rutinas, clases y maquinas
+- Panel cliente con pestanas internas de inicio, QR y perfil
+- Panel cliente con escaneo QR por camara usando CameraX y ML Kit
+- Panel cliente con registro de asistencia manual y automatico al escanear
+- Dialogo de escaneo adaptado al emulador con campo de prueba por ID de QR
+- Panel entrenador conectado a clases, asignaciones y asistencias
+- Panel entrenador con pestanas internas de inicio, actividad y perfil
+- Estructura visual de los tres paneles acercada al lenguaje de Figma: hero, metricas y accesos rapidos
 - Conexion local del emulador usando `http://10.0.2.2:8080/`
 - Configuracion de red preparada para permitir HTTP local en desarrollo
 
@@ -48,6 +53,9 @@ Si pruebas la app en un movil fisico, tendras que cambiar esa URL por la IP loca
 3. La app autentica contra el backend
 4. Si el rol elegido no coincide con el rol real de la cuenta, la app muestra error y no guarda la sesion
 5. Si coincide, se guarda la sesion y se entra al panel inicial correspondiente al rol
+6. El admin puede generar QR de entrada, maquina y sesion
+7. El cliente puede registrar asistencia introduciendo el ID del QR o escaneandolo
+8. El admin y el entrenador pueden revisar asistencias desde sus paneles
 
 ## Estructura principal
 
@@ -59,7 +67,7 @@ Si pruebas la app en un movil fisico, tendras que cambiar esa URL por la IP loca
 
 ## Siguiente paso recomendado
 
-1. Añadir escaneo QR real o lectura de codigo desde camara
-2. Extender la navegacion interna al panel admin
-3. Ajustar detalles visuales finos del layout y spacing
-4. Rematar la fidelidad con los prototipos de Figma pantalla por pantalla
+1. Ajustar detalles visuales finos del layout y spacing
+2. Rematar la fidelidad con los prototipos de Figma pantalla por pantalla
+3. Anadir navegacion interna real desde las tarjetas hacia vistas de detalle
+4. Valorar endpoints filtrados para historial propio de asistencias del cliente

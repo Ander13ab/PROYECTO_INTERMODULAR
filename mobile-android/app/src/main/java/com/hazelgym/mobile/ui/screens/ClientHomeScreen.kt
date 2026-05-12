@@ -1,6 +1,9 @@
 package com.hazelgym.mobile.ui.screens
 
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,11 +35,28 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,13 +64,20 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
 import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.RoutineResponse
 import com.hazelgym.mobile.ui.viewmodel.ClientHomeUiState
+import java.util.concurrent.Executors
 
 private enum class ClientTab(val label: String, val icon: ImageVector) {
     HOME("Inicio", Icons.Default.FitnessCenter),
     QR("QR", Icons.Default.QrCode2),
+    MACHINES("Maquinas", Icons.Default.TaskAlt),
     PROFILE("Perfil", Icons.Default.Person)
 }
 
@@ -64,6 +92,7 @@ fun ClientHomeScreen(
     onRefresh: () -> Unit,
     onLogout: () -> Unit,
     onQrCodeChange: (String) -> Unit,
+    onQrScanned: (String) -> Unit,
     onRegisterAttendance: () -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(ClientTab.HOME) }
@@ -83,13 +112,23 @@ fun ClientHomeScreen(
                         secondaryMetricLabel = secondaryMetricLabel,
                         secondaryMetricValue = secondaryMetricValue,
                         onRefresh = onRefresh,
-                        onLogout = onLogout
+                        onLogout = onLogout,
+                        onNavigateToQr = { selectedTab = ClientTab.QR },
+                        onNavigateToMachines = { selectedTab = ClientTab.MACHINES },
+                        onNavigateToProfile = { selectedTab = ClientTab.PROFILE }
                     )
 
                     ClientTab.QR -> ClientQrTab(
                         uiState = uiState,
                         onQrCodeChange = onQrCodeChange,
+                        onQrScanned = onQrScanned,
                         onRegisterAttendance = onRegisterAttendance,
+                        onLogout = onLogout
+                    )
+
+                    ClientTab.MACHINES -> ClientMachinesTab(
+                        uiState = uiState,
+                        onRefresh = onRefresh,
                         onLogout = onLogout
                     )
 
@@ -123,7 +162,10 @@ private fun ClientHomeTab(
     secondaryMetricLabel: String,
     secondaryMetricValue: String,
     onRefresh: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToQr: () -> Unit,
+    onNavigateToMachines: () -> Unit,
+    onNavigateToProfile: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -131,9 +173,9 @@ private fun ClientHomeTab(
     ) {
         item {
             HeaderCard(
-                eyebrow = heroLabel,
+                eyebrow = "Hola de nuevo",
                 name = uiState.userName,
-                pillLabel = "Cliente",
+                pillLabel = heroLabel,
                 pillColor = Color(0xFFFF6B50),
                 onLogout = onLogout
             )
@@ -165,23 +207,38 @@ private fun ClientHomeTab(
                     .padding(horizontal = 18.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
+                Text(
+                    text = "Acciones rapidas",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                QuickActionCard(
+                    title = "Escanear entrada",
+                    subtitle = "Registra tu visita de hoy desde el area QR.",
+                    icon = Icons.Default.QrCode2,
+                    accent = Color(0xFFDCE8FF),
+                    onClick = onNavigateToQr
+                )
                 QuickActionCard(
                     title = "Mis rutinas",
                     subtitle = "${uiState.routines.size} planes disponibles para entrenar",
                     icon = Icons.Default.TaskAlt,
-                    accent = Color(0xFFFFE1DA)
-                )
-                QuickActionCard(
-                    title = "Clases activas",
-                    subtitle = "${uiState.classes.count { it.activa }} clases activas para reservar",
-                    icon = Icons.Default.CalendarMonth,
-                    accent = Color(0xFFDCE8FF)
+                    accent = Color(0xFFFFE1DA),
+                    onClick = onNavigateToProfile
                 )
                 QuickActionCard(
                     title = sectionTitle,
                     subtitle = "${uiState.machines.size} maquinas preparadas para tu rutina",
                     icon = Icons.Default.FitnessCenter,
-                    accent = Color(0xFFDDF8E6)
+                    accent = Color(0xFFDDF8E6),
+                    onClick = onNavigateToMachines
+                )
+                QuickActionCard(
+                    title = "Clases activas",
+                    subtitle = "${uiState.classes.count { it.activa }} clases activas para reservar",
+                    icon = Icons.Default.CalendarMonth,
+                    accent = Color(0xFFDCE8FF),
+                    onClick = onNavigateToProfile
                 )
             }
         }
@@ -236,9 +293,12 @@ private fun ClientHomeTab(
 private fun ClientQrTab(
     uiState: ClientHomeUiState,
     onQrCodeChange: (String) -> Unit,
+    onQrScanned: (String) -> Unit,
     onRegisterAttendance: () -> Unit,
     onLogout: () -> Unit
 ) {
+    var scannerOpen by rememberSaveable { mutableStateOf(false) }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -262,9 +322,10 @@ private fun ClientQrTab(
             ) {
                 QuickActionCard(
                     title = "Registrar asistencia",
-                    subtitle = "Introduce el identificador del QR para registrar tu entrada o uso.",
+                    subtitle = "Escanea el codigo para registrar la asistencia al momento, o usa el ID manual.",
                     icon = Icons.Default.QrCode2,
-                    accent = Color(0xFFDCE8FF)
+                    accent = Color(0xFFDCE8FF),
+                    onClick = { scannerOpen = true }
                 )
 
                 Card(
@@ -278,6 +339,16 @@ private fun ClientQrTab(
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleMedium
                         )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Button(
+                            onClick = { scannerOpen = true },
+                            enabled = !uiState.isSubmittingAttendance,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(imageVector = Icons.Default.QrCode2, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(if (uiState.isSubmittingAttendance) "Registrando..." else "Escanear y registrar QR")
+                        }
                         Spacer(modifier = Modifier.height(10.dp))
                         OutlinedTextField(
                             value = uiState.qrCodeInput,
@@ -298,13 +369,104 @@ private fun ClientQrTab(
                             Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 text = message,
-                                color = if (message.contains("correctamente", ignoreCase = true)) {
+                                color = if (message.contains("registrada", ignoreCase = true)) {
                                     Color(0xFF16A34A)
                                 } else {
                                     Color(0xFFD92D20)
                                 }
                             )
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    if (scannerOpen) {
+        QrScannerDialog(
+            onDismiss = { scannerOpen = false },
+            onQrScanned = { value ->
+                scannerOpen = false
+                onQrScanned(value)
+            }
+        )
+    }
+}
+
+@Composable
+private fun ClientMachinesTab(
+    uiState: ClientHomeUiState,
+    onRefresh: () -> Unit,
+    onLogout: () -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            HeaderCard(
+                eyebrow = "Catalogo de maquinas",
+                name = uiState.userName,
+                pillLabel = "Cliente",
+                pillColor = Color(0xFFFF6B50),
+                onLogout = onLogout
+            )
+        }
+
+        item {
+            SectionHeader(
+                title = "Maquinas del gimnasio",
+                action = "Recargar",
+                onAction = onRefresh
+            )
+        }
+
+        if (uiState.errorMessage != null) {
+            item {
+                Text(
+                    text = uiState.errorMessage,
+                    color = Color(0xFFD92D20),
+                    modifier = Modifier.padding(horizontal = 18.dp)
+                )
+            }
+        }
+
+        if (uiState.machines.isEmpty()) {
+            item {
+                Text(
+                    text = "Todavia no hay maquinas cargadas.",
+                    color = Color(0xFF667085),
+                    modifier = Modifier.padding(horizontal = 18.dp)
+                )
+            }
+        } else {
+            items(uiState.machines) { machine ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 18.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    shape = RoundedCornerShape(22.dp)
+                ) {
+                    Column(modifier = Modifier.padding(18.dp)) {
+                        Text(
+                            text = machine.nombre,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        if (!machine.descripcion.isNullOrBlank()) {
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = machine.descripcion,
+                                color = Color(0xFF667085)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = "Estado: ${machine.estado}",
+                            color = Color(0xFFFF4D2E),
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
             }
@@ -347,6 +509,147 @@ private fun ClientProfileTab(
             }
         }
     }
+}
+
+@Composable
+private fun QrScannerDialog(
+    onDismiss: () -> Unit,
+    onQrScanned: (String) -> Unit
+) {
+    val context = LocalContext.current
+    var testQrId by rememberSaveable { mutableStateOf("1") }
+    var hasCameraPermission by rememberSaveable {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+    }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        hasCameraPermission = granted
+    }
+
+    LaunchedEffect(Unit) {
+        if (!hasCameraPermission) {
+            permissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(18.dp),
+            color = Color.White,
+            shape = RoundedCornerShape(26.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(18.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Escanear QR",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF0F172A)
+                )
+                Text(
+                    text = "En el emulador puedes probar con un ID si la camara no tiene un QR delante.",
+                    color = Color(0xFF667085),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                if (hasCameraPermission) {
+                    QrCameraPreview(onQrScanned = onQrScanned)
+                } else {
+                    Text(
+                        text = "Activa el permiso de camara para escanear codigos QR.",
+                        color = Color(0xFFD92D20)
+                    )
+                }
+
+                OutlinedTextField(
+                    value = testQrId,
+                    onValueChange = { testQrId = it },
+                    label = { Text("ID de QR para probar") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
+                )
+
+                Button(
+                    onClick = { onQrScanned(testQrId) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Usar este ID como QR")
+                }
+
+                TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text("Cerrar")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun QrCameraPreview(
+    onQrScanned: (String) -> Unit
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
+    val analysisExecutor = remember { Executors.newSingleThreadExecutor() }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            runCatching { cameraProviderFuture.get().unbindAll() }
+            analysisExecutor.shutdown()
+        }
+    }
+
+    AndroidView(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(220.dp),
+        factory = { viewContext ->
+            val previewView = PreviewView(viewContext)
+            val executor = ContextCompat.getMainExecutor(viewContext)
+
+            cameraProviderFuture.addListener(
+                {
+                    val cameraProvider = cameraProviderFuture.get()
+                    val preview = Preview.Builder().build().also {
+                        it.setSurfaceProvider(previewView.surfaceProvider)
+                    }
+                    val analyzer = ImageAnalysis.Builder()
+                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                            .build()
+                            .also {
+                                it.setAnalyzer(analysisExecutor, QrCodeAnalyzer(onQrScanned))
+                            }
+
+                    cameraProvider.unbindAll()
+                    cameraProvider.bindToLifecycle(
+                        lifecycleOwner,
+                        CameraSelector.DEFAULT_BACK_CAMERA,
+                        preview,
+                        analyzer
+                    )
+                },
+                executor
+            )
+
+            previewView
+        }
+    )
 }
 
 @Composable
@@ -439,15 +742,24 @@ private fun MetricCard(label: String, value: String, modifier: Modifier = Modifi
 }
 
 @Composable
-private fun QuickActionCard(title: String, subtitle: String, icon: ImageVector, accent: Color) {
+private fun QuickActionCard(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    accent: Color,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(20.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(Color.White, RoundedCornerShape(20.dp))
                 .padding(18.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -472,7 +784,7 @@ private fun QuickActionCard(title: String, subtitle: String, icon: ImageVector, 
                 }
             }
 
-            Text(text = "›", color = Color(0xFF98A2B3), fontSize = 24.sp)
+            Text(text = ">", color = Color(0xFF98A2B3), fontSize = 24.sp)
         }
     }
 }
@@ -540,5 +852,43 @@ private fun ProfileLine(label: String, value: String) {
         Spacer(modifier = Modifier.height(4.dp))
         Text(text = value, color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
         Spacer(modifier = Modifier.height(12.dp))
+    }
+}
+
+private class QrCodeAnalyzer(
+    private val onQrScanned: (String) -> Unit
+) : ImageAnalysis.Analyzer {
+    private val scanner = BarcodeScanning.getClient()
+    private var hasScanned = false
+
+    @OptIn(ExperimentalGetImage::class)
+    override fun analyze(imageProxy: ImageProxy) {
+        val mediaImage = imageProxy.image
+        if (mediaImage == null || hasScanned) {
+            imageProxy.close()
+            return
+        }
+
+        val image = InputImage.fromMediaImage(
+            mediaImage,
+            imageProxy.imageInfo.rotationDegrees
+        )
+
+        scanner.process(image)
+            .addOnSuccessListener { barcodes ->
+                val rawValue = barcodes
+                    .firstOrNull { barcode ->
+                        barcode.format == Barcode.FORMAT_QR_CODE && !barcode.rawValue.isNullOrBlank()
+                    }
+                    ?.rawValue
+
+                if (rawValue != null && !hasScanned) {
+                    hasScanned = true
+                    onQrScanned(rawValue)
+                }
+            }
+            .addOnCompleteListener {
+                imageProxy.close()
+            }
     }
 }

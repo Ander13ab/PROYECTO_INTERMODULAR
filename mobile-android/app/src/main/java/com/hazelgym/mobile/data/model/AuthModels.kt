@@ -83,6 +83,16 @@ data class GymClassResponse(
 )
 
 @Serializable
+data class ClassSessionResponse(
+    val id: Long,
+    val gymClassId: Long,
+    val gymClassName: String,
+    val fecha: String,
+    val horaInicio: String,
+    val horaFin: String
+)
+
+@Serializable
 data class RoutineAssignmentResponse(
     val id: Long,
     val routineId: Long,
@@ -106,4 +116,23 @@ data class AttendanceResponse(
 data class AttendanceCreateRequest(
     val usuarioId: Long,
     val qrCodeId: Long
+)
+
+@Serializable
+data class QrCodeResponse(
+    val id: Long,
+    val tipo: String,
+    val esEntradaGimnasio: Boolean,
+    val maquinaId: Long? = null,
+    val maquinaNombre: String? = null,
+    val sesionClaseId: Long? = null,
+    val sesionClaseResumen: String? = null
+)
+
+@Serializable
+data class QrCodeCreateRequest(
+    val tipo: String,
+    val esEntradaGimnasio: Boolean,
+    val maquinaId: Long? = null,
+    val sesionClaseId: Long? = null
 )

@@ -78,13 +78,14 @@ fun HazelGymMobileApp() {
             ClientHomeScreen(
                 uiState = clientHomeViewModel.uiState.collectAsState().value,
                 heroLabel = "Tu zona de entrenamiento",
-                sectionTitle = "Maquinas para tu rutina",
+                sectionTitle = "Máquinas para tu rutina",
                 primaryMetricLabel = "Rutinas",
                 secondaryMetricLabel = "Clases",
                 secondaryMetricValue = "Cliente",
                 onRefresh = clientHomeViewModel::refresh,
                 onLogout = rootViewModel::logout,
                 onQrCodeChange = clientHomeViewModel::updateQrCodeInput,
+                onQrScanned = clientHomeViewModel::registerScannedAttendance,
                 onRegisterAttendance = clientHomeViewModel::registerAttendance
             )
         }
@@ -105,6 +106,11 @@ fun HazelGymMobileApp() {
             AdminHomeScreen(
                 uiState = adminHomeViewModel.uiState.collectAsState().value,
                 onRefresh = adminHomeViewModel::refresh,
+                onQrClassSessionIdChange = adminHomeViewModel::updateQrClassSessionIdInput,
+                onQrMachineIdChange = adminHomeViewModel::updateQrMachineIdInput,
+                onCreateEntryQr = adminHomeViewModel::createEntryQrCode,
+                onCreateClassSessionQr = adminHomeViewModel::createClassSessionQrCode,
+                onCreateMachineQr = adminHomeViewModel::createMachineQrCode,
                 onLogout = rootViewModel::logout
             )
         }

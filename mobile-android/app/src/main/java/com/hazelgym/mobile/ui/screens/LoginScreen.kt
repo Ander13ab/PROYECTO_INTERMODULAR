@@ -89,7 +89,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Inicia sesion con tu cuenta y entra en tu panel.",
+                    text = "Accede a tu gimnasio",
                     color = Color(0xFF97A0AF),
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -165,15 +165,32 @@ fun LoginScreen(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(
+                    text = "Olvidaste tu contrasena?",
+                    color = Color(0xFFFFB09B),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                LoginRole.entries.forEach { role ->
-                    RoleTag(
-                        label = role.label,
-                        isSelected = uiState.selectedRole == role,
-                        onClick = { onRoleSelected(role) }
-                    )
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    text = "Acceso segun rol",
+                    color = Color.White.copy(alpha = 0.82f),
+                    fontWeight = FontWeight.SemiBold
+                )
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    LoginRole.entries.forEach { role ->
+                        RoleTag(
+                            label = role.label,
+                            isSelected = uiState.selectedRole == role,
+                            onClick = { onRoleSelected(role) }
+                        )
+                    }
                 }
             }
         }
@@ -201,8 +218,8 @@ private fun RoleTag(
         modifier = Modifier
             .clickable(onClick = onClick)
             .border(
-                width = if (isSelected) 2.dp else 0.dp,
-                color = if (isSelected) Color.White else Color.Transparent,
+                width = if (isSelected) 2.dp else 1.dp,
+                color = if (isSelected) Color.White else Color.White.copy(alpha = 0.08f),
                 shape = RoundedCornerShape(14.dp)
             )
             .background(background, RoundedCornerShape(14.dp))

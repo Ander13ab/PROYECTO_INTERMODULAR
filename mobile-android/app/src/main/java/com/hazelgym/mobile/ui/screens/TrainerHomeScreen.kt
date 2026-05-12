@@ -1,6 +1,7 @@
 package com.hazelgym.mobile.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -71,7 +72,9 @@ fun TrainerHomeScreen(
                     TrainerTab.HOME -> TrainerHomeTab(
                         uiState = uiState,
                         onRefresh = onRefresh,
-                        onLogout = onLogout
+                        onLogout = onLogout,
+                        onNavigateToActivity = { selectedTab = TrainerTab.ACTIVITY },
+                        onNavigateToProfile = { selectedTab = TrainerTab.PROFILE }
                     )
                     TrainerTab.ACTIVITY -> TrainerActivityTab(
                         uiState = uiState,
@@ -103,7 +106,9 @@ fun TrainerHomeScreen(
 private fun TrainerHomeTab(
     uiState: TrainerHomeUiState,
     onRefresh: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToActivity: () -> Unit,
+    onNavigateToProfile: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -111,9 +116,9 @@ private fun TrainerHomeTab(
     ) {
         item {
             HeaderCard(
-                eyebrow = "Panel de seguimiento",
+                eyebrow = "Panel de entrenador",
                 name = uiState.userName,
-                pillLabel = "Entrenador",
+                pillLabel = "Entrenadora certificada",
                 pillColor = Color(0xFF6B8DFF),
                 onLogout = onLogout
             )
@@ -145,23 +150,31 @@ private fun TrainerHomeTab(
                     .padding(horizontal = 18.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
+                Text(
+                    text = "Acciones rapidas",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
                 QuickActionCard(
-                    title = "Clases disponibles",
+                    title = "Clases de hoy",
                     subtitle = "${uiState.classes.count { it.activa }} clases activas para dirigir",
                     icon = Icons.Default.EventAvailable,
-                    accent = Color(0xFFDCE8FF)
+                    accent = Color(0xFFDCE8FF),
+                    onClick = onNavigateToActivity
                 )
                 QuickActionCard(
-                    title = "Rutinas asignadas",
+                    title = "Mis clientes",
                     subtitle = "${uiState.routineAssignments.size} asignaciones con clientes",
                     icon = Icons.Default.Groups,
-                    accent = Color(0xFFDDF8E6)
+                    accent = Color(0xFFDDF8E6),
+                    onClick = onNavigateToActivity
                 )
                 QuickActionCard(
-                    title = "Asistencias recientes",
+                    title = "Clases este mes",
                     subtitle = "${uiState.attendances.size} registros asociados a tu seguimiento",
                     icon = Icons.Default.Badge,
-                    accent = Color(0xFFFFE1DA)
+                    accent = Color(0xFFFFE1DA),
+                    onClick = onNavigateToProfile
                 )
             }
         }
@@ -377,9 +390,17 @@ private fun MetricCard(label: String, value: String, modifier: Modifier = Modifi
 }
 
 @Composable
-private fun QuickActionCard(title: String, subtitle: String, icon: ImageVector, accent: Color) {
+private fun QuickActionCard(
+    title: String,
+    subtitle: String,
+    icon: ImageVector,
+    accent: Color,
+    onClick: () -> Unit
+) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         shape = RoundedCornerShape(20.dp)
     ) {
@@ -410,7 +431,7 @@ private fun QuickActionCard(title: String, subtitle: String, icon: ImageVector, 
                 }
             }
 
-            Text(text = "›", color = Color(0xFF98A2B3), fontSize = 24.sp)
+            Text(text = ">", color = Color(0xFF98A2B3), fontSize = 24.sp)
         }
     }
 }

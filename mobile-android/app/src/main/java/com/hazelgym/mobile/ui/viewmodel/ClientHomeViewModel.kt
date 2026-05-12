@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.hazelgym.mobile.data.model.AttendanceResponse
 import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.MachineResponse
 import com.hazelgym.mobile.data.model.RoutineResponse
@@ -99,14 +98,39 @@ class ClientHomeViewModel(application: Application) : AndroidViewModel(applicati
         _uiState.update { it.copy(qrCodeInput = value, attendanceMessage = null) }
     }
 
-    fun registerAttendance() {
-        viewModelScope.launch {
-            val qrCodeId = uiState.value.qrCodeInput.toLongOrNull()
-            if (qrCodeId == null) {
-                _uiState.update { it.copy(attendanceMessage = "Introduce un identificador QR valido.") }
-                return@launch
+    fun registerScannedAttendance(rawValue: String) {
+        val qrCodeId = extractQrCodeId(rawValue)
+        if (qrCodeId == null) {
+            _uiState.update {
+                it.copy(attendanceMessage = "No se pudo detectar un identificador QR valido.")
             }
+            return
+        }
 
+        _uiState.update {
+            it.copy(
+                qrCodeInput = qrCodeId.toString(),
+                attendanceMessage = "QR detectado. Registrando asistencia..."
+            )
+        }
+        registerAttendance(qrCodeId, clearInput = true, scanned = true)
+    }
+
+    fun registerAttendance() {
+        val qrCodeId = extractQrCodeId(uiState.value.qrCodeInput)
+        if (qrCodeId == null) {
+            _uiState.update { it.copy(attendanceMessage = "Introduce un identificador QR valido.") }
+            return
+        }
+        registerAttendance(qrCodeId, clearInput = true, scanned = false)
+    }
+
+    private fun registerAttendance(qrCodeId: Long, clearInput: Boolean, scanned: Boolean) {
+        if (uiState.value.isSubmittingAttendance) {
+            return
+        }
+
+        viewModelScope.launch {
             _uiState.update { it.copy(isSubmittingAttendance = true, attendanceMessage = null) }
             val session = sessionStorage.session.filterNotNull().first()
             runCatching {
@@ -115,8 +139,12 @@ class ClientHomeViewModel(application: Application) : AndroidViewModel(applicati
                 _uiState.update {
                     it.copy(
                         isSubmittingAttendance = false,
-                        qrCodeInput = "",
-                        attendanceMessage = "Asistencia registrada correctamente con QR #${attendance.qrCodeId}."
+                        qrCodeInput = if (clearInput) "" else it.qrCodeInput,
+                        attendanceMessage = if (scanned) {
+                            "Asistencia registrada automaticamente con QR #${attendance.qrCodeId}."
+                        } else {
+                            "Asistencia registrada correctamente con QR #${attendance.qrCodeId}."
+                        }
                     )
                 }
             }.onFailure { error ->
@@ -128,6 +156,11 @@ class ClientHomeViewModel(application: Application) : AndroidViewModel(applicati
                 }
             }
         }
+    }
+
+    private fun extractQrCodeId(rawValue: String): Long? {
+        return rawValue.trim().toLongOrNull()
+            ?: Regex("\\d+").find(rawValue)?.value?.toLongOrNull()
     }
 
     companion object {

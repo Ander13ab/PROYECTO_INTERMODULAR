@@ -30,8 +30,10 @@ object ApiClient {
 
     val authApi: AuthApi = retrofit.create(AuthApi::class.java)
     val attendanceApi: AttendanceApi = retrofit.create(AttendanceApi::class.java)
+    val classSessionApi: ClassSessionApi = retrofit.create(ClassSessionApi::class.java)
     val gymClassApi: GymClassApi = retrofit.create(GymClassApi::class.java)
     val machineApi: MachineApi = retrofit.create(MachineApi::class.java)
+    val qrCodeApi: QrCodeApi = retrofit.create(QrCodeApi::class.java)
     val routineAssignmentApi: RoutineAssignmentApi = retrofit.create(RoutineAssignmentApi::class.java)
     val routineApi: RoutineApi = retrofit.create(RoutineApi::class.java)
     val userApi: UserApi = retrofit.create(UserApi::class.java)
