@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import com.hazelgym.mobile.data.model.AttendanceResponse
 import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.RoutineAssignmentResponse
+import com.hazelgym.mobile.data.model.RoutineResponse
 import com.hazelgym.mobile.ui.viewmodel.TrainerHomeUiState
 
 private enum class TrainerTab(val label: String, val icon: ImageVector) {
@@ -60,6 +62,7 @@ fun TrainerHomeScreen(
     onRefresh: () -> Unit,
     onLogout: () -> Unit,
     onNavigateToClasses: () -> Unit,
+    onNavigateToRoutines: () -> Unit,
     onNavigateToAssignments: () -> Unit,
     onNavigateToAttendances: () -> Unit
 ) {
@@ -77,6 +80,7 @@ fun TrainerHomeScreen(
                         onRefresh = onRefresh,
                         onLogout = onLogout,
                         onNavigateToClasses = onNavigateToClasses,
+                        onNavigateToRoutines = onNavigateToRoutines,
                         onNavigateToAssignments = onNavigateToAssignments,
                         onNavigateToAttendances = onNavigateToAttendances
                     )
@@ -112,6 +116,7 @@ private fun TrainerHomeTab(
     onRefresh: () -> Unit,
     onLogout: () -> Unit,
     onNavigateToClasses: () -> Unit,
+    onNavigateToRoutines: () -> Unit,
     onNavigateToAssignments: () -> Unit,
     onNavigateToAttendances: () -> Unit
 ) {
@@ -138,12 +143,12 @@ private fun TrainerHomeTab(
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     MetricCard("Clases", uiState.classes.size.toString(), Modifier.weight(1f))
-                    MetricCard("Asistencias", uiState.attendances.size.toString(), Modifier.weight(1f))
+                    MetricCard("Rutinas", uiState.routines.size.toString(), Modifier.weight(1f))
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     MetricCard("Asignaciones", uiState.routineAssignments.size.toString(), Modifier.weight(1f))
-                    MetricCard("Perfil", "Entrenador", Modifier.weight(1f))
+                    MetricCard("Asistencias", uiState.attendances.size.toString(), Modifier.weight(1f))
                 }
             }
         }
@@ -166,6 +171,13 @@ private fun TrainerHomeTab(
                     icon = Icons.Default.EventAvailable,
                     accent = Color(0xFFDCE8FF),
                     onClick = onNavigateToClasses
+                )
+                QuickActionCard(
+                    title = "Mis rutinas",
+                    subtitle = "${uiState.routines.size} rutinas creadas por ti",
+                    icon = Icons.Default.TaskAlt,
+                    accent = Color(0xFFFFE1DA),
+                    onClick = onNavigateToRoutines
                 )
                 QuickActionCard(
                     title = "Mis clientes",
@@ -213,6 +225,19 @@ private fun TrainerHomeTab(
 
         items(uiState.classes.take(3)) { gymClass ->
             GymClassCard(gymClass = gymClass, modifier = Modifier.padding(horizontal = 18.dp))
+        }
+
+        item {
+            Text(
+                text = "Rutinas creadas",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 18.dp)
+            )
+        }
+
+        items(uiState.routines.take(3)) { routine ->
+            RoutineCard(routine = routine, modifier = Modifier.padding(horizontal = 18.dp))
         }
     }
 }
@@ -491,6 +516,25 @@ private fun RoutineAssignmentCard(assignment: RoutineAssignmentResponse, modifie
             Text(text = "Cliente: ${assignment.clientName}", color = Color(0xFF667085))
             Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Asignacion #${assignment.id}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+@Composable
+private fun RoutineCard(routine: RoutineResponse, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text(text = routine.nombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            if (!routine.descripcion.isNullOrBlank()) {
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(text = routine.descripcion, color = Color(0xFF667085))
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "Rutina #${routine.id}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
         }
     }
 }

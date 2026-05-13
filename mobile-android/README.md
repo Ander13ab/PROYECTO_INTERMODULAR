@@ -26,6 +26,8 @@ Base Android nativa para Hazel Gym usando Kotlin + Jetpack Compose.
 - Panel entrenador conectado a clases, asignaciones y asistencias
 - Panel entrenador con pestanas internas de inicio, actividad y perfil
 - Panel entrenador con pantallas de detalle para clases, asignaciones y asistencias
+- Panel entrenador con gestion real de clases y rutinas propias: crear, editar y eliminar
+- Panel entrenador con gestion real de asignaciones de rutinas a clientes
 - Estructura visual de los tres paneles acercada al lenguaje de Figma: hero, metricas y accesos rapidos
 - Conexion local del emulador usando `http://10.0.2.2:8080/`
 - Configuracion de red preparada para permitir HTTP local en desarrollo

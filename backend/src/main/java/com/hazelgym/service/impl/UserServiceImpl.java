@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.hazelgym.dto.request.UserCreateRequest;
 import com.hazelgym.dto.request.UserUpdateRequest;
@@ -17,6 +19,7 @@ import com.hazelgym.model.User;
 import com.hazelgym.repository.RoleRepository;
 import com.hazelgym.repository.UserRepository;
 import com.hazelgym.service.UserService;
+import com.hazelgym.security.AuthUserDetails;
 
 @Service
 @Transactional
@@ -35,7 +38,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<UserResponse> findAll() {
-        return userRepository.findAll()
+        User authenticatedUser = getAuthenticatedUser();
+        RoleName roleName = authenticatedUser.getRole().getName();
+
+        List<User> users = switch (roleName) {
+            case ADMIN -> userRepository.findAll();
+            case TRAINER -> userRepository.findAllByRole_Name(RoleName.CLIENT);
+            case CLIENT -> List.of(authenticatedUser);
+        };
+
+        return users
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -44,7 +56,17 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserResponse findById(Long id) {
-        return toResponse(getUserById(id));
+        User authenticatedUser = getAuthenticatedUser();
+        User user = getUserById(id);
+
+        if (authenticatedUser.getRole().getName() == RoleName.TRAINER && user.getRole().getName() != RoleName.CLIENT) {
+            throw new ResourceNotFoundException("Usuario no accesible para el entrenador");
+        }
+        if (authenticatedUser.getRole().getName() == RoleName.CLIENT && !authenticatedUser.getId().equals(user.getId())) {
+            throw new ResourceNotFoundException("Usuario no accesible para el cliente autenticado");
+        }
+
+        return toResponse(user);
     }
 
     @Override
@@ -94,6 +116,14 @@ public class UserServiceImpl implements UserService {
     private User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id " + id));
+    }
+
+    private User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof AuthUserDetails authUserDetails)) {
+            throw new ResourceNotFoundException("No hay usuario autenticado en el contexto");
+        }
+        return authUserDetails.getUser();
     }
 
     private Role getRoleById(Long id) {

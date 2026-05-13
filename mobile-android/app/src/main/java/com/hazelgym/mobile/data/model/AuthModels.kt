@@ -83,6 +83,22 @@ data class UserUpsertRequest(
 )
 
 @Serializable
+data class GymClassUpsertRequest(
+    val nombre: String,
+    val descripcion: String? = null,
+    val duracion: Int,
+    val entrenadorId: Long,
+    val activa: Boolean
+)
+
+@Serializable
+data class RoutineUpsertRequest(
+    val nombre: String,
+    val descripcion: String? = null,
+    val entrenadorId: Long
+)
+
+@Serializable
 data class RoutineResponse(
     val id: Long,
     val nombre: String,
@@ -121,6 +137,12 @@ data class RoutineAssignmentResponse(
     val clientId: Long,
     val clientName: String,
     val fechaAsignacion: String? = null
+)
+
+@Serializable
+data class RoutineAssignmentUpsertRequest(
+    val routineId: Long,
+    val clientId: Long
 )
 
 @Serializable

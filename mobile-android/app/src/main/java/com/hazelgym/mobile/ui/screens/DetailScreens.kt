@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +23,10 @@ import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +35,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -136,6 +144,14 @@ fun ClientAttendancesDetailScreen(
 @Composable
 fun TrainerClassesDetailScreen(
     uiState: TrainerHomeUiState,
+    onClassNameChange: (String) -> Unit,
+    onClassDescriptionChange: (String) -> Unit,
+    onClassDurationChange: (String) -> Unit,
+    onClassActiveChange: (Boolean) -> Unit,
+    onSaveClass: () -> Unit,
+    onDeleteClass: () -> Unit,
+    onStartNewClass: () -> Unit,
+    onEditClass: (GymClassResponse) -> Unit,
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
@@ -146,10 +162,67 @@ fun TrainerClassesDetailScreen(
         onBack = onBack
     ) {
         item {
+            TrainerClassFormCard(
+                uiState = uiState,
+                onClassNameChange = onClassNameChange,
+                onClassDescriptionChange = onClassDescriptionChange,
+                onClassDurationChange = onClassDurationChange,
+                onClassActiveChange = onClassActiveChange,
+                onSaveClass = onSaveClass,
+                onDeleteClass = onDeleteClass,
+                onStartNewClass = onStartNewClass
+            )
+        }
+        item {
             DetailSectionHeader("Clases cargadas", "${uiState.classes.size} clases")
         }
         items(uiState.classes) { gymClass ->
-            GymClassDetailCard(gymClass)
+            GymClassDetailCard(
+                gymClass = gymClass,
+                isSelected = uiState.classEditingId == gymClass.id,
+                onClick = { onEditClass(gymClass) }
+            )
+        }
+    }
+}
+
+@Composable
+fun TrainerRoutinesDetailScreen(
+    uiState: TrainerHomeUiState,
+    onRoutineNameChange: (String) -> Unit,
+    onRoutineDescriptionChange: (String) -> Unit,
+    onSaveRoutine: () -> Unit,
+    onDeleteRoutine: () -> Unit,
+    onStartNewRoutine: () -> Unit,
+    onEditRoutine: (RoutineResponse) -> Unit,
+    onBack: () -> Unit
+) {
+    DetailScreenScaffold(
+        eyebrow = "Detalle operativo",
+        title = "Mis rutinas",
+        pillLabel = "Entrenador",
+        pillColor = Color(0xFF6B8DFF),
+        onBack = onBack
+    ) {
+        item {
+            TrainerRoutineFormCard(
+                uiState = uiState,
+                onRoutineNameChange = onRoutineNameChange,
+                onRoutineDescriptionChange = onRoutineDescriptionChange,
+                onSaveRoutine = onSaveRoutine,
+                onDeleteRoutine = onDeleteRoutine,
+                onStartNewRoutine = onStartNewRoutine
+            )
+        }
+        item {
+            DetailSectionHeader("Rutinas creadas", "${uiState.routines.size} rutinas")
+        }
+        items(uiState.routines) { routine ->
+            RoutineDetailCard(
+                routine = routine,
+                isSelected = uiState.routineEditingId == routine.id,
+                onClick = { onEditRoutine(routine) }
+            )
         }
     }
 }
@@ -157,6 +230,14 @@ fun TrainerClassesDetailScreen(
 @Composable
 fun TrainerAssignmentsDetailScreen(
     uiState: TrainerHomeUiState,
+    onAssignmentRoutineIdChange: (String) -> Unit,
+    onAssignmentClientIdChange: (String) -> Unit,
+    onSelectRoutine: (Long) -> Unit,
+    onSelectClient: (Long) -> Unit,
+    onSaveAssignment: () -> Unit,
+    onDeleteAssignment: () -> Unit,
+    onStartNewAssignment: () -> Unit,
+    onEditAssignment: (RoutineAssignmentResponse) -> Unit,
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
@@ -167,10 +248,26 @@ fun TrainerAssignmentsDetailScreen(
         onBack = onBack
     ) {
         item {
+            TrainerAssignmentFormCard(
+                uiState = uiState,
+                onAssignmentRoutineIdChange = onAssignmentRoutineIdChange,
+                onAssignmentClientIdChange = onAssignmentClientIdChange,
+                onSelectRoutine = onSelectRoutine,
+                onSelectClient = onSelectClient,
+                onSaveAssignment = onSaveAssignment,
+                onDeleteAssignment = onDeleteAssignment,
+                onStartNewAssignment = onStartNewAssignment
+            )
+        }
+        item {
             DetailSectionHeader("Rutinas asignadas", "${uiState.routineAssignments.size} asignaciones")
         }
         items(uiState.routineAssignments) { assignment ->
-            RoutineAssignmentDetailCard(assignment)
+            RoutineAssignmentDetailCard(
+                assignment = assignment,
+                isSelected = uiState.assignmentEditingId == assignment.id,
+                onClick = { onEditAssignment(assignment) }
+            )
         }
     }
 }
@@ -427,12 +524,19 @@ private fun DetailSectionHeader(title: String, subtitle: String) {
 }
 
 @Composable
-private fun RoutineDetailCard(routine: RoutineResponse) {
+private fun RoutineDetailCard(
+    routine: RoutineResponse,
+    isSelected: Boolean = false,
+    onClick: (() -> Unit)? = null
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+            .padding(horizontal = 18.dp)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) Color(0xFFEAFBF1) else Color.White
+        ),
         shape = RoundedCornerShape(22.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
@@ -441,20 +545,41 @@ private fun RoutineDetailCard(routine: RoutineResponse) {
             Text(text = routine.descripcion ?: "Rutina sin descripcion", color = Color(0xFF667085))
             Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Entrenador: ${routine.entrenadorNombre}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
+            if (onClick != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = if (isSelected) "Editando esta rutina" else "Toca para editar",
+                    color = if (isSelected) Color(0xFF1DAA64) else Color(0xFF667085),
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .background(
+                            if (isSelected) Color(0xFFDDF8E6) else Color(0xFFF2F4F7),
+                            RoundedCornerShape(14.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun GymClassDetailCard(gymClass: GymClassResponse) {
+private fun GymClassDetailCard(
+    gymClass: GymClassResponse,
+    isSelected: Boolean = false,
+    onClick: (() -> Unit)? = null
+) {
     val statusText = if (gymClass.activa) "Activa" else "Inactiva"
     val statusColor = if (gymClass.activa) Color(0xFF16A34A) else Color(0xFFD92D20)
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+            .padding(horizontal = 18.dp)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) Color(0xFFEAFBF1) else Color.White
+        ),
         shape = RoundedCornerShape(22.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
@@ -465,6 +590,167 @@ private fun GymClassDetailCard(gymClass: GymClassResponse) {
             Text(text = "Entrenador: ${gymClass.entrenadorNombre}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = "Estado: $statusText", color = statusColor)
+            if (onClick != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = if (isSelected) "Editando esta clase" else "Toca para editar",
+                    color = if (isSelected) Color(0xFF1DAA64) else Color(0xFF667085),
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .background(
+                            if (isSelected) Color(0xFFDDF8E6) else Color(0xFFF2F4F7),
+                            RoundedCornerShape(14.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrainerClassFormCard(
+    uiState: TrainerHomeUiState,
+    onClassNameChange: (String) -> Unit,
+    onClassDescriptionChange: (String) -> Unit,
+    onClassDurationChange: (String) -> Unit,
+    onClassActiveChange: (Boolean) -> Unit,
+    onSaveClass: () -> Unit,
+    onDeleteClass: () -> Unit,
+    onStartNewClass: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = if (uiState.classEditingId == null) "Nueva clase" else "Editar clase #${uiState.classEditingId}",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Completa los datos de la clase y define su estado.",
+                color = Color(0xFF667085)
+            )
+
+            FormSectionLabel("Datos basicos")
+
+            OutlinedTextField(
+                value = uiState.classNameInput,
+                onValueChange = onClassNameChange,
+                label = { Text("Nombre") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.classDescriptionInput,
+                onValueChange = onClassDescriptionChange,
+                label = { Text("Descripcion") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.classDurationInput,
+                onValueChange = onClassDurationChange,
+                label = { Text("Duracion en minutos") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            FormSectionLabel("Disponibilidad")
+
+            SearchableChoiceField(
+                label = "Estado de la clase",
+                placeholder = "Selecciona el estado",
+                selectedKey = uiState.classActiveInput.toString(),
+                options = listOf(
+                    ChoiceOption("true", "Activa", "La clase se muestra como disponible"),
+                    ChoiceOption("false", "Inactiva", "La clase queda desactivada temporalmente")
+                ),
+                onOptionSelected = { option -> onClassActiveChange(option.key.toBoolean()) }
+            )
+
+            Text(
+                text = "Estado: ${if (uiState.classActiveInput) "Activa" else "Inactiva"}",
+                color = Color(0xFF667085)
+            )
+
+            FormActionsRow(
+                onClear = onStartNewClass,
+                onDelete = if (uiState.classEditingId != null) onDeleteClass else null,
+                onSave = onSaveClass,
+                isSaving = uiState.isSavingClass
+            )
+
+            if (uiState.classSaveMessage != null) {
+                Text(text = uiState.classSaveMessage, color = Color(0xFF667085))
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrainerRoutineFormCard(
+    uiState: TrainerHomeUiState,
+    onRoutineNameChange: (String) -> Unit,
+    onRoutineDescriptionChange: (String) -> Unit,
+    onSaveRoutine: () -> Unit,
+    onDeleteRoutine: () -> Unit,
+    onStartNewRoutine: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = if (uiState.routineEditingId == null) "Nueva rutina" else "Editar rutina #${uiState.routineEditingId}",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "Organiza aqui la informacion principal de la rutina.",
+                color = Color(0xFF667085)
+            )
+
+            FormSectionLabel("Datos basicos")
+
+            OutlinedTextField(
+                value = uiState.routineNameInput,
+                onValueChange = onRoutineNameChange,
+                label = { Text("Nombre") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.routineDescriptionInput,
+                onValueChange = onRoutineDescriptionChange,
+                label = { Text("Descripcion") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            FormActionsRow(
+                onClear = onStartNewRoutine,
+                onDelete = if (uiState.routineEditingId != null) onDeleteRoutine else null,
+                onSave = onSaveRoutine,
+                isSaving = uiState.isSavingRoutine
+            )
+
+            if (uiState.routineSaveMessage != null) {
+                Text(text = uiState.routineSaveMessage, color = Color(0xFF667085))
+            }
         }
     }
 }
@@ -541,6 +827,12 @@ private fun AdminMachineFormCard(
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )
+            Text(
+                text = "Mantiene el catalogo del gimnasio actualizado desde el movil.",
+                color = Color(0xFF667085)
+            )
+
+            FormSectionLabel("Datos basicos")
 
             OutlinedTextField(
                 value = uiState.machineNameInput,
@@ -563,40 +855,30 @@ private fun AdminMachineFormCard(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                SelectableTextButton(
-                    label = "ACTIVA",
-                    selected = uiState.machineStatusInput == "ACTIVA",
-                    onClick = { onMachineStatusChange("ACTIVA") }
-                )
-                SelectableTextButton(
-                    label = "FUERA SERVICIO",
-                    selected = uiState.machineStatusInput == "FUERA_DE_SERVICIO",
-                    onClick = { onMachineStatusChange("FUERA_DE_SERVICIO") }
-                )
-            }
+            FormSectionLabel("Estado de operacion")
+
+            SearchableChoiceField(
+                label = "Estado de la maquina",
+                placeholder = "Selecciona el estado",
+                selectedKey = uiState.machineStatusInput,
+                options = listOf(
+                    ChoiceOption("ACTIVA", "Activa", "Disponible para usar en sala"),
+                    ChoiceOption("FUERA_DE_SERVICIO", "Fuera de servicio", "No disponible temporalmente")
+                ),
+                onOptionSelected = { option -> onMachineStatusChange(option.key) }
+            )
 
             Text(
                 text = "Estado seleccionado: ${uiState.machineStatusInput}",
                 color = Color(0xFF667085)
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                TextButton(onClick = onStartNewMachine) {
-                    Text("Limpiar")
-                }
-                if (uiState.machineEditingId != null) {
-                    TextButton(
-                        onClick = onDeleteMachine,
-                        enabled = !uiState.isSavingMachine
-                    ) {
-                        Text("Eliminar")
-                    }
-                }
-                TextButton(onClick = onSaveMachine, enabled = !uiState.isSavingMachine) {
-                    Text(if (uiState.isSavingMachine) "Guardando..." else "Guardar")
-                }
-            }
+            FormActionsRow(
+                onClear = onStartNewMachine,
+                onDelete = if (uiState.machineEditingId != null) onDeleteMachine else null,
+                onSave = onSaveMachine,
+                isSaving = uiState.isSavingMachine
+            )
 
             if (uiState.machineSaveMessage != null) {
                 Text(
@@ -609,12 +891,19 @@ private fun AdminMachineFormCard(
 }
 
 @Composable
-private fun RoutineAssignmentDetailCard(assignment: RoutineAssignmentResponse) {
+private fun RoutineAssignmentDetailCard(
+    assignment: RoutineAssignmentResponse,
+    isSelected: Boolean = false,
+    onClick: (() -> Unit)? = null
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+            .padding(horizontal = 18.dp)
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) Color(0xFFEAFBF1) else Color.White
+        ),
         shape = RoundedCornerShape(22.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
@@ -623,6 +912,396 @@ private fun RoutineAssignmentDetailCard(assignment: RoutineAssignmentResponse) {
             Text(text = "Cliente: ${assignment.clientName}", color = Color(0xFF667085))
             Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Asignacion #${assignment.id}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
+            if (onClick != null) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = if (isSelected) "Seleccionada para borrar" else "Toca para seleccionar",
+                    color = if (isSelected) Color(0xFF1DAA64) else Color(0xFF667085),
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .background(
+                            if (isSelected) Color(0xFFDDF8E6) else Color(0xFFF2F4F7),
+                            RoundedCornerShape(14.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrainerAssignmentFormCard(
+    uiState: TrainerHomeUiState,
+    onAssignmentRoutineIdChange: (String) -> Unit,
+    onAssignmentClientIdChange: (String) -> Unit,
+    onSelectRoutine: (Long) -> Unit,
+    onSelectClient: (Long) -> Unit,
+    onSaveAssignment: () -> Unit,
+    onDeleteAssignment: () -> Unit,
+    onStartNewAssignment: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = if (uiState.assignmentEditingId == null) "Nueva asignacion" else "Asignacion #${uiState.assignmentEditingId}",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Text(
+                text = "Selecciona una rutina tuya y un cliente.",
+                color = Color(0xFF667085)
+            )
+
+            FormSectionLabel("Rutina")
+
+            SelectionSummaryCard(
+                icon = Icons.Default.TaskAlt,
+                title = "Rutina seleccionada",
+                value = uiState.routines.firstOrNull { it.id.toString() == uiState.assignmentRoutineIdInput }?.nombre
+                    ?: "Todavia no has elegido una rutina"
+            )
+
+            SearchableSelectionField(
+                label = "Buscar rutina",
+                placeholder = "Escribe el nombre de la rutina",
+                selectedId = uiState.assignmentRoutineIdInput,
+                options = uiState.routines.map {
+                    SearchOption(
+                        id = it.id,
+                        title = it.nombre,
+                        subtitle = it.descripcion ?: "Rutina sin descripcion"
+                    )
+                },
+                emptyMessage = "No hay rutinas disponibles",
+                onOptionSelected = { option -> onSelectRoutine(option.id) }
+            )
+
+            FormSectionLabel("Cliente")
+
+            SelectionSummaryCard(
+                icon = Icons.Default.Groups,
+                title = "Cliente seleccionado",
+                value = uiState.clients.firstOrNull { it.id.toString() == uiState.assignmentClientIdInput }?.nombre
+                    ?: "Todavia no has elegido un cliente"
+            )
+
+            SearchableSelectionField(
+                label = "Buscar cliente",
+                placeholder = "Escribe el nombre del cliente",
+                selectedId = uiState.assignmentClientIdInput,
+                options = uiState.clients.map {
+                    SearchOption(
+                        id = it.id,
+                        title = it.nombre,
+                        subtitle = it.email
+                    )
+                },
+                emptyMessage = "No hay clientes disponibles",
+                onOptionSelected = { option -> onSelectClient(option.id) }
+            )
+
+            if (uiState.routines.isEmpty() || uiState.clients.isEmpty()) {
+                Text(
+                    text = "Si faltan datos para seleccionar, puedes escribir los ID manualmente.",
+                    color = Color(0xFF667085)
+                )
+
+                OutlinedTextField(
+                    value = uiState.assignmentRoutineIdInput,
+                    onValueChange = onAssignmentRoutineIdChange,
+                    label = { Text("ID de rutina") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = uiState.assignmentClientIdInput,
+                    onValueChange = onAssignmentClientIdChange,
+                    label = { Text("ID de cliente") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            FormActionsRow(
+                onClear = onStartNewAssignment,
+                onDelete = if (uiState.assignmentEditingId != null) onDeleteAssignment else null,
+                onSave = onSaveAssignment,
+                isSaving = uiState.isSavingAssignment
+            )
+
+            if (uiState.assignmentSaveMessage != null) {
+                Text(text = uiState.assignmentSaveMessage, color = Color(0xFF667085))
+            }
+        }
+    }
+}
+
+private data class SearchOption(
+    val id: Long,
+    val title: String,
+    val subtitle: String
+)
+
+private data class ChoiceOption(
+    val key: String,
+    val title: String,
+    val subtitle: String
+)
+
+@Composable
+private fun SelectionSummaryCard(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    value: String
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F8FA)),
+        shape = RoundedCornerShape(18.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(Color(0xFFEAFBF1), RoundedCornerShape(14.dp))
+                    .padding(10.dp)
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = Color(0xFF1DAA64)
+                )
+            }
+            Column {
+                Text(
+                    text = title,
+                    color = Color(0xFF667085),
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = value,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF0F172A)
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchableSelectionField(
+    label: String,
+    placeholder: String,
+    selectedId: String,
+    options: List<SearchOption>,
+    emptyMessage: String,
+    onOptionSelected: (SearchOption) -> Unit
+) {
+    var expanded by rememberSaveable(label) { mutableStateOf(false) }
+    var query by rememberSaveable(label) { mutableStateOf("") }
+
+    val selectedOption = options.firstOrNull { it.id.toString() == selectedId }
+    LaunchedEffect(selectedId) {
+        query = selectedOption?.title.orEmpty()
+    }
+    val filteredOptions = options.filter { option ->
+        query.isBlank() ||
+            option.title.contains(query, ignoreCase = true) ||
+            option.subtitle.contains(query, ignoreCase = true) ||
+            option.id.toString().contains(query)
+    }.take(8)
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = if (expanded) query else selectedOption?.title.orEmpty(),
+            onValueChange = {
+                query = it
+                expanded = true
+            },
+            label = { Text(label) },
+            placeholder = { Text(placeholder) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            supportingText = {
+                Text(
+                    text = selectedOption?.let { "ID seleccionado: ${it.id}" } ?: "Sin seleccion actual",
+                    color = Color(0xFF667085)
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            if (options.isEmpty()) {
+                DropdownMenuItem(
+                    text = { Text(emptyMessage) },
+                    onClick = { expanded = false }
+                )
+            } else if (filteredOptions.isEmpty()) {
+                DropdownMenuItem(
+                    text = { Text("No hay resultados para \"$query\"") },
+                    onClick = { expanded = false }
+                )
+            } else {
+                filteredOptions.forEach { option ->
+                    DropdownMenuItem(
+                        text = {
+                            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Text(
+                                    text = option.title,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = "${option.subtitle} · ID ${option.id}",
+                                    color = Color(0xFF667085),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        },
+                        onClick = {
+                            onOptionSelected(option)
+                            query = option.title
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SearchableChoiceField(
+    label: String,
+    placeholder: String,
+    selectedKey: String,
+    options: List<ChoiceOption>,
+    onOptionSelected: (ChoiceOption) -> Unit
+) {
+    var expanded by rememberSaveable(label) { mutableStateOf(false) }
+    var query by rememberSaveable(label) { mutableStateOf("") }
+
+    val selectedOption = options.firstOrNull { it.key == selectedKey }
+    LaunchedEffect(selectedKey) {
+        query = selectedOption?.title.orEmpty()
+    }
+    val filteredOptions = options.filter { option ->
+        query.isBlank() ||
+            option.title.contains(query, ignoreCase = true) ||
+            option.subtitle.contains(query, ignoreCase = true) ||
+            option.key.contains(query, ignoreCase = true)
+    }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = if (expanded) query else selectedOption?.title.orEmpty(),
+            onValueChange = {
+                query = it
+                expanded = true
+            },
+            label = { Text(label) },
+            placeholder = { Text(placeholder) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            supportingText = {
+                Text(
+                    text = selectedOption?.subtitle ?: "Sin seleccion actual",
+                    color = Color(0xFF667085)
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            filteredOptions.forEach { option ->
+                DropdownMenuItem(
+                    text = {
+                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                text = option.title,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = option.subtitle,
+                                color = Color(0xFF667085),
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    },
+                    onClick = {
+                        onOptionSelected(option)
+                        query = option.title
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun FormSectionLabel(text: String) {
+    Text(
+        text = text,
+        color = Color(0xFF0F172A),
+        fontWeight = FontWeight.SemiBold,
+        style = MaterialTheme.typography.bodyMedium
+    )
+}
+
+@Composable
+private fun FormActionsRow(
+    onClear: () -> Unit,
+    onDelete: (() -> Unit)?,
+    onSave: () -> Unit,
+    isSaving: Boolean
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        TextButton(onClick = onClear) {
+            Text("Limpiar")
+        }
+        if (onDelete != null) {
+            TextButton(onClick = onDelete, enabled = !isSaving) {
+                Text("Eliminar")
+            }
+        }
+        TextButton(onClick = onSave, enabled = !isSaving) {
+            Text(if (isSaving) "Guardando..." else "Guardar")
         }
     }
 }
@@ -720,6 +1399,12 @@ private fun AdminUserFormCard(
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )
+            Text(
+                text = "Gestiona altas, cambios de rol y acceso desde una sola vista.",
+                color = Color(0xFF667085)
+            )
+
+            FormSectionLabel("Datos basicos")
 
             OutlinedTextField(
                 value = uiState.userNameInput,
@@ -742,77 +1427,47 @@ private fun AdminUserFormCard(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                SelectableTextButton(
-                    label = "CLIENT",
-                    selected = uiState.userRoleInput == "CLIENT",
-                    onClick = { onUserRoleChange("CLIENT") }
-                )
-                SelectableTextButton(
-                    label = "TRAINER",
-                    selected = uiState.userRoleInput == "TRAINER",
-                    onClick = { onUserRoleChange("TRAINER") }
-                )
-                SelectableTextButton(
-                    label = "ADMIN",
-                    selected = uiState.userRoleInput == "ADMIN",
-                    onClick = { onUserRoleChange("ADMIN") }
-                )
-            }
+            FormSectionLabel("Permisos y acceso")
 
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                SelectableTextButton(
-                    label = "Activo",
-                    selected = uiState.userActiveInput,
-                    onClick = { onUserActiveChange(true) }
-                )
-                SelectableTextButton(
-                    label = "Inactivo",
-                    selected = !uiState.userActiveInput,
-                    onClick = { onUserActiveChange(false) }
-                )
-            }
+            SearchableChoiceField(
+                label = "Rol del usuario",
+                placeholder = "Selecciona el rol",
+                selectedKey = uiState.userRoleInput,
+                options = listOf(
+                    ChoiceOption("CLIENT", "Cliente", "Usuario final del gimnasio"),
+                    ChoiceOption("TRAINER", "Entrenador", "Gestiona clases y rutinas"),
+                    ChoiceOption("ADMIN", "Administrador", "Control total del sistema")
+                ),
+                onOptionSelected = { option -> onUserRoleChange(option.key) }
+            )
+
+            SearchableChoiceField(
+                label = "Estado del usuario",
+                placeholder = "Selecciona el estado",
+                selectedKey = uiState.userActiveInput.toString(),
+                options = listOf(
+                    ChoiceOption("true", "Activo", "Puede iniciar sesion y usar la app"),
+                    ChoiceOption("false", "Inactivo", "No puede acceder temporalmente")
+                ),
+                onOptionSelected = { option -> onUserActiveChange(option.key.toBoolean()) }
+            )
 
             Text(
                 text = "Rol: ${uiState.userRoleInput} | Estado: ${if (uiState.userActiveInput) "Activo" else "Inactivo"}",
                 color = Color(0xFF667085)
             )
 
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                TextButton(onClick = onStartNewUser) { Text("Limpiar") }
-                if (uiState.userEditingId != null) {
-                    TextButton(onClick = onDeleteUser, enabled = !uiState.isSavingUser) { Text("Eliminar") }
-                }
-                TextButton(onClick = onSaveUser, enabled = !uiState.isSavingUser) {
-                    Text(if (uiState.isSavingUser) "Guardando..." else "Guardar")
-                }
-            }
+            FormActionsRow(
+                onClear = onStartNewUser,
+                onDelete = if (uiState.userEditingId != null) onDeleteUser else null,
+                onSave = onSaveUser,
+                isSaving = uiState.isSavingUser
+            )
 
             if (uiState.userSaveMessage != null) {
                 Text(text = uiState.userSaveMessage, color = Color(0xFF667085))
             }
         }
-    }
-}
-
-@Composable
-private fun SelectableTextButton(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    TextButton(
-        onClick = onClick,
-        modifier = Modifier.background(
-            color = if (selected) Color(0xFFEAFBF1) else Color(0xFFF4F4F5),
-            shape = RoundedCornerShape(14.dp)
-        )
-    ) {
-        Text(
-            text = label,
-            color = if (selected) Color(0xFF1DAA64) else Color(0xFF475467),
-            fontWeight = FontWeight.SemiBold
-        )
     }
 }
 

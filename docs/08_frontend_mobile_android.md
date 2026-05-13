@@ -27,6 +27,8 @@ Durante esta fase se ha levantado la primera base funcional de la app movil nati
 - Backend de asistencias ajustado para que el cliente vea solo sus propios registros autenticados
 - Gestion basica de maquinas desde la app admin: alta y edicion simple con formulario
 - Gestion basica de usuarios desde la app admin: alta, edicion y borrado simple con formulario
+- Gestion real de clases y rutinas desde la app del entrenador: alta, edicion y borrado
+- Gestion real de asignaciones de rutinas a clientes desde la app del entrenador
 
 ## Decisiones tecnicas
 
@@ -54,6 +56,9 @@ Durante esta fase se ha levantado la primera base funcional de la app movil nati
 - Ajuste visual del home siguiendo la referencia de Figma
 - Pestana de actividad con rutinas asignadas y asistencias recientes
 - Accesos rapidos conectados a actividad y perfil
+- Gestion real de sus clases desde la vista de detalle
+- Gestion real de sus rutinas desde la vista de detalle
+- Gestion real de asignaciones de rutina a clientes desde la vista de detalle
 - Perfil basico
 
 ### Administrador

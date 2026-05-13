@@ -33,6 +33,7 @@ import com.hazelgym.mobile.ui.screens.TrainerAssignmentsDetailScreen
 import com.hazelgym.mobile.ui.screens.TrainerAttendancesDetailScreen
 import com.hazelgym.mobile.ui.screens.TrainerClassesDetailScreen
 import com.hazelgym.mobile.ui.screens.TrainerHomeScreen
+import com.hazelgym.mobile.ui.screens.TrainerRoutinesDetailScreen
 import com.hazelgym.mobile.ui.viewmodel.AdminHomeViewModel
 import com.hazelgym.mobile.ui.viewmodel.ClientHomeViewModel
 import com.hazelgym.mobile.ui.viewmodel.LoginRole
@@ -52,6 +53,7 @@ private object Routes {
     const val ClientAttendances = "client_attendances"
     const val TrainerHome = "trainer_home"
     const val TrainerClasses = "trainer_classes"
+    const val TrainerRoutines = "trainer_routines"
     const val TrainerAssignments = "trainer_assignments"
     const val TrainerAttendances = "trainer_attendances"
     const val AdminHome = "admin_home"
@@ -156,6 +158,7 @@ fun HazelGymMobileApp() {
                 onRefresh = trainerHomeViewModel::refresh,
                 onLogout = rootViewModel::logout,
                 onNavigateToClasses = { navController.navigate(Routes.TrainerClasses) },
+                onNavigateToRoutines = { navController.navigate(Routes.TrainerRoutines) },
                 onNavigateToAssignments = { navController.navigate(Routes.TrainerAssignments) },
                 onNavigateToAttendances = { navController.navigate(Routes.TrainerAttendances) }
             )
@@ -164,6 +167,27 @@ fun HazelGymMobileApp() {
             val trainerHomeViewModel: TrainerHomeViewModel = viewModel(factory = TrainerHomeViewModel.factory())
             TrainerClassesDetailScreen(
                 uiState = trainerHomeViewModel.uiState.collectAsState().value,
+                onClassNameChange = trainerHomeViewModel::updateClassNameInput,
+                onClassDescriptionChange = trainerHomeViewModel::updateClassDescriptionInput,
+                onClassDurationChange = trainerHomeViewModel::updateClassDurationInput,
+                onClassActiveChange = trainerHomeViewModel::updateClassActiveInput,
+                onSaveClass = trainerHomeViewModel::saveClass,
+                onDeleteClass = trainerHomeViewModel::deleteEditingClass,
+                onStartNewClass = trainerHomeViewModel::startNewClass,
+                onEditClass = trainerHomeViewModel::editClass,
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.TrainerRoutines) {
+            val trainerHomeViewModel: TrainerHomeViewModel = viewModel(factory = TrainerHomeViewModel.factory())
+            TrainerRoutinesDetailScreen(
+                uiState = trainerHomeViewModel.uiState.collectAsState().value,
+                onRoutineNameChange = trainerHomeViewModel::updateRoutineNameInput,
+                onRoutineDescriptionChange = trainerHomeViewModel::updateRoutineDescriptionInput,
+                onSaveRoutine = trainerHomeViewModel::saveRoutine,
+                onDeleteRoutine = trainerHomeViewModel::deleteEditingRoutine,
+                onStartNewRoutine = trainerHomeViewModel::startNewRoutine,
+                onEditRoutine = trainerHomeViewModel::editRoutine,
                 onBack = { navController.popBackStack() }
             )
         }
@@ -171,6 +195,14 @@ fun HazelGymMobileApp() {
             val trainerHomeViewModel: TrainerHomeViewModel = viewModel(factory = TrainerHomeViewModel.factory())
             TrainerAssignmentsDetailScreen(
                 uiState = trainerHomeViewModel.uiState.collectAsState().value,
+                onAssignmentRoutineIdChange = trainerHomeViewModel::updateAssignmentRoutineIdInput,
+                onAssignmentClientIdChange = trainerHomeViewModel::updateAssignmentClientIdInput,
+                onSelectRoutine = trainerHomeViewModel::selectAssignmentRoutine,
+                onSelectClient = trainerHomeViewModel::selectAssignmentClient,
+                onSaveAssignment = trainerHomeViewModel::saveAssignment,
+                onDeleteAssignment = trainerHomeViewModel::deleteEditingAssignment,
+                onStartNewAssignment = trainerHomeViewModel::startNewAssignment,
+                onEditAssignment = trainerHomeViewModel::editAssignment,
                 onBack = { navController.popBackStack() }
             )
         }
