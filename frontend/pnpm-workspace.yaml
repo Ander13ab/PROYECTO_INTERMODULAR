@@ -1,2 +1,19 @@
 packages:
   - '.'
+
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - react
+  - react-dom
+  - vite
+minimumReleaseAgeStrict: true
+blockExoticSubdeps: true
+verifyDepsBeforeRun: error
+strictDepBuilds: true
+allowBuilds:
+  esbuild: true
+  "@tailwindcss/oxide": true
+registries:
+  default: https://registry.npmjs.org/
+nodeVersion: 24.15.0
+engineStrict: true

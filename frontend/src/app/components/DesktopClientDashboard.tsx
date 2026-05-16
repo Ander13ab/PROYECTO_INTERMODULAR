@@ -41,12 +41,22 @@ function StatCard({
   );
 }
 
-export function DesktopClientDashboard() {
+interface DesktopClientDashboardProps {
+  userName: string;
+  onLogout: () => void;
+}
+
+export function DesktopClientDashboard({
+  userName,
+  onLogout,
+}: DesktopClientDashboardProps) {
   return (
     <div className="overflow-hidden rounded-[32px] border border-[#E7EAEE] bg-[#F2F5F2] shadow-[0_24px_60px_rgba(15,23,42,0.10)]">
       <div className="grid min-h-[760px] grid-cols-[240px_1fr]">
         <aside className="bg-[#0D0D14] px-5 py-7">
-          <h2 className="font-['Syne'] text-3xl font-extrabold text-white">Hazel Gym</h2>
+          <h2 className="font-['Syne'] text-3xl font-extrabold text-white">
+            Hazel Gym
+          </h2>
           <p className="mt-2 text-sm text-[#98A2B3]">Panel cliente</p>
           <div className="mt-10 space-y-3">
             <SidebarItem label="Inicio" active />
@@ -62,32 +72,40 @@ export function DesktopClientDashboard() {
             <div>
               <p className="text-sm text-[#667085]">Hola de nuevo</p>
               <h3 className="font-['Syne'] text-5xl font-extrabold text-[#101828]">
-                Carlos
+                {userName}
               </h3>
             </div>
-            <div className="rounded-full bg-[#FFE1D8] px-5 py-3 text-sm font-semibold text-[#C2410C]">
-              14 dias seguidos
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-[#FFE1D8] px-5 py-3 text-sm font-semibold text-[#C2410C]">
+                Cliente
+              </div>
+              <button
+                className="rounded-full bg-[#0D0D14] px-5 py-3 text-sm font-semibold text-white"
+                onClick={onLogout}
+              >
+                Cerrar sesion
+              </button>
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-6">
             <StatCard
+              accent="#FF4D2E"
+              helper="Entradas registradas"
               label="Visitas totales"
               value="47"
-              helper="Entradas registradas"
-              accent="#FF4D2E"
             />
             <StatCard
+              accent="#2266FF"
+              helper="Dias consecutivos"
               label="Racha actual"
               value="14"
-              helper="Dias consecutivos"
-              accent="#2266FF"
             />
             <StatCard
+              accent="#22CC66"
+              helper="Asignadas por tu entrenador"
               label="Rutinas activas"
               value="3"
-              helper="Asignadas por tu entrenador"
-              accent="#22CC66"
             />
           </div>
 
@@ -132,7 +150,9 @@ export function DesktopClientDashboard() {
                 </div>
                 <div className="rounded-[20px] bg-[#181B24] p-5">
                   <p className="text-lg font-semibold">Spinning</p>
-                  <p className="mt-2 text-sm text-white/55">Manana · 08:30 · Sala 1</p>
+                  <p className="mt-2 text-sm text-white/55">
+                    Manana · 08:30 · Sala 1
+                  </p>
                 </div>
               </div>
             </aside>

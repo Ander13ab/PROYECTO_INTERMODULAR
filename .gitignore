@@ -3,6 +3,8 @@ mobile-android/.gradle/
 mobile-android/build/
 mobile-android/app/build/
 mobile-android/local.properties
+frontend/node_modules/
+frontend/.pnpm-store/
 
 # IDE
 .idea/

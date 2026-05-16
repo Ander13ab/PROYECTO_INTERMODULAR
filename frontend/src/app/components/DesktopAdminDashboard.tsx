@@ -28,17 +28,29 @@ function AdminMetric({
   return (
     <div className="rounded-[22px] border border-[#E7EAEE] bg-white p-6">
       <p className="text-sm text-[#667085]">{label}</p>
-      <p className="mt-4 font-['Syne'] text-4xl font-extrabold text-[#0D2010]">{value}</p>
+      <p className="mt-4 font-['Syne'] text-4xl font-extrabold text-[#0D2010]">
+        {value}
+      </p>
     </div>
   );
 }
 
-export function DesktopAdminDashboard() {
+interface DesktopAdminDashboardProps {
+  userName: string;
+  onLogout: () => void;
+}
+
+export function DesktopAdminDashboard({
+  userName,
+  onLogout,
+}: DesktopAdminDashboardProps) {
   return (
     <div className="overflow-hidden rounded-[32px] border border-[#E7EAEE] bg-[#F2F5F2] shadow-[0_24px_60px_rgba(15,23,42,0.10)]">
       <div className="grid min-h-[760px] grid-cols-[240px_1fr]">
         <aside className="bg-[#0D2010] px-5 py-7">
-          <h2 className="font-['Syne'] text-3xl font-extrabold text-white">Hazel Gym</h2>
+          <h2 className="font-['Syne'] text-3xl font-extrabold text-white">
+            Hazel Gym
+          </h2>
           <p className="mt-2 text-sm text-[#A7F3D0]">Administracion</p>
           <div className="mt-10 space-y-3">
             <AdminSidebarItem label="Dashboard" active />
@@ -55,11 +67,19 @@ export function DesktopAdminDashboard() {
             <div>
               <p className="text-sm text-[#667085]">Panel de administracion</p>
               <h3 className="font-['Syne'] text-5xl font-extrabold text-[#0D2010]">
-                GymApp
+                {userName}
               </h3>
             </div>
-            <div className="rounded-full bg-[#DCFCE7] px-5 py-3 text-sm font-semibold text-[#166534]">
-              Administrador
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-[#DCFCE7] px-5 py-3 text-sm font-semibold text-[#166534]">
+                Administrador
+              </div>
+              <button
+                className="rounded-full bg-[#0D2010] px-5 py-3 text-sm font-semibold text-white"
+                onClick={onLogout}
+              >
+                Cerrar sesion
+              </button>
             </div>
           </div>
 

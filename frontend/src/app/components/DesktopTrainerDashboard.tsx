@@ -18,12 +18,22 @@ function TrainerSidebarItem({
   );
 }
 
-export function DesktopTrainerDashboard() {
+interface DesktopTrainerDashboardProps {
+  userName: string;
+  onLogout: () => void;
+}
+
+export function DesktopTrainerDashboard({
+  userName,
+  onLogout,
+}: DesktopTrainerDashboardProps) {
   return (
     <div className="overflow-hidden rounded-[32px] border border-[#DCE3F6] bg-[#EEF2FF] shadow-[0_24px_60px_rgba(15,23,42,0.10)]">
       <div className="grid min-h-[760px] grid-cols-[240px_1fr]">
         <aside className="bg-[#0A1A4A] px-5 py-7">
-          <h2 className="font-['Syne'] text-3xl font-extrabold text-white">Hazel Gym</h2>
+          <h2 className="font-['Syne'] text-3xl font-extrabold text-white">
+            Hazel Gym
+          </h2>
           <p className="mt-2 text-sm text-[#C7D7FE]">Panel entrenador</p>
           <div className="mt-10 space-y-3">
             <TrainerSidebarItem label="Resumen" active />
@@ -39,11 +49,19 @@ export function DesktopTrainerDashboard() {
             <div>
               <p className="text-sm text-[#667085]">Panel de entrenador</p>
               <h3 className="font-['Syne'] text-5xl font-extrabold text-[#0A1A4A]">
-                Laura R.
+                {userName}
               </h3>
             </div>
-            <div className="rounded-full bg-[#DBEAFE] px-5 py-3 text-sm font-semibold text-[#1D4ED8]">
-              Entrenadora certificada
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-[#DBEAFE] px-5 py-3 text-sm font-semibold text-[#1D4ED8]">
+                Entrenador
+              </div>
+              <button
+                className="rounded-full bg-[#0A1A4A] px-5 py-3 text-sm font-semibold text-white"
+                onClick={onLogout}
+              >
+                Cerrar sesion
+              </button>
             </div>
           </div>
 
@@ -73,7 +91,9 @@ export function DesktopTrainerDashboard() {
                       className="h-3 w-3 rounded-full"
                       style={{ backgroundColor: color }}
                     />
-                    <span className="text-base font-semibold text-[#0A1A4A]">{name}</span>
+                    <span className="text-base font-semibold text-[#0A1A4A]">
+                      {name}
+                    </span>
                   </div>
                 ))}
               </div>

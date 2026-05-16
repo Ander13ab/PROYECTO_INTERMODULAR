@@ -1,4 +1,22 @@
-export function DesktopLoginScreen() {
+interface DesktopLoginScreenProps {
+  email: string;
+  password: string;
+  errorMessage: string | null;
+  isLoading: boolean;
+  onEmailChange: (value: string) => void;
+  onPasswordChange: (value: string) => void;
+  onSubmit: () => void;
+}
+
+export function DesktopLoginScreen({
+  email,
+  password,
+  errorMessage,
+  isLoading,
+  onEmailChange,
+  onPasswordChange,
+  onSubmit,
+}: DesktopLoginScreenProps) {
   return (
     <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[#0D0D14] shadow-[0_30px_80px_rgba(13,13,20,0.35)]">
       <div className="grid min-h-[720px] grid-cols-[1.1fr_0.9fr]">
@@ -8,15 +26,17 @@ export function DesktopLoginScreen() {
               Hazel Gym
             </div>
           </div>
+
           <div className="max-w-[520px]">
             <h2 className="font-['Syne'] text-6xl font-extrabold leading-[1.02] text-white">
               Accede a tu gimnasio y sigue tu progreso.
             </h2>
             <p className="mt-6 max-w-[420px] text-lg leading-8 text-[#A7ACBA]">
-              Una misma plataforma para clientes, entrenadores y administración,
+              Una misma plataforma para clientes, entrenadores y administracion,
               conectada con el backend actual y preparada para crecer.
             </p>
           </div>
+
           <div className="flex gap-3 text-sm">
             <div className="rounded-full border border-[#FF4D2E44] bg-[#FF4D2E1A] px-4 py-2 text-[#FF6B50]">
               Cliente
@@ -39,35 +59,59 @@ export function DesktopLoginScreen() {
               Bienvenido de vuelta
             </h3>
             <p className="mt-3 text-base text-[#9CA3AF]">
-              Aqui conectaremos `/api/auth/login` y `/api/auth/me`.
+              Inicia sesion con tu cuenta real del backend para acceder a tu panel.
             </p>
 
-            <div className="mt-10 space-y-5">
+            <form
+              className="mt-10 space-y-5"
+              onSubmit={(event) => {
+                event.preventDefault();
+                onSubmit();
+              }}
+            >
               <label className="block">
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[#6B7280]">
                   Email
                 </span>
-                <div className="rounded-2xl border border-white/5 bg-[#1F2230] px-5 py-4 text-base text-white/80">
-                  usuario@gym.es
-                </div>
+                <input
+                  className="w-full rounded-2xl border border-white/5 bg-[#1F2230] px-5 py-4 text-base text-white outline-none transition placeholder:text-white/30 focus:border-[#FF4D2E]"
+                  placeholder="usuario@gym.es"
+                  type="email"
+                  value={email}
+                  onChange={(event) => onEmailChange(event.target.value)}
+                />
               </label>
 
               <label className="block">
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[#6B7280]">
                   Contrasena
                 </span>
-                <div className="rounded-2xl border border-white/5 bg-[#1F2230] px-5 py-4 text-base text-white/80">
-                  ••••••••
-                </div>
+                <input
+                  className="w-full rounded-2xl border border-white/5 bg-[#1F2230] px-5 py-4 text-base text-white outline-none transition placeholder:text-white/30 focus:border-[#FF4D2E]"
+                  placeholder="Introduce tu contrasena"
+                  type="password"
+                  value={password}
+                  onChange={(event) => onPasswordChange(event.target.value)}
+                />
               </label>
 
-              <button className="w-full rounded-2xl bg-[#FF4D2E] px-5 py-4 font-['Syne'] text-lg font-bold text-white">
-                Entrar
+              {errorMessage ? (
+                <div className="rounded-2xl border border-[#FF4D2E33] bg-[#FF4D2E12] px-4 py-3 text-sm text-[#FF9B87]">
+                  {errorMessage}
+                </div>
+              ) : null}
+
+              <button
+                className="w-full rounded-2xl bg-[#FF4D2E] px-5 py-4 font-['Syne'] text-lg font-bold text-white transition hover:bg-[#ff5f44] disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isLoading}
+                type="submit"
+              >
+                {isLoading ? 'Entrando...' : 'Entrar'}
               </button>
-            </div>
+            </form>
 
             <p className="mt-6 text-center text-sm text-white/25">
-              Has olvidado tu contrasena?
+              El rol se detecta automaticamente segun la cuenta que uses.
             </p>
           </div>
         </div>
