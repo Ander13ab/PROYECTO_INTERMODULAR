@@ -100,6 +100,7 @@ export default function App() {
         return (
           <DesktopTrainerDashboard
             onLogout={handleLogout}
+            userId={user.id}
             userName={user.nombre}
           />
         );
@@ -108,70 +109,48 @@ export default function App() {
         return (
           <DesktopClientDashboard
             onLogout={handleLogout}
+            userId={user.id}
             userName={user.nombre}
           />
         );
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#F7F8FA_0%,#EEF1F5_100%)] p-6 md:p-8">
-      <div className="mx-auto max-w-[1600px]">
-        <div className="mb-8 rounded-[28px] border border-white/70 bg-white/85 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-          <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-            <div className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#667085]">
-                Hazel Gym Frontend
-              </p>
-              <h1 className="mt-3 font-['Syne'] text-4xl font-extrabold text-[#0D0D14] md:text-5xl">
-                Aplicacion web sencilla conectada al backend
-              </h1>
-              <p className="mt-4 text-base leading-7 text-[#667085]">
-                Esta version web esta pensada para ser facil de entender:
-                login real, sesion simple y panel de escritorio distinto segun
-                el rol autenticado.
-              </p>
-            </div>
+  const content =
+    status === 'checking' ? (
+      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,_rgba(255,92,61,0.16),_transparent_22%),radial-gradient(circle_at_top_right,_rgba(34,102,255,0.14),_transparent_24%),linear-gradient(180deg,#0D0D14_0%,#121523_100%)] px-6 py-12">
+        <div className="w-full max-w-[560px] rounded-[32px] border border-white/40 bg-white/80 p-12 text-center shadow-[0_28px_90px_rgba(15,23,42,0.12)] backdrop-blur">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#FF5C3D_0%,#FF8A66_100%)] font-['Syne'] text-2xl font-extrabold text-white">
+            HG
           </div>
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#98A2B3]">
+            Hazel Gym
+          </p>
+          <h2 className="mt-4 font-['Syne'] text-4xl font-extrabold text-[#0D0D14]">
+            Comprobando tu sesion
+          </h2>
+          <p className="mt-4 text-base leading-7 text-[#667085]">
+            Estamos preparando tu acceso para llevarte directamente a tu panel.
+          </p>
         </div>
-
-        <div className="mb-8 flex flex-wrap gap-3 text-sm">
-          <div className="rounded-full bg-white px-4 py-2 text-[#667085] shadow-sm">
-            Paso actual: login real con `/api/auth/login` y lectura del usuario
-            con `/api/auth/me`
-          </div>
-          <div className="rounded-full bg-white px-4 py-2 text-[#667085] shadow-sm">
-            Siguiente integracion natural: empezar a conectar datos reales
-            dentro de cada panel
-          </div>
-        </div>
-
-        {status === 'checking' ? (
-          <div className="rounded-[32px] border border-white/70 bg-white p-12 text-center shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#98A2B3]">
-              Hazel Gym
-            </p>
-            <h2 className="mt-4 font-['Syne'] text-4xl font-extrabold text-[#0D0D14]">
-              Comprobando la sesion actual
-            </h2>
-            <p className="mt-4 text-base text-[#667085]">
-              Estamos revisando si ya habia una sesion abierta en este navegador.
-            </p>
-          </div>
-        ) : status === 'logged_in' ? (
-          renderDashboard()
-        ) : (
-          <DesktopLoginScreen
-            email={email}
-            errorMessage={errorMessage}
-            isLoading={isSubmitting}
-            password={password}
-            onEmailChange={setEmail}
-            onPasswordChange={setPassword}
-            onSubmit={handleLogin}
-          />
-        )}
       </div>
+    ) : status === 'logged_in' ? (
+      renderDashboard()
+    ) : (
+      <DesktopLoginScreen
+        email={email}
+        errorMessage={errorMessage}
+        isLoading={isSubmitting}
+        password={password}
+        onEmailChange={setEmail}
+        onPasswordChange={setPassword}
+        onSubmit={handleLogin}
+      />
+    );
+
+  return (
+    <div className="min-h-screen bg-[#0D0D14]">
+      {content}
     </div>
   );
 }

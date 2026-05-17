@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/machines/**", "/api/classes/**", "/api/routines/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/class-sessions/**", "/api/qr-codes/**", "/api/membership-fees/**").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/routine-assignments/**").hasAnyRole("ADMIN", "TRAINER")
+                        .requestMatchers(HttpMethod.GET, "/api/routine-assignments/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/attendances/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/machines/**", "/api/classes/**", "/api/routines/**")
                         .hasAnyRole("ADMIN", "TRAINER")
@@ -111,7 +111,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(parseOrigins());
+        configuration.setAllowedOriginPatterns(parseOrigins());
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

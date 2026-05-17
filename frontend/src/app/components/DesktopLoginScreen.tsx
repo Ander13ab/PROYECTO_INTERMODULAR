@@ -18,9 +18,9 @@ export function DesktopLoginScreen({
   onSubmit,
 }: DesktopLoginScreenProps) {
   return (
-    <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[#0D0D14] shadow-[0_30px_80px_rgba(13,13,20,0.35)]">
-      <div className="grid min-h-[720px] grid-cols-[1.1fr_0.9fr]">
-        <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,_rgba(255,77,46,0.22),_transparent_35%),linear-gradient(180deg,_#0D0D14_0%,_#12131D_100%)] p-14">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(255,77,46,0.18),_transparent_24%),linear-gradient(180deg,_#0D0D14_0%,_#11131C_100%)] text-white">
+      <div className="grid min-h-screen grid-cols-[1.1fr_0.9fr]">
+        <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,_rgba(255,77,46,0.18),_transparent_32%),linear-gradient(180deg,_#0D0D14_0%,_#12131D_100%)] p-14">
           <div>
             <div className="inline-flex rounded-full border border-[#FF4D2E33] bg-[#FF4D2E1F] px-4 py-2 text-sm font-semibold text-[#FF8B73]">
               Hazel Gym
@@ -50,8 +50,8 @@ export function DesktopLoginScreen({
           </div>
         </div>
 
-        <div className="flex items-center justify-center bg-[#11131C] p-10">
-          <div className="w-full max-w-[460px] rounded-[28px] border border-white/5 bg-[#171923] p-10">
+        <div className="flex items-center justify-center border-l border-white/5 bg-[#11131C] p-10">
+          <div className="w-full max-w-[460px] rounded-[28px] border border-white/5 bg-[#171923] p-10 shadow-[0_24px_70px_rgba(0,0,0,0.24)]">
             <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#6B7280]">
               Inicio de sesion
             </p>

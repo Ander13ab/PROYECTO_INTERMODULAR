@@ -33,27 +33,35 @@ async function readJsonOrThrow<T>(response: Response): Promise<T> {
 }
 
 export async function login(request: LoginRequest): Promise<AuthResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-    body: JSON.stringify(request),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    method: 'POST',
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      body: JSON.stringify(request),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    });
 
-  return readJsonOrThrow<AuthResponse>(response);
+    return readJsonOrThrow<AuthResponse>(response);
+  } catch (error) {
+    throw toNetworkAwareError(error);
+  }
 }
 
 export async function getAuthenticatedUser(
   token: string,
 ): Promise<AuthenticatedUser> {
-  const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-  return readJsonOrThrow<AuthenticatedUser>(response);
+    return readJsonOrThrow<AuthenticatedUser>(response);
+  } catch (error) {
+    throw toNetworkAwareError(error);
+  }
 }
 
 export function saveSessionToken(token: string) {
@@ -66,4 +74,18 @@ export function readSessionToken() {
 
 export function clearSessionToken() {
   window.sessionStorage.removeItem(SESSION_TOKEN_KEY);
+}
+
+function toNetworkAwareError(error: unknown) {
+  if (error instanceof TypeError) {
+    return new Error(
+      'No se ha podido conectar con el backend. Comprueba que Spring Boot esta arrancado y que el navegador puede acceder a http://localhost:8080.',
+    );
+  }
+
+  if (error instanceof Error) {
+    return error;
+  }
+
+  return new Error('No se ha podido completar la solicitud.');
 }

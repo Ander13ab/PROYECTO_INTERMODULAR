@@ -48,7 +48,8 @@ Vamos a priorizar:
 ## Ejecucion local
 
 1. Instalar dependencias
-2. Arrancar el entorno web
+2. Tener el backend arrancado en `http://localhost:8080`
+3. Arrancar el entorno web
 
 En esta carpeta:
 
@@ -61,3 +62,7 @@ En esta carpeta:
 - [Arranque de la parte web desde Figma](../docs/09_frontend_web_figma_y_arranque.md)
 - [Login real y shell por rol](../docs/11_frontend_web_login_y_shell.md)
 - [Migracion a pnpm y preparacion de Node](../docs/12_pnpm_y_node_para_frontend.md)
+- [Login web a pantalla completa y CORS local](../docs/15_frontend_web_login_fullscreen_y_cors_local.md)
+- [Cliente web conectado y logica de QR por plataforma](../docs/16_frontend_web_cliente_conectado_y_logica_qr.md)
+- [Navegacion real por roles en la web](../docs/17_frontend_web_navegacion_real_por_roles.md)
+- [Gestion real de maquinas y titulo de la app](../docs/18_frontend_web_admin_maquinas_y_titulo_app.md)

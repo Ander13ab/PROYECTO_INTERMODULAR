@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.hazelgym.dto.request.RoutineAssignmentRequest;
 import com.hazelgym.dto.response.RoutineAssignmentResponse;
@@ -15,6 +17,7 @@ import com.hazelgym.model.User;
 import com.hazelgym.repository.RoutineAssignmentRepository;
 import com.hazelgym.repository.RoutineRepository;
 import com.hazelgym.repository.UserRepository;
+import com.hazelgym.security.AuthUserDetails;
 import com.hazelgym.service.RoutineAssignmentService;
 
 @Service
@@ -38,13 +41,27 @@ public class RoutineAssignmentServiceImpl implements RoutineAssignmentService {
     @Override
     @Transactional(readOnly = true)
     public List<RoutineAssignmentResponse> findAll() {
-        return routineAssignmentRepository.findAll().stream().map(this::toResponse).toList();
+        AuthUserDetails userDetails = getAuthenticatedUser();
+        User currentUser = userDetails.getUser();
+
+        List<RoutineAssignment> assignments = currentUser.getRole().getName() == RoleName.CLIENT
+                ? routineAssignmentRepository.findByClienteIdOrderByFechaAsignacionDesc(currentUser.getId())
+                : routineAssignmentRepository.findAllByOrderByFechaAsignacionDesc();
+
+        return assignments.stream().map(this::toResponse).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public RoutineAssignmentResponse findById(Long id) {
-        return toResponse(getById(id));
+        AuthUserDetails userDetails = getAuthenticatedUser();
+        User currentUser = userDetails.getUser();
+
+        RoutineAssignment assignment = currentUser.getRole().getName() == RoleName.CLIENT
+                ? getByIdForClient(id, currentUser.getId())
+                : getById(id);
+
+        return toResponse(assignment);
     }
 
     @Override
@@ -65,6 +82,11 @@ public class RoutineAssignmentServiceImpl implements RoutineAssignmentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Asignacion de rutina no encontrada con id " + id));
     }
 
+    private RoutineAssignment getByIdForClient(Long id, Long clienteId) {
+        return routineAssignmentRepository.findByIdAndClienteId(id, clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asignacion de rutina no encontrada con id " + id));
+    }
+
     private Routine getRoutine(Long id) {
         return routineRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Rutina no encontrada con id " + id));
@@ -77,6 +99,14 @@ public class RoutineAssignmentServiceImpl implements RoutineAssignmentService {
             throw new ResourceNotFoundException("El usuario con id " + id + " no tiene rol CLIENT");
         }
         return user;
+    }
+
+    private AuthUserDetails getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof AuthUserDetails userDetails)) {
+            throw new ResourceNotFoundException("No hay un usuario autenticado en el contexto actual");
+        }
+        return userDetails;
     }
 
     private RoutineAssignmentResponse toResponse(RoutineAssignment assignment) {
