@@ -7,6 +7,14 @@ export interface UserSummary {
   fechaCreacion: string;
 }
 
+export interface UserDraft {
+  nombre: string;
+  email: string;
+  password: string;
+  roleName: 'CLIENT' | 'TRAINER' | 'ADMIN';
+  activo: boolean;
+}
+
 export interface MachineSummary {
   id: number;
   nombre: string;
@@ -35,7 +43,16 @@ export interface GymClassSummary {
   nombre: string;
   descripcion: string | null;
   duracion: number | null;
+  entrenadorId: number | null;
   entrenadorNombre: string | null;
+  activa: boolean;
+}
+
+export interface GymClassDraft {
+  nombre: string;
+  descripcion: string;
+  duracion: string;
+  entrenadorId: string;
   activa: boolean;
 }
 
@@ -48,6 +65,32 @@ export interface AttendanceSummary {
   fechaHora: string;
 }
 
+export interface QrCodeSummary {
+  id: number;
+  tipo: 'ENTRY' | 'MACHINE' | 'CLASS_SESSION';
+  esEntradaGimnasio: boolean;
+  maquinaId: number | null;
+  maquinaNombre: string | null;
+  sesionClaseId: number | null;
+  sesionClaseResumen: string | null;
+}
+
+export interface QrCodeDraft {
+  tipo: 'ENTRY' | 'MACHINE' | 'CLASS_SESSION';
+  esEntradaGimnasio: boolean;
+  maquinaId: string;
+  sesionClaseId: string;
+}
+
+export interface ClassSessionSummary {
+  id: number;
+  gymClassId: number;
+  gymClassName: string;
+  fecha: string;
+  horaInicio: string;
+  horaFin: string;
+}
+
 export interface MembershipFeeSummary {
   id: number;
   nombre: string;
@@ -55,10 +98,18 @@ export interface MembershipFeeSummary {
   precio: number;
 }
 
+export interface MembershipFeeDraft {
+  nombre: string;
+  descripcion: string;
+  precio: string;
+}
+
 export interface AdminDashboardData {
   users: UserSummary[];
   machines: MachineSummary[];
   classes: GymClassSummary[];
+  classSessions: ClassSessionSummary[];
+  qrCodes: QrCodeSummary[];
   attendances: AttendanceSummary[];
   membershipFees: MembershipFeeSummary[];
 }

@@ -6,18 +6,25 @@ html,
 body,
 #root {
   min-height: 100%;
+  width: 100%;
 }
 
 html,
 body {
   margin: 0;
   background: #0d0d14;
+  scrollbar-gutter: stable;
 }
 
 body {
   min-height: 100vh;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100vh;
+  isolation: isolate;
 }

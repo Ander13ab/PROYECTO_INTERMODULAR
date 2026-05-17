@@ -19,25 +19,25 @@ export function DesktopLoginScreen({
 }: DesktopLoginScreenProps) {
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(255,77,46,0.18),_transparent_24%),linear-gradient(180deg,_#0D0D14_0%,_#11131C_100%)] text-white">
-      <div className="grid min-h-screen grid-cols-[1.1fr_0.9fr]">
-        <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,_rgba(255,77,46,0.18),_transparent_32%),linear-gradient(180deg,_#0D0D14_0%,_#12131D_100%)] p-14">
+      <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,_rgba(255,77,46,0.18),_transparent_32%),linear-gradient(180deg,_#0D0D14_0%,_#12131D_100%)] px-6 py-8 sm:px-8 xl:p-14">
           <div>
-            <div className="inline-flex rounded-full border border-[#FF4D2E33] bg-[#FF4D2E1F] px-4 py-2 text-sm font-semibold text-[#FF8B73]">
+          <div className="inline-flex rounded-full border border-[#FF4D2E33] bg-[#FF4D2E1F] px-4 py-2 text-sm font-semibold text-[#FF8B73] shadow-[0_10px_24px_rgba(255,77,46,0.12)]">
               Hazel Gym
             </div>
           </div>
 
-          <div className="max-w-[520px]">
-            <h2 className="font-['Syne'] text-6xl font-extrabold leading-[1.02] text-white">
+          <div className="max-w-[520px] py-10 xl:py-0">
+            <h2 className="font-['Syne'] text-4xl font-extrabold leading-[1.02] text-white sm:text-5xl xl:text-6xl">
               Accede a tu gimnasio y sigue tu progreso.
             </h2>
-            <p className="mt-6 max-w-[420px] text-lg leading-8 text-[#A7ACBA]">
+            <p className="mt-6 max-w-[420px] text-base leading-7 text-[#A7ACBA] sm:text-lg sm:leading-8">
               Una misma plataforma para clientes, entrenadores y administracion,
               conectada con el backend actual y preparada para crecer.
             </p>
           </div>
 
-          <div className="flex gap-3 text-sm">
+          <div className="flex flex-wrap gap-3 text-sm">
             <div className="rounded-full border border-[#FF4D2E44] bg-[#FF4D2E1A] px-4 py-2 text-[#FF6B50]">
               Cliente
             </div>
@@ -50,12 +50,12 @@ export function DesktopLoginScreen({
           </div>
         </div>
 
-        <div className="flex items-center justify-center border-l border-white/5 bg-[#11131C] p-10">
-          <div className="w-full max-w-[460px] rounded-[28px] border border-white/5 bg-[#171923] p-10 shadow-[0_24px_70px_rgba(0,0,0,0.24)]">
+        <div className="flex items-center justify-center border-t border-white/5 bg-[#11131C] px-6 py-8 sm:px-8 xl:border-l xl:border-t-0 xl:p-10">
+          <div className="w-full max-w-[460px] rounded-[32px] border border-white/5 bg-[#171923] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.28)] sm:p-8 xl:p-10">
             <p className="text-sm font-medium uppercase tracking-[0.24em] text-[#6B7280]">
               Inicio de sesion
             </p>
-            <h3 className="mt-4 font-['Syne'] text-4xl font-bold text-white">
+            <h3 className="mt-4 font-['Syne'] text-3xl font-bold text-white sm:text-4xl">
               Bienvenido de vuelta
             </h3>
             <p className="mt-3 text-base text-[#9CA3AF]">
