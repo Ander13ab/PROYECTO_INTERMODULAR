@@ -6,7 +6,7 @@
   "packageManager": "pnpm@11.0.0",
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "build": "node ./scripts/build.mjs",
     "dev": "vite"
   },
   "engines": {
@@ -82,7 +82,9 @@
   },
   "pnpm": {
     "overrides": {
-      "vite": "6.3.5"
+      "vite": "6.3.5",
+      "@types/react": "18.3.12",
+      "@types/react-dom": "18.3.1"
     }
   }
 }

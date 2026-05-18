@@ -55,6 +55,13 @@ En esta carpeta:
 
 - `pnpm install`
 - `pnpm dev`
+- `pnpm build`
+
+## Nota sobre compilacion
+
+La compilacion de produccion se ejecuta con un script propio (`scripts/build.mjs`) que llama a Vite de forma programatica.
+
+Se deja asi para evitar bloqueos de resolucion del archivo de configuracion que pueden aparecer en Windows al lanzar el build estandar de Vite.
 
 ## Documentacion relacionada
 
