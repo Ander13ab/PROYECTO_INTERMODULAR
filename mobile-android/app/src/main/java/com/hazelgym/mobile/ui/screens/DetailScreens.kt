@@ -1,5 +1,7 @@
 package com.hazelgym.mobile.ui.screens
 
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,17 +40,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hazelgym.mobile.data.model.AttendanceResponse
 import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.MachineResponse
+import com.hazelgym.mobile.data.model.buildQrPayload
+import com.hazelgym.mobile.data.model.describeQrDestination
 import com.hazelgym.mobile.data.model.RoutineAssignmentResponse
 import com.hazelgym.mobile.data.model.RoutineResponse
 import com.hazelgym.mobile.data.model.UserSummaryResponse
@@ -56,6 +62,8 @@ import com.hazelgym.mobile.data.model.QrCodeResponse
 import com.hazelgym.mobile.ui.viewmodel.AdminHomeUiState
 import com.hazelgym.mobile.ui.viewmodel.ClientHomeUiState
 import com.hazelgym.mobile.ui.viewmodel.TrainerHomeUiState
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.qrcode.QRCodeWriter
 
 @Composable
 fun ClientRoutinesDetailScreen(
@@ -346,6 +354,10 @@ fun AdminMachinesDetailScreen(
     onMachineNameChange: (String) -> Unit,
     onMachineDescriptionChange: (String) -> Unit,
     onMachineMuscleGroupChange: (String) -> Unit,
+    onMachineInstructionsChange: (String) -> Unit,
+    onMachineLevelChange: (String) -> Unit,
+    onMachineSafetyWarningChange: (String) -> Unit,
+    onMachineMediaUrlChange: (String) -> Unit,
     onMachineStatusChange: (String) -> Unit,
     onSaveMachine: () -> Unit,
     onDeleteMachine: () -> Unit,
@@ -366,6 +378,10 @@ fun AdminMachinesDetailScreen(
                 onMachineNameChange = onMachineNameChange,
                 onMachineDescriptionChange = onMachineDescriptionChange,
                 onMachineMuscleGroupChange = onMachineMuscleGroupChange,
+                onMachineInstructionsChange = onMachineInstructionsChange,
+                onMachineLevelChange = onMachineLevelChange,
+                onMachineSafetyWarningChange = onMachineSafetyWarningChange,
+                onMachineMediaUrlChange = onMachineMediaUrlChange,
                 onMachineStatusChange = onMachineStatusChange,
                 onSaveMachine = onSaveMachine,
                 onDeleteMachine = onDeleteMachine,
@@ -780,6 +796,22 @@ private fun MachineDetailCard(
             Text(text = machine.descripcion ?: "Maquina sin descripcion", color = Color(0xFF667085))
             Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Grupo muscular: ${machine.grupoMuscular ?: "-"}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
+            machine.nivel?.takeIf { it.isNotBlank() }?.let { nivel ->
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Nivel: $nivel", color = Color(0xFF667085))
+            }
+            machine.instrucciones?.takeIf { it.isNotBlank() }?.let { instrucciones ->
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Uso: $instrucciones", color = Color(0xFF667085))
+            }
+            machine.advertenciaSeguridad?.takeIf { it.isNotBlank() }?.let { advertencia ->
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Seguridad: $advertencia", color = Color(0xFFD92D20))
+            }
+            machine.imagenUrl?.takeIf { it.isNotBlank() }?.let { url ->
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(text = "Recurso: $url", color = Color(0xFF667085))
+            }
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = "Estado: ${machine.estado}", color = Color(0xFFFF4D2E), fontWeight = FontWeight.SemiBold)
             if (onClick != null) {
@@ -806,6 +838,10 @@ private fun AdminMachineFormCard(
     onMachineNameChange: (String) -> Unit,
     onMachineDescriptionChange: (String) -> Unit,
     onMachineMuscleGroupChange: (String) -> Unit,
+    onMachineInstructionsChange: (String) -> Unit,
+    onMachineLevelChange: (String) -> Unit,
+    onMachineSafetyWarningChange: (String) -> Unit,
+    onMachineMediaUrlChange: (String) -> Unit,
     onMachineStatusChange: (String) -> Unit,
     onSaveMachine: () -> Unit,
     onDeleteMachine: () -> Unit,
@@ -852,6 +888,34 @@ private fun AdminMachineFormCard(
                 value = uiState.machineMuscleGroupInput,
                 onValueChange = onMachineMuscleGroupChange,
                 label = { Text("Grupo muscular") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.machineInstructionsInput,
+                onValueChange = onMachineInstructionsChange,
+                label = { Text("Instrucciones de uso") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.machineLevelInput,
+                onValueChange = onMachineLevelChange,
+                label = { Text("Nivel recomendado") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.machineSafetyWarningInput,
+                onValueChange = onMachineSafetyWarningChange,
+                label = { Text("Advertencia de seguridad") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.machineMediaUrlInput,
+                onValueChange = onMachineMediaUrlChange,
+                label = { Text("URL de video o recurso") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -1473,6 +1537,9 @@ private fun AdminUserFormCard(
 
 @Composable
 private fun QrCodeDetailCard(qrCode: QrCodeResponse) {
+    val qrPayload = remember(qrCode) { buildQrPayload(qrCode) }
+    val qrBitmap = remember(qrPayload) { buildQrBitmap(qrPayload) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -1485,9 +1552,63 @@ private fun QrCodeDetailCard(qrCode: QrCodeResponse) {
             Spacer(modifier = Modifier.height(6.dp))
             Text(text = "Tipo: ${qrCode.tipo}", color = Color(0xFF667085))
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = if (qrCode.esEntradaGimnasio) "Entrada del gimnasio" else "QR asociado", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
+            Text(
+                text = describeQrDestination(qrCode),
+                color = Color(0xFF0F172A),
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(14.dp))
+            qrBitmap?.let { bitmap ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFF7F8FA), RoundedCornerShape(18.dp))
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = "Codigo QR ${qrCode.id}",
+                        modifier = Modifier.size(180.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+            Text(
+                text = "Contenido del QR",
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = qrPayload,
+                color = Color(0xFF0F172A),
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Prueba rapida en emulador: tambien puedes usar el ID ${qrCode.id} manualmente en el lector.",
+                color = Color(0xFF667085)
+            )
         }
     }
+}
+
+private fun buildQrBitmap(value: String, size: Int = 768): Bitmap? {
+    return runCatching {
+        val matrix = QRCodeWriter().encode(value, BarcodeFormat.QR_CODE, size, size)
+        Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888).apply {
+            for (x in 0 until size) {
+                for (y in 0 until size) {
+                    setPixel(
+                        x,
+                        y,
+                        if (matrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE
+                    )
+                }
+            }
+        }
+    }.getOrNull()
 }
 
 @Composable

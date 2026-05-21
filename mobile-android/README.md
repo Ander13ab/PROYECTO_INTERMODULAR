@@ -22,6 +22,7 @@ Base Android nativa para Hazel Gym usando Kotlin + Jetpack Compose.
 - El historial del cliente se apoya en un filtrado backend por usuario autenticado para no exponer registros de otros usuarios
 - Panel cliente con escaneo QR por camara usando CameraX y ML Kit
 - Panel cliente con registro de asistencia manual y automatico al escanear
+- Panel cliente con escaneo de QR de maquina para abrir ficha de uso, seguridad y recurso/video asociado
 - Dialogo de escaneo adaptado al emulador con campo de prueba por ID de QR
 - Panel entrenador conectado a clases, asignaciones y asistencias
 - Panel entrenador con pestanas internas de inicio, actividad y perfil
@@ -41,6 +42,17 @@ Si ejecutas el backend en tu PC y abres la app en el emulador de Android Studio:
 Ese valor ya esta puesto en:
 
 - `app/build.gradle.kts`
+
+Tambien se puede cambiar sin editar codigo usando la variable:
+
+- `HAZELGYM_API_BASE_URL`
+
+Ejemplo para generar APK contra un backend desplegado:
+
+```powershell
+$env:HAZELGYM_API_BASE_URL="https://URL_DEL_BACKEND/"
+.\gradlew.bat assembleDebug
+```
 
 Si pruebas la app en un movil fisico, tendras que cambiar esa URL por la IP local de tu ordenador, por ejemplo:
 
@@ -63,7 +75,8 @@ Si pruebas la app en un movil fisico, tendras que cambiar esa URL por la IP loca
 5. Si coincide, se guarda la sesion y se entra al panel inicial correspondiente al rol
 6. El admin puede generar QR de entrada, maquina y sesion
 7. El cliente puede registrar asistencia introduciendo el ID del QR o escaneandolo
-8. Cliente, entrenador y admin pueden revisar asistencias desde sus vistas de detalle
+8. El cliente puede escanear un QR de maquina desde la pestana `Maquinas` para ver instrucciones y recurso/video
+9. Cliente, entrenador y admin pueden revisar asistencias desde sus vistas de detalle
 
 ## Estructura principal
 

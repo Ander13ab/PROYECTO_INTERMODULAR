@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +33,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -343,6 +345,8 @@ private fun HeaderCard(
     pillColor: Color,
     onLogout: () -> Unit
 ) {
+    var showLogoutConfirmation by rememberSaveable { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -381,7 +385,7 @@ private fun HeaderCard(
                     RolePill(pillLabel, pillColor)
                 }
 
-                IconButton(onClick = onLogout) {
+                IconButton(onClick = { showLogoutConfirmation = true }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Volver al login",
@@ -390,6 +394,29 @@ private fun HeaderCard(
                 }
             }
         }
+    }
+
+    if (showLogoutConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showLogoutConfirmation = false },
+            title = { Text("Salir al login") },
+            text = { Text("Se cerrara la sesion actual del entrenador. Quieres continuar?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutConfirmation = false
+                        onLogout()
+                    }
+                ) {
+                    Text("Salir")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutConfirmation = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 

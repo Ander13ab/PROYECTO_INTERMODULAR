@@ -54,6 +54,10 @@ data class AdminHomeUiState(
     val machineNameInput: String = "",
     val machineDescriptionInput: String = "",
     val machineMuscleGroupInput: String = "",
+    val machineInstructionsInput: String = "",
+    val machineLevelInput: String = "",
+    val machineSafetyWarningInput: String = "",
+    val machineMediaUrlInput: String = "",
     val machineStatusInput: String = "ACTIVA",
     val machineSaveMessage: String? = null,
     val isSavingMachine: Boolean = false,
@@ -290,6 +294,10 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
                 machineNameInput = "",
                 machineDescriptionInput = "",
                 machineMuscleGroupInput = "",
+                machineInstructionsInput = "",
+                machineLevelInput = "",
+                machineSafetyWarningInput = "",
+                machineMediaUrlInput = "",
                 machineStatusInput = "ACTIVA",
                 machineSaveMessage = null
             )
@@ -303,6 +311,10 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
                 machineNameInput = machine.nombre,
                 machineDescriptionInput = machine.descripcion.orEmpty(),
                 machineMuscleGroupInput = machine.grupoMuscular.orEmpty(),
+                machineInstructionsInput = machine.instrucciones.orEmpty(),
+                machineLevelInput = machine.nivel.orEmpty(),
+                machineSafetyWarningInput = machine.advertenciaSeguridad.orEmpty(),
+                machineMediaUrlInput = machine.imagenUrl.orEmpty(),
                 machineStatusInput = machine.estado,
                 machineSaveMessage = "Editando maquina #${machine.id}"
             )
@@ -319,6 +331,22 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun updateMachineMuscleGroupInput(value: String) {
         _uiState.update { it.copy(machineMuscleGroupInput = value, machineSaveMessage = null) }
+    }
+
+    fun updateMachineInstructionsInput(value: String) {
+        _uiState.update { it.copy(machineInstructionsInput = value, machineSaveMessage = null) }
+    }
+
+    fun updateMachineLevelInput(value: String) {
+        _uiState.update { it.copy(machineLevelInput = value, machineSaveMessage = null) }
+    }
+
+    fun updateMachineSafetyWarningInput(value: String) {
+        _uiState.update { it.copy(machineSafetyWarningInput = value, machineSaveMessage = null) }
+    }
+
+    fun updateMachineMediaUrlInput(value: String) {
+        _uiState.update { it.copy(machineMediaUrlInput = value, machineSaveMessage = null) }
     }
 
     fun updateMachineStatusInput(value: String) {
@@ -342,6 +370,10 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
             nombre = name,
             descripcion = uiState.value.machineDescriptionInput.trim().ifBlank { null },
             grupoMuscular = uiState.value.machineMuscleGroupInput.trim().ifBlank { null },
+            instrucciones = uiState.value.machineInstructionsInput.trim().ifBlank { null },
+            nivel = uiState.value.machineLevelInput.trim().ifBlank { null },
+            advertenciaSeguridad = uiState.value.machineSafetyWarningInput.trim().ifBlank { null },
+            imagenUrl = uiState.value.machineMediaUrlInput.trim().ifBlank { null },
             estado = status
         )
 
@@ -364,6 +396,10 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
                         machineNameInput = "",
                         machineDescriptionInput = "",
                         machineMuscleGroupInput = "",
+                        machineInstructionsInput = "",
+                        machineLevelInput = "",
+                        machineSafetyWarningInput = "",
+                        machineMediaUrlInput = "",
                         machineStatusInput = "ACTIVA",
                         machineSaveMessage = "Maquina #${machine.id} guardada correctamente."
                     )
@@ -400,6 +436,10 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
                         machineNameInput = "",
                         machineDescriptionInput = "",
                         machineMuscleGroupInput = "",
+                        machineInstructionsInput = "",
+                        machineLevelInput = "",
+                        machineSafetyWarningInput = "",
+                        machineMediaUrlInput = "",
                         machineStatusInput = "ACTIVA",
                         machineSaveMessage = "Maquina eliminada correctamente."
                     )

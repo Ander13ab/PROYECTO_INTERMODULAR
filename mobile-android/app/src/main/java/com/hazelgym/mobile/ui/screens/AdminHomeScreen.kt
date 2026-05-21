@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +34,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -297,6 +299,10 @@ private fun AdminQrTab(
     onCreateMachineQr: () -> Unit,
     onLogout: () -> Unit
 ) {
+    val entryCount = uiState.qrCodes.count { it.esEntradaGimnasio }
+    val machineQrCount = uiState.qrCodes.count { it.tipo.equals("MACHINE", ignoreCase = true) }
+    val sessionQrCount = uiState.qrCodes.count { it.tipo.equals("CLASS_SESSION", ignoreCase = true) }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -332,6 +338,24 @@ private fun AdminQrTab(
                     accent = Color(0xFFDDF8E6),
                     onClick = onRefresh
                 )
+            }
+        }
+
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    MetricCard("Entrada", entryCount.toString(), Modifier.weight(1f))
+                    MetricCard("Maquinas", machineQrCount.toString(), Modifier.weight(1f))
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    MetricCard("Sesiones", sessionQrCount.toString(), Modifier.weight(1f))
+                    MetricCard("Total QR", uiState.qrCodes.size.toString(), Modifier.weight(1f))
+                }
             }
         }
 
@@ -543,6 +567,8 @@ private fun HeroHeader(
     pillColor: Color,
     onLogout: () -> Unit
 ) {
+    var showLogoutConfirmation by rememberSaveable { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -581,7 +607,7 @@ private fun HeroHeader(
                     RolePill(pillLabel, pillColor)
                 }
 
-                IconButton(onClick = onLogout) {
+                IconButton(onClick = { showLogoutConfirmation = true }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Volver al login",
@@ -590,6 +616,29 @@ private fun HeroHeader(
                 }
             }
         }
+    }
+
+    if (showLogoutConfirmation) {
+        AlertDialog(
+            onDismissRequest = { showLogoutConfirmation = false },
+            title = { Text("Salir al login") },
+            text = { Text("Se cerrara la sesion actual del administrador. Quieres continuar?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutConfirmation = false
+                        onLogout()
+                    }
+                ) {
+                    Text("Salir")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutConfirmation = false }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 

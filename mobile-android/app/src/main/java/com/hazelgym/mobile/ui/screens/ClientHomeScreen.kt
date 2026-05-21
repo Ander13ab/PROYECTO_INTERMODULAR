@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -71,6 +73,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.hazelgym.mobile.data.model.AttendanceResponse
 import com.hazelgym.mobile.data.model.GymClassResponse
+import com.hazelgym.mobile.data.model.MachineResponse
 import com.hazelgym.mobile.data.model.RoutineResponse
 import com.hazelgym.mobile.ui.viewmodel.ClientHomeUiState
 import java.util.concurrent.Executors
@@ -93,11 +96,13 @@ fun ClientHomeScreen(
     onLogout: () -> Unit,
     onQrCodeChange: (String) -> Unit,
     onQrScanned: (String) -> Unit,
+    onMachineQrScanned: (String) -> Unit,
     onRegisterAttendance: () -> Unit,
     onNavigateToRoutines: () -> Unit,
     onNavigateToClasses: () -> Unit,
     onNavigateToMachines: () -> Unit,
-    onNavigateToAttendances: () -> Unit
+    onNavigateToAttendances: () -> Unit,
+    onClearScannedMachine: () -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(ClientTab.HOME) }
 
@@ -134,7 +139,9 @@ fun ClientHomeScreen(
                     ClientTab.MACHINES -> ClientMachinesTab(
                         uiState = uiState,
                         onRefresh = onRefresh,
-                        onLogout = onLogout
+                        onLogout = onLogout,
+                        onMachineQrScanned = onMachineQrScanned,
+                        onClearScannedMachine = onClearScannedMachine
                     )
 
                     ClientTab.PROFILE -> ClientProfileTab(
@@ -323,6 +330,7 @@ private fun ClientHomeTab(
             }
         }
     }
+
 }
 
 @Composable
@@ -358,7 +366,7 @@ private fun ClientQrTab(
             ) {
                 QuickActionCard(
                     title = "Registrar asistencia",
-                    subtitle = "Escanea el codigo para registrar la asistencia al momento, o usa el ID manual.",
+                    subtitle = "Escanea un QR de entrada, maquina o sesion; tambien puedes usar el ID manual.",
                     icon = Icons.Default.QrCode2,
                     accent = Color(0xFFDCE8FF),
                     onClick = { scannerOpen = true }
@@ -389,7 +397,7 @@ private fun ClientQrTab(
                         OutlinedTextField(
                             value = uiState.qrCodeInput,
                             onValueChange = onQrCodeChange,
-                            label = { Text("Ejemplo: 1") },
+                            label = { Text("Ejemplo: 1 o QR Hazel Gym") },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp)
                         )
@@ -433,8 +441,13 @@ private fun ClientQrTab(
 private fun ClientMachinesTab(
     uiState: ClientHomeUiState,
     onRefresh: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onMachineQrScanned: (String) -> Unit,
+    onClearScannedMachine: () -> Unit
 ) {
+    var scannerOpen by rememberSaveable { mutableStateOf(false) }
+    val uriHandler = LocalUriHandler.current
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -455,6 +468,44 @@ private fun ClientMachinesTab(
                 action = "Recargar",
                 onAction = onRefresh
             )
+        }
+
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 18.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                QuickActionCard(
+                    title = "Escanear QR de maquina",
+                    subtitle = "Lee el QR pegado en la maquina para abrir su ficha y su recurso de ayuda.",
+                    icon = Icons.Default.QrCode2,
+                    accent = Color(0xFFDCE8FF),
+                    onClick = { scannerOpen = true }
+                )
+
+                uiState.machineScanMessage?.let { message ->
+                    Text(
+                        text = message,
+                        color = if (uiState.scannedMachine != null) Color(0xFF16A34A) else Color(0xFFD92D20)
+                    )
+                }
+            }
+        }
+
+        uiState.scannedMachine?.let { machine ->
+            item {
+                ClientMachineInsightCard(
+                    machine = machine,
+                    onClear = onClearScannedMachine,
+                    onOpenMedia = {
+                        machine.imagenUrl
+                            ?.takeIf { url -> url.isNotBlank() }
+                            ?.let { url -> uriHandler.openUri(url) }
+                    }
+                )
+            }
         }
 
         if (uiState.errorMessage != null) {
@@ -508,6 +559,20 @@ private fun ClientMachinesTab(
             }
         }
     }
+
+    if (scannerOpen) {
+        QrScannerDialog(
+            title = "Escanear QR de maquina",
+            helperText = "Escanea el QR de una maquina para ver su ficha tecnica y su video o recurso de apoyo.",
+            manualLabel = "ID de QR de maquina para probar",
+            manualButtonText = "Usar este QR de maquina",
+            onDismiss = { scannerOpen = false },
+            onQrScanned = { value ->
+                scannerOpen = false
+                onMachineQrScanned(value)
+            }
+        )
+    }
 }
 
 @Composable
@@ -549,6 +614,10 @@ private fun ClientProfileTab(
 
 @Composable
 private fun QrScannerDialog(
+    title: String = "Escanear QR",
+    helperText: String = "En el emulador puedes probar con un ID si la camara no tiene un QR delante.",
+    manualLabel: String = "ID de QR para probar",
+    manualButtonText: String = "Usar este ID como QR",
     onDismiss: () -> Unit,
     onQrScanned: (String) -> Unit
 ) {
@@ -590,13 +659,13 @@ private fun QrScannerDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = "Escanear QR",
+                    text = title,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF0F172A)
                 )
                 Text(
-                    text = "En el emulador puedes probar con un ID si la camara no tiene un QR delante.",
+                    text = helperText,
                     color = Color(0xFF667085),
                     style = MaterialTheme.typography.bodyMedium
                 )
@@ -612,7 +681,7 @@ private fun QrScannerDialog(
                 OutlinedTextField(
                     value = testQrId,
                     onValueChange = { testQrId = it },
-                    label = { Text("ID de QR para probar") },
+                    label = { Text(manualLabel) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
                 )
@@ -621,7 +690,7 @@ private fun QrScannerDialog(
                     onClick = { onQrScanned(testQrId) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Usar este ID como QR")
+                    Text(manualButtonText)
                 }
 
                 TextButton(
@@ -696,6 +765,8 @@ private fun HeaderCard(
     pillColor: Color,
     onLogout: () -> Unit
 ) {
+    var showLogoutConfirmation by rememberSaveable { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -734,7 +805,7 @@ private fun HeaderCard(
                     RolePill(pillLabel, pillColor)
                 }
 
-                IconButton(onClick = onLogout) {
+                IconButton(onClick = { showLogoutConfirmation = true }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Volver al login",
@@ -744,6 +815,38 @@ private fun HeaderCard(
             }
         }
     }
+
+    if (showLogoutConfirmation) {
+        ClientLogoutConfirmationDialog(
+            onDismiss = { showLogoutConfirmation = false },
+            onConfirm = {
+                showLogoutConfirmation = false
+                onLogout()
+            }
+        )
+    }
+}
+
+@Composable
+private fun ClientLogoutConfirmationDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Salir al login") },
+        text = { Text("Se cerrara la sesion actual. Quieres volver a la pantalla de inicio de sesion?") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Salir")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
 }
 
 @Composable
@@ -823,6 +926,90 @@ private fun QuickActionCard(
             Text(text = ">", color = Color(0xFF98A2B3), fontSize = 24.sp)
         }
     }
+
+}
+
+@Composable
+private fun ClientMachineInsightCard(
+    machine: MachineResponse,
+    onClear: () -> Unit,
+    onOpenMedia: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = "Maquina detectada por QR",
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = machine.nombre,
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                text = machine.descripcion ?: "Sin descripcion disponible.",
+                color = Color(0xFF667085)
+            )
+            Text(
+                text = "Grupo muscular: ${machine.grupoMuscular ?: "-"}",
+                color = Color(0xFF0F172A),
+                fontWeight = FontWeight.SemiBold
+            )
+            machine.nivel?.takeIf { it.isNotBlank() }?.let { nivel ->
+                Text(
+                    text = "Nivel recomendado: $nivel",
+                    color = Color(0xFF0F172A)
+                )
+            }
+            machine.instrucciones?.takeIf { it.isNotBlank() }?.let { instrucciones ->
+                Text(
+                    text = "Como usarla: $instrucciones",
+                    color = Color(0xFF667085)
+                )
+            }
+            machine.advertenciaSeguridad?.takeIf { it.isNotBlank() }?.let { advertencia ->
+                Text(
+                    text = "Seguridad: $advertencia",
+                    color = Color(0xFFD92D20),
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            Text(
+                text = "Estado: ${machine.estado}",
+                color = Color(0xFFFF4D2E),
+                fontWeight = FontWeight.SemiBold
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Button(
+                    onClick = onOpenMedia,
+                    enabled = !machine.imagenUrl.isNullOrBlank(),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(if (machine.imagenUrl.isNullOrBlank()) "Video no disponible" else "Ver video o recurso")
+                }
+                TextButton(
+                    onClick = onClear,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Limpiar")
+                }
+            }
+        }
+    }
+
 }
 
 @Composable

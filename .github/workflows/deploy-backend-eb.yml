@@ -1,0 +1,61 @@
+name: Deploy backend to Elastic Beanstalk
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy-backend-eb.yml"
+
+jobs:
+  deploy:
+    name: Build and deploy backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Package backend
+        run: |
+          chmod +x ./mvnw
+          ./mvnw -B clean package -DskipTests
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload artifact to S3
+        run: |
+          VERSION_LABEL="hazelgym-${GITHUB_SHA::7}-${GITHUB_RUN_NUMBER}"
+          JAR_FILE="$(ls target/*.jar | head -n 1)"
+          cp "$JAR_FILE" hazelgym.jar
+          zip hazelgym-eb.zip hazelgym.jar Procfile
+          aws s3 cp hazelgym-eb.zip "s3://${{ secrets.AWS_BACKEND_ARTIFACT_BUCKET }}/$VERSION_LABEL.zip"
+          echo "VERSION_LABEL=$VERSION_LABEL" >> "$GITHUB_ENV"
+
+      - name: Create Elastic Beanstalk version
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name "${{ secrets.AWS_EB_APPLICATION_NAME }}" \
+            --version-label "$VERSION_LABEL" \
+            --source-bundle S3Bucket="${{ secrets.AWS_BACKEND_ARTIFACT_BUCKET }}",S3Key="$VERSION_LABEL.zip"
+
+      - name: Update Elastic Beanstalk environment
+        run: |
+          aws elasticbeanstalk update-environment \
+            --environment-name "${{ secrets.AWS_EB_ENVIRONMENT_NAME }}" \
+            --version-label "$VERSION_LABEL"

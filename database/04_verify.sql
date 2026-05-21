@@ -10,7 +10,7 @@ FROM usuarios u
 JOIN roles r ON r.id = u.rol_id
 ORDER BY u.id;
 
-SELECT id, nombre, grupo_muscular, nivel, estado
+SELECT id, nombre, grupo_muscular, nivel, estado, imagen_url
 FROM maquinas
 ORDER BY id;
 

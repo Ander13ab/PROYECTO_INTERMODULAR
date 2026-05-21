@@ -14,7 +14,7 @@ INSERT INTO usuarios (nombre, email, password, rol_id, activo) VALUES
 ('Laura Rodriguez', 'laura@hazelgym.com', '$2a$10$QGPQcQUiVHrYxmmc7tcrdOmDjrnH0ayQdjyzrZzo6DJqtVJN33Bmy', 2, TRUE);
 
 -- Machines
-INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel, advertencia_seguridad, estado) VALUES
+INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel, advertencia_seguridad, imagen_url, estado) VALUES
 (
   'Press de banca',
   'Maquina para trabajo de pectoral, hombros y triceps',
@@ -22,6 +22,7 @@ INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel,
   '1. Ajusta el banco a posicion horizontal\n2. Agarre a la anchura de hombros, codos a 45 grados\n3. Baja controlado hasta el pecho, empuja sin bloquear codos',
   'Medio',
   'No uses cargas elevadas sin un companero.',
+  'https://www.youtube.com/results?search_query=press+de+banca+tecnica+correcta',
   'ACTIVA'
 ),
 (
@@ -31,6 +32,7 @@ INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel,
   '1. Coloca la barra sobre los trapecios\n2. Pies a la anchura de hombros\n3. Baja hasta que los muslos esten paralelos al suelo',
   'Principiante',
   'Manten la espalda recta durante todo el movimiento.',
+  'https://www.youtube.com/results?search_query=sentadilla+smith+tecnica+correcta',
   'ACTIVA'
 ),
 (
@@ -40,6 +42,7 @@ INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel,
   '1. Sientate con los pies apoyados\n2. Agarra el mango con las palmas hacia dentro\n3. Tira hacia el abdomen manteniendo la espalda recta',
   'Medio',
   'No arquees la espalda al tirar.',
+  'https://www.youtube.com/results?search_query=remo+en+polea+tecnica+correcta',
   'ACTIVA'
 );
 

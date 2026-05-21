@@ -5,6 +5,13 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
+fun String.ensureTrailingSlash(): String = if (endsWith("/")) this else "$this/"
+
+val apiBaseUrl: String =
+    (providers.gradleProperty("HAZELGYM_API_BASE_URL").orNull
+        ?: providers.environmentVariable("HAZELGYM_API_BASE_URL").orNull
+        ?: "http://10.0.2.2:8080/").ensureTrailingSlash()
+
 android {
     namespace = "com.hazelgym.mobile"
     compileSdk = 35
@@ -20,7 +27,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"")
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
     }
 
     buildTypes {
@@ -82,6 +89,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation("com.google.zxing:core:3.5.3")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

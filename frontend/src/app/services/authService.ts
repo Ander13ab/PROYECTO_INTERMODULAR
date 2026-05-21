@@ -3,8 +3,8 @@ import type {
   AuthResponse,
   LoginRequest,
 } from '../types/auth';
+import { API_BASE_URL, getBackendConnectionMessage } from './apiConfig';
 
-const API_BASE_URL = 'http://localhost:8080';
 export const SESSION_TOKEN_KEY = 'hazelgym.web.token';
 
 async function readJsonOrThrow<T>(response: Response): Promise<T> {
@@ -78,9 +78,7 @@ export function clearSessionToken() {
 
 function toNetworkAwareError(error: unknown) {
   if (error instanceof TypeError) {
-    return new Error(
-      'No se ha podido conectar con el backend. Comprueba que Spring Boot esta arrancado y que el navegador puede acceder a http://localhost:8080.',
-    );
+    return new Error(getBackendConnectionMessage());
   }
 
   if (error instanceof Error) {

@@ -9,6 +9,10 @@ Esta carpeta contiene todo lo necesario para crear la base de datos desde cero, 
 3. `03_seed.sql`
 4. `04_verify.sql`
 
+Si la base de datos ya existia y solo quieres actualizar los datos de demo para el flujo QR de maquinas, ejecuta tambien:
+
+- `05_demo_machine_media.sql`
+
 ## Requisitos previos
 
 - MySQL Server 8.x instalado.
@@ -27,6 +31,12 @@ SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/01_create_da
 SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/02_schema.sql;
 SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/03_seed.sql;
 SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/04_verify.sql;
+```
+
+Para enriquecer una base ya creada con URLs de recurso/video para las maquinas:
+
+```sql
+SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/05_demo_machine_media.sql;
 ```
 
 ## Opcion B: desde MySQL Workbench

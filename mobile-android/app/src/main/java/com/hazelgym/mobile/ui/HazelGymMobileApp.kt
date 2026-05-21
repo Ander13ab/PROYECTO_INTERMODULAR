@@ -114,11 +114,13 @@ fun HazelGymMobileApp() {
                 onLogout = rootViewModel::logout,
                 onQrCodeChange = clientHomeViewModel::updateQrCodeInput,
                 onQrScanned = clientHomeViewModel::registerScannedAttendance,
+                onMachineQrScanned = clientHomeViewModel::registerScannedMachine,
                 onRegisterAttendance = clientHomeViewModel::registerAttendance,
                 onNavigateToRoutines = { navController.navigate(Routes.ClientRoutines) },
                 onNavigateToClasses = { navController.navigate(Routes.ClientClasses) },
                 onNavigateToMachines = { navController.navigate(Routes.ClientMachines) },
-                onNavigateToAttendances = { navController.navigate(Routes.ClientAttendances) }
+                onNavigateToAttendances = { navController.navigate(Routes.ClientAttendances) },
+                onClearScannedMachine = clientHomeViewModel::clearScannedMachine
             )
         }
         composable(Routes.ClientRoutines) {
@@ -239,6 +241,10 @@ fun HazelGymMobileApp() {
                 onMachineNameChange = adminHomeViewModel::updateMachineNameInput,
                 onMachineDescriptionChange = adminHomeViewModel::updateMachineDescriptionInput,
                 onMachineMuscleGroupChange = adminHomeViewModel::updateMachineMuscleGroupInput,
+                onMachineInstructionsChange = adminHomeViewModel::updateMachineInstructionsInput,
+                onMachineLevelChange = adminHomeViewModel::updateMachineLevelInput,
+                onMachineSafetyWarningChange = adminHomeViewModel::updateMachineSafetyWarningInput,
+                onMachineMediaUrlChange = adminHomeViewModel::updateMachineMediaUrlInput,
                 onMachineStatusChange = adminHomeViewModel::updateMachineStatusInput,
                 onSaveMachine = adminHomeViewModel::saveMachine,
                 onDeleteMachine = adminHomeViewModel::deleteEditingMachine,

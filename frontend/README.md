@@ -57,6 +57,15 @@ En esta carpeta:
 - `pnpm dev`
 - `pnpm build`
 
+Por defecto la web usa el backend local en `http://localhost:8080`.
+
+Para compilar o ejecutar contra el backend desplegado:
+
+```powershell
+$env:VITE_API_BASE_URL="https://URL_DEL_BACKEND"
+pnpm build
+```
+
 ## Nota sobre compilacion
 
 La compilacion de produccion se ejecuta con un script propio (`scripts/build.mjs`) que llama a Vite de forma programatica.

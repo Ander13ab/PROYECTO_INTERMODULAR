@@ -1,4 +1,5 @@
 import { readSessionToken } from './authService';
+import { API_BASE_URL } from './apiConfig';
 import type {
   TrainerAssignmentDraft,
   TrainerAssignment,
@@ -10,8 +11,6 @@ import type {
   TrainerRoutineDraft,
   TrainerRoutine,
 } from '../types/trainer';
-
-const API_BASE_URL = 'http://localhost:8080';
 
 async function fetchWithSession<T>(path: string): Promise<T> {
   const token = readSessionToken();
