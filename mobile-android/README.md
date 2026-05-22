@@ -54,6 +54,13 @@ $env:HAZELGYM_API_BASE_URL="https://URL_DEL_BACKEND/"
 .\gradlew.bat assembleDebug
 ```
 
+Tambien puedes usar el script preparado:
+
+```powershell
+.\scripts\build-debug-apk.ps1
+.\scripts\build-debug-apk.ps1 -ApiBaseUrl "https://URL_DEL_BACKEND/"
+```
+
 Si pruebas la app en un movil fisico, tendras que cambiar esa URL por la IP local de tu ordenador, por ejemplo:
 
 - `http://192.168.1.34:8080/`
@@ -88,8 +95,7 @@ Si pruebas la app en un movil fisico, tendras que cambiar esa URL por la IP loca
 
 ## Siguiente paso recomendado
 
-1. Ajustar detalles visuales finos del layout y spacing
-2. Rematar la fidelidad con los prototipos de Figma pantalla por pantalla
-3. Anadir acciones reales dentro de las vistas de detalle, no solo lectura
-4. Decidir mas adelante si la sesion debe mantenerse entre arranques o solo durante la prueba actual
+1. Generar y validar APK debug instalable
+2. Validar QR de sesion como flujo demostrable
+3. Preparar APK contra backend desplegado cuando AWS este listo
 

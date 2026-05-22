@@ -20,7 +20,7 @@ Estado: en progreso.
 
 ### 2. QR y asistencia
 
-Estado: funcional, demo de maquina cerrada.
+Estado: funcional, demo de maquina y sesion cerradas con smoke test.
 
 Lo que ya existe:
 
@@ -30,22 +30,25 @@ Lo que ya existe:
 - El emulador tiene modo de prueba por ID de QR.
 - El cliente puede escanear QR de maquina desde la pestana `Maquinas` y ver ficha de uso, seguridad y recurso/video.
 - Los datos de demo incluyen un script para rellenar instrucciones y enlaces de recurso en maquinas existentes.
+- El smoke test registra asistencia con un QR `CLASS_SESSION` y valida que el backend responde ese tipo.
 
 Prioridad antes de entrega:
 
-1. Validar demo de QR de maquina en emulador con un QR real o ID manual.
-2. Asegurar demo de QR de sesion.
-3. Intentar demo de QR de entrada al gimnasio si no pone en riesgo el cierre.
+1. Intentar demo de QR de entrada al gimnasio si no pone en riesgo el cierre.
+2. Mantener estable QR de maquina y QR de sesion durante el despliegue.
+3. Validar de nuevo QR contra backend desplegado.
 
 ### 3. APK Android
 
-Estado: pendiente.
+Estado: preparado para generar y validar.
 
 Objetivo minimo:
 
 - Generar APK debug instalable para demo.
 - Documentar como instalarla.
 - Dejar claro que para movil fisico necesita apuntar a una URL accesible del backend desplegado.
+- Guia creada en `docs/36_generacion_apk_android.md`.
+- Script local creado en `mobile-android/scripts/build-debug-apk.ps1`.
 
 Objetivo deseable:
 
@@ -104,7 +107,7 @@ Pendiente antes del 26:
 
 ### 21 mayo
 
-- Validar QR de maquina ya cerrado y cerrar QR de sesion como flujo demostrable.
+- QR de maquina y QR de sesion cerrados; empezar despliegue AWS inicial.
 - Generar primer APK debug.
 - Validar Android contra backend local.
 

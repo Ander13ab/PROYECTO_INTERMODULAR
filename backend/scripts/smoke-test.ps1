@@ -81,9 +81,11 @@ $attendance = Invoke-Json -Method "POST" -Path "/api/attendances" -Headers $clie
 }
 Write-Host "[OK] Client can register attendance id=$($attendance.id)"
 
-Assert-Status -Label "Client access to admin users endpoint" -ExpectedStatus 403 -Call {
-    Invoke-Json -Method "GET" -Path "/api/users" -Headers $clientHeaders
+$clientVisibleUsers = @(Invoke-Json -Method "GET" -Path "/api/users" -Headers $clientHeaders)
+if ($clientVisibleUsers.Count -ne 1 -or $clientVisibleUsers[0].id -ne $clientAuth.userId) {
+    throw "Client users endpoint should only return the authenticated client"
 }
+Write-Host "[OK] Client users endpoint only returns own user"
 
 $adminAuth = Invoke-Json -Method "POST" -Path "/api/auth/login" -Body @{
     email = "admin@hazelgym.com"
@@ -150,6 +152,16 @@ $createdClassQr = Invoke-Json -Method "POST" -Path "/api/qr-codes" -Headers $adm
 }
 Write-Host "[OK] Admin can create class QR id=$($createdClassQr.id)"
 
+$classAttendance = Invoke-Json -Method "POST" -Path "/api/attendances" -Headers $clientHeaders -Body @{
+    usuarioId = $clientAuth.userId
+    qrCodeId = $createdClassQr.id
+}
+
+if ($classAttendance.qrType -ne "CLASS_SESSION") {
+    throw "Class QR attendance returned qrType '$($classAttendance.qrType)' instead of CLASS_SESSION"
+}
+Write-Host "[OK] Client can register class session attendance id=$($classAttendance.id)"
+
 $createdRoutine = Invoke-Json -Method "POST" -Path "/api/routines" -Headers $adminHeaders -Body @{
     nombre = "Smoke Test Routine"
     descripcion = "Temporary routine for API verification"
@@ -163,9 +175,12 @@ $createdAssignment = Invoke-Json -Method "POST" -Path "/api/routine-assignments"
 }
 Write-Host "[OK] Admin can assign routine id=$($createdAssignment.id)"
 
-Assert-Status -Label "Client access to routine assignments endpoint" -ExpectedStatus 403 -Call {
-    Invoke-Json -Method "GET" -Path "/api/routine-assignments" -Headers $clientHeaders
+$clientAssignments = @(Invoke-Json -Method "GET" -Path "/api/routine-assignments" -Headers $clientHeaders)
+$ownAssignments = @($clientAssignments | Where-Object { $_.clientId -eq $clientAuth.userId })
+if ($clientAssignments.Count -lt 1 -or $ownAssignments.Count -lt 1) {
+    throw "Client routine assignments endpoint should return the authenticated client's assignments"
 }
+Write-Host "[OK] Client can list own routine assignments"
 
 Invoke-Json -Method "GET" -Path "/api/routine-assignments" -Headers $adminHeaders | Out-Null
 Write-Host "[OK] Admin can list routine assignments"
@@ -196,5 +211,8 @@ Write-Host "[OK] Admin can delete membership fee"
 
 Invoke-Json -Method "DELETE" -Path "/api/machines/$($createdMachine.id)" -Headers $adminHeaders | Out-Null
 Write-Host "[OK] Admin can delete test machine"
+
+Invoke-Json -Method "DELETE" -Path "/api/users/$($clientAuth.userId)" -Headers $adminHeaders | Out-Null
+Write-Host "[OK] Admin can delete smoke client"
 
 Write-Host "Smoke test completed successfully"

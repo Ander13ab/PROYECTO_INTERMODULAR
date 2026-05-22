@@ -13,6 +13,10 @@ Si la base de datos ya existia y solo quieres actualizar los datos de demo para 
 
 - `05_demo_machine_media.sql`
 
+Si has ejecutado muchas pruebas smoke y quieres limpiar registros temporales de demo:
+
+- `06_cleanup_smoke_data.sql`
+
 ## Requisitos previos
 
 - MySQL Server 8.x instalado.
@@ -37,6 +41,12 @@ Para enriquecer una base ya creada con URLs de recurso/video para las maquinas:
 
 ```sql
 SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/05_demo_machine_media.sql;
+```
+
+Para limpiar usuarios y registros temporales creados por smoke tests:
+
+```sql
+SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/06_cleanup_smoke_data.sql;
 ```
 
 ## Opcion B: desde MySQL Workbench

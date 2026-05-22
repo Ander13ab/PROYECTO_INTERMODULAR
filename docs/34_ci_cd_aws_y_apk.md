@@ -146,6 +146,13 @@ cd C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android
 .\gradlew.bat assembleDebug
 ```
 
+Tambien existe un script local para simplificar este paso:
+
+```powershell
+cd C:\Users\ander\Documents\2DAM\PROYECTO_INTERMODULAR\mobile-android
+.\scripts\build-debug-apk.ps1
+```
+
 La APK se genera en:
 
 ```text
@@ -157,6 +164,12 @@ Para generar APK apuntando al backend desplegado:
 ```powershell
 $env:HAZELGYM_API_BASE_URL="https://URL_DEL_BACKEND/"
 .\gradlew.bat assembleDebug
+```
+
+Con el script:
+
+```powershell
+.\scripts\build-debug-apk.ps1 -ApiBaseUrl "https://URL_DEL_BACKEND/"
 ```
 
 ## Orden recomendado de despliegue
