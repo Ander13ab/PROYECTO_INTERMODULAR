@@ -55,6 +55,34 @@ SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/06_cleanup_s
 2. Ejecuta cada uno con el icono de rayo.
 3. Comprueba resultados del archivo `04_verify.sql`.
 
+## Opcion C: cargar en AWS RDS
+
+El endpoint actual de RDS para el despliegue es:
+
+```text
+hazelgym-db.cpsq2kmkisyt.eu-west-1.rds.amazonaws.com
+```
+
+Para probar la conexion y cargar la base en RDS desde PowerShell:
+
+```powershell
+.\database\load-rds.ps1
+```
+
+El script pide la password de RDS en pantalla, no la guarda en archivos y ejecuta:
+
+1. `02_schema.sql`
+2. `03_seed.sql`
+3. `05_demo_machine_media.sql`
+4. `04_verify.sql`
+
+Si la conexion falla antes de pedir o cargar datos, revisa en AWS:
+
+- RDS debe estar en estado `Available`.
+- `Public access` debe estar en `Yes` mientras cargas desde tu PC.
+- El security group debe permitir `MySQL/Aurora`, puerto `3306`, origen `My IP`.
+- El usuario configurado actualmente es `admin_hazelgym`.
+
 ## Resultado esperado
 
 - 10 tablas creadas:

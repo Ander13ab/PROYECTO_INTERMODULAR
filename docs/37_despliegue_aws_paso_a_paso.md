@@ -86,6 +86,16 @@ MYSQL_PASSWORD=contrasena elegida en RDS
 
 No pegues la contrasena en Notion, GitHub ni en ningun archivo del proyecto. La usaremos despues como variable de entorno o secreto.
 
+Configuracion real creada para Hazel Gym:
+
+```text
+AWS_REGION=eu-west-1
+RDS_ENDPOINT=hazelgym-db.cpsq2kmkisyt.eu-west-1.rds.amazonaws.com
+MYSQL_USERNAME=admin_hazelgym
+MYSQL_DATABASE=hazelgym
+MYSQL_PORT=3306
+```
+
 ## 2. Cargar esquema y datos
 
 Ejecuta en MySQL Workbench contra RDS:
@@ -115,7 +125,40 @@ Si Workbench no conecta:
 - Comprueba que `Public access` este en `Yes` durante esta fase.
 - Comprueba que la instancia este en estado `Available`.
 
+Tambien puedes cargar RDS desde PowerShell con el script preparado:
+
+```powershell
+.\database\load-rds.ps1
+```
+
+El script usa el endpoint real, busca `mysql.exe`, pide la password de RDS de forma interactiva y ejecuta `02_schema.sql`, `03_seed.sql`, `05_demo_machine_media.sql` y `04_verify.sql`.
+
 ## 3. Crear Elastic Beanstalk
+
+Antes de crear el entorno en AWS, el backend ya debe estar empaquetado.
+
+Estado real del paquete de despliegue:
+
+```text
+backend/Procfile
+backend/target/hazelgym-0.0.1-SNAPSHOT.jar
+backend/deploy/hazelgym-0.0.1-SNAPSHOT.jar
+backend/deploy/Procfile
+backend/hazelgym-backend-eb.zip
+```
+
+El `Procfile` usado para Elastic Beanstalk es:
+
+```text
+web: java -jar hazelgym-0.0.1-SNAPSHOT.jar
+```
+
+El ZIP `backend/hazelgym-backend-eb.zip` contiene solo:
+
+```text
+hazelgym-0.0.1-SNAPSHOT.jar
+Procfile
+```
 
 Crear una aplicacion para backend:
 
