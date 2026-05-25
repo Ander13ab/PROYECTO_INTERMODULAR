@@ -262,6 +262,43 @@ Orden recomendado:
 - Cliente puede ver maquinas.
 - Cliente puede registrar QR de sesion o maquina.
 
+## Incidencia: raiz `/` devuelve 403 en Elastic Beanstalk
+
+Durante la primera prueba del backend en Elastic Beanstalk, estas rutas funcionaban:
+
+```text
+http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/swagger-ui.html
+http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/api-docs
+```
+
+pero la raiz devolvia `HTTP 403`:
+
+```text
+http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/
+```
+
+La causa era la configuracion de Spring Security. Swagger y OpenAPI estaban en la lista de rutas publicas, pero `/` no. Como la regla final es `anyRequest().authenticated()`, Spring Security trataba la raiz como una ruta protegida.
+
+Solucion aplicada:
+
+- Se ha creado `RootController` con `GET /`.
+- Se ha anadido `/` a la lista de rutas permitidas en `SecurityConfig`.
+- La raiz devuelve ahora un JSON sencillo con estado de la API, ruta de Swagger y ruta OpenAPI.
+
+Respuesta esperada:
+
+```json
+{
+  "app": "Hazel Gym API",
+  "status": "running",
+  "docs": "/swagger-ui.html",
+  "openapi": "/api-docs",
+  "timestamp": "..."
+}
+```
+
+Tras este cambio hay que volver a subir `backend/hazelgym-backend-eb.zip` como nueva version de Elastic Beanstalk.
+
 ## Referencias oficiales
 
 - [AWS RDS Free Tier](https://aws.amazon.com/rds/free/)
