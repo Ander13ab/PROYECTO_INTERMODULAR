@@ -24,8 +24,8 @@ export function DesktopLoginScreen({
       <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[1.1fr_0.9fr]">
         <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,_rgba(255,77,46,0.18),_transparent_32%),linear-gradient(180deg,_#0D0D14_0%,_#12131D_100%)] px-6 py-8 sm:px-8 xl:p-14">
           <div>
-            <div className="inline-flex h-40 w-64 items-center justify-center rounded-[30px] border border-[#FF7A60]/35 bg-[#FF4D2E]/50 shadow-[0_22px_56px_rgba(255,77,46,0.20)] sm:h-44 sm:w-72">
-              <BrandLogo className="h-28 w-28 sm:h-32 sm:w-32" tone="dark" />
+            <div className="inline-flex h-56 w-56 items-center justify-center rounded-full border border-[#FF7A60]/35 bg-[#FF4D2E]/50 shadow-[0_22px_56px_rgba(255,77,46,0.20)] sm:h-64 sm:w-64">
+              <BrandLogo className="h-48 w-48 sm:h-56 sm:w-56" tone="dark" />
             </div>
           </div>
 
