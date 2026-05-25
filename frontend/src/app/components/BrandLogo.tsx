@@ -11,7 +11,7 @@ export function BrandLogo({ className = '', tone = 'light' }: BrandLogoProps) {
     <img
       alt="Hazel Gym"
       className={`object-contain ${toneClass} ${className}`}
-      src="/logo_hazelgym_no_back_1.webp"
+      src="/logo_hazelgym_no_back_1_g.webp"
     />
   );
 }
