@@ -190,20 +190,34 @@ hazelgym-backend-artifacts
 
 Este bucket no es el de la web; solo guarda ZIPs del backend.
 
-## 5. Crear frontend en S3 + CloudFront
+## 5. Crear frontend en AWS Amplify
 
-Crear un bucket S3 para la web:
+Para la entrega se usara AWS Amplify Hosting para publicar la web React/Vite.
 
 ```text
-hazelgym-frontend-web
+AWS Console -> Amplify -> Deploy an app -> GitHub
 ```
 
-Despues crear una distribucion CloudFront apuntando a ese bucket.
-
-Cuando tengas la URL publica de CloudFront, por ejemplo:
+Seleccionar:
 
 ```text
-https://dxxxxxxxx.cloudfront.net
+Repository: Ander13ab/PROYECTO_INTERMODULAR
+Branch: main
+App root: frontend
+```
+
+El repositorio incluye `amplify.yml` en la raiz. Ese archivo indica a Amplify que debe entrar en `frontend`, activar pnpm y ejecutar `pnpm build`.
+
+Variable de entorno necesaria en Amplify:
+
+```text
+VITE_API_BASE_URL=http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
+```
+
+Cuando tengas la URL publica de Amplify, por ejemplo:
+
+```text
+https://main.xxxxx.amplifyapp.com
 ```
 
 actualiza `APP_CORS_ALLOWED_ORIGINS` en Elastic Beanstalk para incluirla.
@@ -225,8 +239,6 @@ AWS_REGION
 AWS_BACKEND_ARTIFACT_BUCKET
 AWS_EB_APPLICATION_NAME
 AWS_EB_ENVIRONMENT_NAME
-AWS_S3_BUCKET
-AWS_CLOUDFRONT_DISTRIBUTION_ID
 VITE_API_BASE_URL
 ```
 
@@ -236,11 +248,10 @@ Valores esperados:
 AWS_BACKEND_ARTIFACT_BUCKET=hazelgym-backend-artifacts
 AWS_EB_APPLICATION_NAME=hazelgym-backend
 AWS_EB_ENVIRONMENT_NAME=hazelgym-backend-prod
-AWS_S3_BUCKET=hazelgym-frontend-web
-VITE_API_BASE_URL=https://URL_PUBLICA_BACKEND
+VITE_API_BASE_URL=http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
 ```
 
-`AWS_CLOUDFRONT_DISTRIBUTION_ID` puede quedarse vacio al principio si aun no tienes CloudFront.
+Si se usa Amplify manual conectado a GitHub, no necesitas `AWS_S3_BUCKET` ni `AWS_CLOUDFRONT_DISTRIBUTION_ID` para la web.
 
 ## 7. Ejecutar workflows
 
@@ -248,8 +259,8 @@ Orden recomendado:
 
 1. Ejecutar `Deploy backend to Elastic Beanstalk`.
 2. Probar `https://URL_PUBLICA_BACKEND/api-docs`.
-3. Ejecutar `Deploy frontend to S3`.
-4. Probar login web desde CloudFront.
+3. Conectar Amplify al repositorio y desplegar `frontend`.
+4. Probar login web desde la URL de Amplify.
 5. Ejecutar `Android APK` con `api_base_url=https://URL_PUBLICA_BACKEND/`.
 6. Descargar artifact `hazelgym-debug-apk`.
 7. Instalar APK en movil fisico.

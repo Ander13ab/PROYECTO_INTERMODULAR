@@ -62,9 +62,30 @@ Por defecto la web usa el backend local en `http://localhost:8080`.
 Para compilar o ejecutar contra el backend desplegado:
 
 ```powershell
-$env:VITE_API_BASE_URL="https://URL_DEL_BACKEND"
+$env:VITE_API_BASE_URL="http://hazelgym-backend.eu-west-1.elasticbeanstalk.com"
 pnpm build
 ```
+
+Para desarrollo local contra AWS, crea `frontend/.env.local`:
+
+```text
+VITE_API_BASE_URL=http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
+```
+
+Ese archivo no se sube a Git. La variable que debes configurar tambien en AWS Amplify es `VITE_API_BASE_URL`.
+
+## Despliegue en AWS Amplify
+
+El repositorio incluye `amplify.yml` en la raiz para que Amplify sepa que la app web vive en `frontend/`.
+
+Configuracion esperada:
+
+- App root: `frontend`
+- Build command: `pnpm build`
+- Output directory: `dist`
+- Variable de entorno: `VITE_API_BASE_URL=http://hazelgym-backend.eu-west-1.elasticbeanstalk.com`
+
+Cuando Amplify genere la URL publica, hay que anadirla en Elastic Beanstalk dentro de `APP_CORS_ALLOWED_ORIGINS`.
 
 ## Nota sobre compilacion
 
