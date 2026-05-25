@@ -1,4 +1,4 @@
--- Hazel Gym - Step 3: seed data for testing
+-- Hazel Gym - Step 3: base data for development and delivery demo
 USE hazelgym;
 
 -- Roles
@@ -22,7 +22,7 @@ INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel,
   '1. Ajusta el banco a posicion horizontal\n2. Agarre a la anchura de hombros, codos a 45 grados\n3. Baja controlado hasta el pecho, empuja sin bloquear codos',
   'Medio',
   'No uses cargas elevadas sin un companero.',
-  'https://www.youtube.com/results?search_query=press+de+banca+tecnica+correcta',
+  'https://www.wodcat.com/ejercicios/press-de-banca',
   'ACTIVA'
 ),
 (
@@ -32,7 +32,7 @@ INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel,
   '1. Coloca la barra sobre los trapecios\n2. Pies a la anchura de hombros\n3. Baja hasta que los muslos esten paralelos al suelo',
   'Principiante',
   'Manten la espalda recta durante todo el movimiento.',
-  'https://www.youtube.com/results?search_query=sentadilla+smith+tecnica+correcta',
+  'https://www.entrenamientos.com/ejercicios/sentadilla-en-maquina-smith',
   'ACTIVA'
 ),
 (
@@ -42,7 +42,7 @@ INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel,
   '1. Sientate con los pies apoyados\n2. Agarra el mango con las palmas hacia dentro\n3. Tira hacia el abdomen manteniendo la espalda recta',
   'Medio',
   'No arquees la espalda al tirar.',
-  'https://www.youtube.com/results?search_query=remo+en+polea+tecnica+correcta',
+  'https://www.inspireusafoundation.org/seated-cable-row/',
   'ACTIVA'
 );
 

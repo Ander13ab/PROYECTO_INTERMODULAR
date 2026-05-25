@@ -112,6 +112,7 @@ SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/01_create_da
 SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/02_schema.sql;
 SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/03_seed.sql;
 SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/05_demo_machine_media.sql;
+SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/07_prepare_delivery_demo_data.sql;
 SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/04_verify.sql;
 ```
 
@@ -132,6 +133,8 @@ Tambien puedes cargar RDS desde PowerShell con el script preparado:
 ```
 
 El script usa el endpoint real, busca `mysql.exe`, pide la password de RDS de forma interactiva y ejecuta `02_schema.sql`, `03_seed.sql`, `05_demo_machine_media.sql` y `04_verify.sql`.
+
+Antes de la entrega final se ha anadido tambien `07_prepare_delivery_demo_data.sql`. Este script limpia registros temporales del smoke test, deja nombres de usuarios y planes mas presentables y sustituye enlaces genericos de busqueda por recursos concretos para las maquinas.
 
 ## 3. Crear Elastic Beanstalk
 

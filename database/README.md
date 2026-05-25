@@ -17,6 +17,10 @@ Si has ejecutado muchas pruebas smoke y quieres limpiar registros temporales de 
 
 - `06_cleanup_smoke_data.sql`
 
+Para preparar la base de datos de cara a la entrega final, con datos mas defendibles y enlaces utiles para las maquinas:
+
+- `07_prepare_delivery_demo_data.sql`
+
 ## Requisitos previos
 
 - MySQL Server 8.x instalado.
@@ -49,6 +53,12 @@ Para limpiar usuarios y registros temporales creados por smoke tests:
 SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/06_cleanup_smoke_data.sql;
 ```
 
+Para dejar RDS listo para la demo final:
+
+```sql
+SOURCE C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/database/07_prepare_delivery_demo_data.sql;
+```
+
 ## Opcion B: desde MySQL Workbench
 
 1. Abre cada archivo SQL en orden.
@@ -75,6 +85,12 @@ El script pide la password de RDS en pantalla, no la guarda en archivos y ejecut
 2. `03_seed.sql`
 3. `05_demo_machine_media.sql`
 4. `04_verify.sql`
+
+Antes de entregar o grabar la demo, ejecuta tambien:
+
+```text
+07_prepare_delivery_demo_data.sql
+```
 
 Si la conexion falla antes de pedir o cargar datos, revisa en AWS:
 

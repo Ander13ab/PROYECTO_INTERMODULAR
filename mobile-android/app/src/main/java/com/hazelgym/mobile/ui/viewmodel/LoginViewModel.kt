@@ -30,8 +30,8 @@ enum class LoginRole(
 }
 
 data class LoginUiState(
-    val email: String = "admin@hazelgym.com",
-    val password: String = "admin123",
+    val email: String = "",
+    val password: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )

@@ -89,10 +89,10 @@ Si pruebas la app en un movil fisico contra un backend local, tendras que cambia
 2. La app autentica contra el backend
 3. El backend devuelve el token y el rol real de la cuenta
 4. Se guarda la sesion y se entra al panel inicial correspondiente al rol
-6. El admin puede generar QR de entrada, maquina y sesion
-7. El cliente puede registrar asistencia introduciendo el ID del QR o escaneandolo
-8. El cliente puede escanear un QR de maquina desde la pestana `Maquinas` para ver instrucciones y recurso/video
-9. Cliente, entrenador y admin pueden revisar asistencias desde sus vistas de detalle
+5. El admin puede generar QR de entrada, maquina y sesion
+6. El cliente puede registrar asistencia introduciendo el ID del QR o escaneandolo
+7. El cliente puede escanear un QR de maquina desde la pestana `Maquinas` para ver instrucciones y recurso/video
+8. Cliente, entrenador y admin pueden revisar asistencias desde sus vistas de detalle
 
 ## Estructura principal
 
@@ -106,5 +106,5 @@ Si pruebas la app en un movil fisico contra un backend local, tendras que cambia
 
 1. Generar y validar APK debug instalable
 2. Validar QR de sesion como flujo demostrable
-3. Preparar APK contra backend desplegado cuando AWS este listo
+3. Ejecutar `07_prepare_delivery_demo_data.sql` en RDS para dejar datos finales de demo
 
