@@ -6,7 +6,7 @@ Base Android nativa para Hazel Gym usando Kotlin + Jetpack Compose.
 
 - Proyecto Android creado dentro de `mobile-android`
 - Login conectado a `POST /api/auth/login`
-- Selector de rol funcional en login con validacion contra el rol real devuelto por backend, aceptando aliases como `CLIENT`, `TRAINER` y `ADMIN`
+- Login sin selector manual de rol: la app detecta automaticamente el rol devuelto por el backend
 - Contrasena oculta por defecto con icono de ojo para mostrarla o esconderla
 - Sesion guardada con DataStore
 - Arranque forzado en login en cada nueva ejecucion para probar los tres roles con facilidad
@@ -30,16 +30,26 @@ Base Android nativa para Hazel Gym usando Kotlin + Jetpack Compose.
 - Panel entrenador con gestion real de clases y rutinas propias: crear, editar y eliminar
 - Panel entrenador con gestion real de asignaciones de rutinas a clientes
 - Estructura visual de los tres paneles acercada al lenguaje de Figma: hero, metricas y accesos rapidos
-- Conexion local del emulador usando `http://10.0.2.2:8080/`
-- Configuracion de red preparada para permitir HTTP local en desarrollo
+- Conexion por defecto contra API Gateway para que la APK pueda funcionar fuera del ordenador local
+- Configuracion de red preparada para permitir HTTP local si se fuerza una URL de desarrollo
 
-## Importante para el backend local
+## Conexion con backend
 
-Si ejecutas el backend en tu PC y abres la app en el emulador de Android Studio:
+Por defecto la app apunta a la API remota publicada con API Gateway:
 
-- usa `http://10.0.2.2:8080/`
+```text
+https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/
+```
 
-Ese valor ya esta puesto en:
+Esta URL es la recomendada para APK instalada en movil fisico, porque es publica y usa HTTPS.
+
+Si ejecutas el backend en tu PC y quieres abrir la app en el emulador de Android Studio, puedes sobrescribir la URL con:
+
+```text
+http://10.0.2.2:8080/
+```
+
+La URL por defecto esta definida en:
 
 - `app/build.gradle.kts`
 
@@ -50,7 +60,7 @@ Tambien se puede cambiar sin editar codigo usando la variable:
 Ejemplo para generar APK contra un backend desplegado:
 
 ```powershell
-$env:HAZELGYM_API_BASE_URL="https://URL_DEL_BACKEND/"
+$env:HAZELGYM_API_BASE_URL="https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/"
 .\gradlew.bat assembleDebug
 ```
 
@@ -58,10 +68,10 @@ Tambien puedes usar el script preparado:
 
 ```powershell
 .\scripts\build-debug-apk.ps1
-.\scripts\build-debug-apk.ps1 -ApiBaseUrl "https://URL_DEL_BACKEND/"
+.\scripts\build-debug-apk.ps1 -ApiBaseUrl "https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/"
 ```
 
-Si pruebas la app en un movil fisico, tendras que cambiar esa URL por la IP local de tu ordenador, por ejemplo:
+Si pruebas la app en un movil fisico contra un backend local, tendras que cambiar esa URL por una IP local accesible desde el movil, por ejemplo:
 
 - `http://192.168.1.34:8080/`
 
@@ -70,16 +80,15 @@ Si pruebas la app en un movil fisico, tendras que cambiar esa URL por la IP loca
 1. Abre Android Studio
 2. Selecciona la carpeta `mobile-android`
 3. Espera a que sincronice Gradle
-4. Arranca el backend en `localhost:8080`
+4. Ejecuta la app. Por defecto conectara con API Gateway
 5. Ejecuta la app en emulador o dispositivo
 
 ## Flujo actual
 
-1. El usuario elige un rol en login
-2. Introduce sus credenciales
-3. La app autentica contra el backend
-4. Si el rol elegido no coincide con el rol real de la cuenta, la app muestra error y no guarda la sesion
-5. Si coincide, se guarda la sesion y se entra al panel inicial correspondiente al rol
+1. El usuario introduce sus credenciales
+2. La app autentica contra el backend
+3. El backend devuelve el token y el rol real de la cuenta
+4. Se guarda la sesion y se entra al panel inicial correspondiente al rol
 6. El admin puede generar QR de entrada, maquina y sesion
 7. El cliente puede registrar asistencia introduciendo el ID del QR o escaneandolo
 8. El cliente puede escanear un QR de maquina desde la pestana `Maquinas` para ver instrucciones y recurso/video

@@ -211,7 +211,7 @@ El repositorio incluye `amplify.yml` en la raiz. Ese archivo indica a Amplify qu
 Variable de entorno necesaria en Amplify:
 
 ```text
-VITE_API_BASE_URL=http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
+VITE_API_BASE_URL=/api-proxy
 ```
 
 Cuando tengas la URL publica de Amplify, por ejemplo:
@@ -221,6 +221,64 @@ https://main.xxxxx.amplifyapp.com
 ```
 
 actualiza `APP_CORS_ALLOWED_ORIGINS` en Elastic Beanstalk para incluirla.
+
+Como Amplify sirve la web por HTTPS y Elastic Beanstalk expone el backend por HTTP, no se debe llamar directamente desde la web publica a:
+
+```text
+http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
+```
+
+El navegador puede bloquear esas llamadas por `Mixed Content`. Ademas, Amplify no permite usar un destino `http://` en sus rewrites.
+
+La solucion aplicada para la entrega ha sido usar API Gateway como proxy HTTPS:
+
+```text
+Amplify HTTPS -> API Gateway HTTPS -> Elastic Beanstalk HTTP -> RDS MySQL
+```
+
+Configuracion real:
+
+```text
+Amplify:
+https://main.d1mithns8dqv1b.amplifyapp.com
+
+API Gateway:
+https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com
+
+Elastic Beanstalk:
+http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
+```
+
+API Gateway debe tener:
+
+```text
+Route: ANY /{proxy+}
+Integration: ANY http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/{proxy}
+Stage: $default con auto-deploy activado
+```
+
+El detalle critico es `/{proxy}` en la integracion. Si se deja solo la URL base de Elastic Beanstalk, rutas como `/api/auth/login` no se reenvian correctamente y el login puede fallar con:
+
+```text
+Request method 'POST' is not supported
+```
+
+Rewrites finales de Amplify:
+
+```json
+[
+  {
+    "source": "/api-proxy/<*>",
+    "target": "https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/<*>",
+    "status": "200"
+  },
+  {
+    "source": "/<*>",
+    "target": "/index.html",
+    "status": "404-200"
+  }
+]
+```
 
 ## 6. Secretos en GitHub
 

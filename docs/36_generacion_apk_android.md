@@ -24,16 +24,31 @@ C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/mobile-android/app/build/out
 
 Esta opcion es la mas comoda si Android Studio ya tiene descargadas las dependencias.
 
-## Opcion B: PowerShell con backend local
+## Opcion B: PowerShell con backend remoto AWS
 
-Esta APK sirve para probar en emulador con el backend arrancado en tu PC:
+La app apunta por defecto a API Gateway:
+
+```text
+https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/
+```
+
+Esto permite instalar la APK en un movil fisico y usarla fuera del ordenador local.
 
 ```powershell
 cd C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/mobile-android
 .\scripts\build-debug-apk.ps1
 ```
 
-La URL usada por defecto es:
+## Opcion C: PowerShell con backend local
+
+Esta APK sirve para probar en emulador con el backend arrancado en tu PC:
+
+```powershell
+cd C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/mobile-android
+.\scripts\build-debug-apk.ps1 -ApiBaseUrl "http://10.0.2.2:8080/"
+```
+
+La URL local del emulador es:
 
 ```text
 http://10.0.2.2:8080/
@@ -41,9 +56,9 @@ http://10.0.2.2:8080/
 
 `10.0.2.2` es la direccion especial que usa el emulador Android para acceder al `localhost` del ordenador.
 
-## Opcion C: PowerShell con backend desplegado
+## Opcion D: PowerShell con otra URL
 
-Esta APK sirve para instalar en un movil fisico o para probar contra AWS:
+Si necesitas generar la APK contra otra URL publica:
 
 ```powershell
 cd C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/mobile-android

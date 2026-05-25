@@ -96,7 +96,6 @@ fun HazelGymMobileApp() {
                 uiState = loginViewModel.uiState.collectAsState().value,
                 onEmailChange = loginViewModel::updateEmail,
                 onPasswordChange = loginViewModel::updatePassword,
-                onRoleSelected = loginViewModel::selectRole,
                 onLoginClick = loginViewModel::login
             )
         }

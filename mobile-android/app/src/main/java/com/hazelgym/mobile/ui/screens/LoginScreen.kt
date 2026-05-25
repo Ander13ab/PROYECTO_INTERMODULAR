@@ -1,12 +1,9 @@
 package com.hazelgym.mobile.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,7 +35,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hazelgym.mobile.ui.components.HazelGymLogo
-import com.hazelgym.mobile.ui.viewmodel.LoginRole
 import com.hazelgym.mobile.ui.viewmodel.LoginUiState
 
 @Composable
@@ -46,7 +42,6 @@ fun LoginScreen(
     uiState: LoginUiState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
-    onRoleSelected: (LoginRole) -> Unit,
     onLoginClick: () -> Unit
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
@@ -107,7 +102,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = onPasswordChange,
-                    label = { Text("Contraseña", color = Color.White.copy(alpha = 0.8f)) },
+                    label = { Text("Contrasena", color = Color.White.copy(alpha = 0.8f)) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = loginFieldColors(),
@@ -125,9 +120,9 @@ fun LoginScreen(
                                     Icons.Default.Visibility
                                 },
                                 contentDescription = if (isPasswordVisible) {
-                                    "Ocultar contraseña"
+                                    "Ocultar contrasena"
                                 } else {
-                                    "Mostrar contraseña"
+                                    "Mostrar contrasena"
                                 },
                                 tint = Color.White
                             )
@@ -166,67 +161,13 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "Olvidaste tu contraseña?",
-                    color = Color(0xFFFFB09B),
+                    text = "El rol se detecta automaticamente segun la cuenta que uses.",
+                    color = Color.White.copy(alpha = 0.52f),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.Medium
                 )
-            }
-
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    text = "Acceso segun rol",
-                    color = Color.White.copy(alpha = 0.82f),
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    LoginRole.entries.forEach { role ->
-                        RoleTag(
-                            label = role.label,
-                            isSelected = uiState.selectedRole == role,
-                            onClick = { onRoleSelected(role) }
-                        )
-                    }
-                }
             }
         }
-    }
-}
-
-@Composable
-private fun RoleTag(
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    val background = when (label) {
-        "Cliente" -> if (isSelected) Color(0x55FF4D2E) else Color(0x33FF4D2E)
-        "Entrenador" -> if (isSelected) Color(0x552266FF) else Color(0x332266FF)
-        else -> if (isSelected) Color(0x5522CC66) else Color(0x3322CC66)
-    }
-    val content = when (label) {
-        "Cliente" -> Color(0xFFFF6B50)
-        "Entrenador" -> Color(0xFF7AA2FF)
-        else -> Color(0xFF58D68D)
-    }
-
-    Box(
-        modifier = Modifier
-            .clickable(onClick = onClick)
-            .border(
-                width = if (isSelected) 2.dp else 1.dp,
-                color = if (isSelected) Color.White else Color.White.copy(alpha = 0.08f),
-                shape = RoundedCornerShape(14.dp)
-            )
-            .background(background, RoundedCornerShape(14.dp))
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-    ) {
-        Text(
-            text = label,
-            color = if (isSelected) Color.White else content,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold
-        )
     }
 }
 

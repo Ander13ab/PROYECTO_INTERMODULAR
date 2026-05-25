@@ -121,9 +121,71 @@ http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
 
 Si el navegador carga una web HTTPS y el JavaScript intenta llamar directamente a un backend HTTP, puede bloquear la peticion por `Mixed Content`.
 
-### Solucion recomendada para la entrega: proxy de Amplify
+### Solucion aplicada para la entrega: Amplify + API Gateway
 
-En Amplify se puede crear una regla de rewrite para que el frontend llame a su mismo dominio HTTPS y Amplify reenvie la peticion al backend HTTP.
+La primera idea fue crear una regla de rewrite en Amplify para que el frontend llamara a su mismo dominio HTTPS y Amplify reenviara la peticion al backend HTTP.
+
+Esa opcion fallo porque Amplify no permite usar destinos `http://` en custom rewrites. AWS exige que el destino del rewrite sea `https://`.
+
+Por eso se anadio una capa intermedia con API Gateway:
+
+```text
+Amplify HTTPS -> API Gateway HTTPS -> Elastic Beanstalk HTTP -> RDS MySQL
+```
+
+URLs reales usadas:
+
+```text
+Frontend Amplify:
+https://main.d1mithns8dqv1b.amplifyapp.com
+
+API Gateway:
+https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com
+
+Backend Elastic Beanstalk:
+http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
+```
+
+## Configuracion de API Gateway
+
+Se creo una HTTP API en API Gateway para actuar como proxy HTTPS hacia Elastic Beanstalk.
+
+Configuracion importante:
+
+```text
+Route:
+ANY /{proxy+}
+
+Integration:
+ANY http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/{proxy}
+
+Stage:
+$default con auto-deploy activado
+```
+
+El punto clave fue anadir `/{proxy}` al final de la ruta de integracion. Sin ese fragmento, API Gateway recibia correctamente la peticion, pero no reenviaba bien la ruta completa al backend. El sintoma en el login fue:
+
+```text
+Request method 'POST' is not supported
+```
+
+Tras corregir la integracion a:
+
+```text
+http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/{proxy}
+```
+
+las peticiones `POST` a `/api/auth/login` empezaron a llegar correctamente al backend.
+
+Prueba de API Gateway:
+
+```text
+https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/api-docs
+```
+
+## Rewrite final en Amplify
+
+En Amplify se configuro el rewrite para que el frontend use `/api-proxy` y Amplify lo reenvie a API Gateway, no directamente a Elastic Beanstalk.
 
 En Amplify:
 
@@ -131,12 +193,16 @@ En Amplify:
 App settings -> Rewrites and redirects -> Add rule
 ```
 
-Regla:
+Reglas:
 
 ```text
 Source address: /api-proxy/<*>
-Target address: http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/<*>
+Target address: https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/<*>
 Type: 200 (Rewrite)
+
+Source address: /<*>
+Target address: /index.html
+Type: 404-200 (Rewrite)
 ```
 
 Despues cambia la variable de entorno de Amplify:
@@ -160,7 +226,7 @@ Con esto, cuando el frontend haga:
 Amplify lo reenviara internamente a:
 
 ```text
-http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/api/auth/login
+https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/api/auth/login
 ```
 
 Ventajas:

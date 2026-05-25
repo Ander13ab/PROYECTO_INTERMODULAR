@@ -10,7 +10,7 @@ fun String.ensureTrailingSlash(): String = if (endsWith("/")) this else "$this/"
 val apiBaseUrl: String =
     (providers.gradleProperty("HAZELGYM_API_BASE_URL").orNull
         ?: providers.environmentVariable("HAZELGYM_API_BASE_URL").orNull
-        ?: "http://10.0.2.2:8080/").ensureTrailingSlash()
+        ?: "https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/").ensureTrailingSlash()
 
 android {
     namespace = "com.hazelgym.mobile"

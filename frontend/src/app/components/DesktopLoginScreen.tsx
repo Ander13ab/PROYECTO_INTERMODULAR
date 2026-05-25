@@ -24,12 +24,12 @@ export function DesktopLoginScreen({
       <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[1.1fr_0.9fr]">
         <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,_rgba(255,77,46,0.18),_transparent_32%),linear-gradient(180deg,_#0D0D14_0%,_#12131D_100%)] px-6 py-8 sm:px-8 xl:p-14">
           <div>
-          <div className="inline-flex rounded-full border border-[#FF4D2E33] bg-[#FF4D2E1F] px-5 py-3 shadow-[0_10px_24px_rgba(255,77,46,0.12)]">
-              <BrandLogo className="h-6 w-32" />
+            <div className="inline-flex h-14 w-48 items-center justify-center overflow-hidden rounded-full border border-[#FF4D2E44] bg-[#FF4D2E1F] shadow-[0_14px_30px_rgba(255,77,46,0.16)]">
+              <BrandLogo className="h-24 w-24 scale-[1.85]" tone="original" />
             </div>
           </div>
 
-          <div className="max-w-[520px] py-10 xl:py-0">
+          <div className="max-w-[560px] py-10 sm:pl-6 xl:py-0 xl:pl-10 2xl:pl-16">
             <h2 className="font-['Syne'] text-4xl font-extrabold leading-[1.02] text-white sm:text-5xl xl:text-6xl">
               Accede a tu gimnasio y sigue tu progreso.
             </h2>

@@ -1,5 +1,5 @@
 param(
-    [string]$ApiBaseUrl = "http://10.0.2.2:8080/"
+    [string]$ApiBaseUrl = "https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/"
 )
 
 $ErrorActionPreference = "Stop"

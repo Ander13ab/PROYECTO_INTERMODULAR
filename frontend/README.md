@@ -103,11 +103,29 @@ http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
 
 puede bloquear la llamada por `Mixed Content`.
 
-Para la entrega se usa un proxy de Amplify:
+Para la entrega se usa API Gateway como proxy HTTPS intermedio. La arquitectura queda:
+
+```text
+Amplify HTTPS -> API Gateway HTTPS -> Elastic Beanstalk HTTP -> RDS MySQL
+```
+
+La regla directa de Amplify hacia Elastic Beanstalk HTTP no sirve, porque Amplify no acepta destinos `http://` en custom rewrites.
+
+API Gateway esta configurado asi:
+
+```text
+Route: ANY /{proxy+}
+Integration: ANY http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/{proxy}
+Stage: $default
+```
+
+El `/{proxy}` final de la integracion es necesario para que rutas como `/api/auth/login` lleguen completas al backend.
+
+Rewrite de Amplify:
 
 ```text
 Source address: /api-proxy/<*>
-Target address: http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/<*>
+Target address: https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/<*>
 Type: 200 (Rewrite)
 ```
 
