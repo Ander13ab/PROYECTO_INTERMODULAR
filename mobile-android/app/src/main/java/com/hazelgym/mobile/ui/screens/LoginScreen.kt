@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hazelgym.mobile.ui.components.HazelGymLogo
 import com.hazelgym.mobile.ui.viewmodel.LoginRole
 import com.hazelgym.mobile.ui.viewmodel.LoginUiState
 
@@ -67,13 +68,9 @@ fun LoginScreen(
                             color = Color(0xFFFF4D2E),
                             shape = RoundedCornerShape(16.dp)
                         )
-                        .padding(horizontal = 16.dp, vertical = 10.dp)
+                        .padding(horizontal = 14.dp, vertical = 9.dp)
                 ) {
-                    Text(
-                        text = "Hazel Gym",
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
+                    HazelGymLogo(modifier = Modifier.height(32.dp))
                 }
 
                 Spacer(modifier = Modifier.height(36.dp))

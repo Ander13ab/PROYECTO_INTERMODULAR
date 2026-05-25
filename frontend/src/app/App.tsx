@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DesktopAdminDashboard } from './components/DesktopAdminDashboard';
+import { BrandLogo } from './components/BrandLogo';
 import { DesktopClientDashboard } from './components/DesktopClientDashboard';
 import { DesktopLoginScreen } from './components/DesktopLoginScreen';
 import { DesktopTrainerDashboard } from './components/DesktopTrainerDashboard';
@@ -120,12 +121,10 @@ export default function App() {
     status === 'checking' ? (
       <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,_rgba(255,92,61,0.16),_transparent_22%),radial-gradient(circle_at_top_right,_rgba(34,102,255,0.14),_transparent_24%),linear-gradient(180deg,#0D0D14_0%,#121523_100%)] px-6 py-12">
         <div className="w-full max-w-[560px] rounded-[32px] border border-white/40 bg-white/80 p-12 text-center shadow-[0_28px_90px_rgba(15,23,42,0.12)] backdrop-blur">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#FF5C3D_0%,#FF8A66_100%)] font-['Syne'] text-2xl font-extrabold text-white">
-            HG
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#FF5C3D_0%,#FF8A66_100%)] p-2">
+            <BrandLogo className="h-full w-full" />
           </div>
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#98A2B3]">
-            Hazel Gym
-          </p>
+          <BrandLogo className="mx-auto h-6 w-36" tone="dark" />
           <h2 className="mt-4 font-['Syne'] text-4xl font-extrabold text-[#0D0D14]">
             Comprobando tu sesion
           </h2>

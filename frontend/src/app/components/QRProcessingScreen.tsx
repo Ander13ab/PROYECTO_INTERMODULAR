@@ -1,5 +1,7 @@
 import { PhoneFrame } from './PhoneFrame';
 
+import { BrandLogo } from './BrandLogo';
+
 export function QRProcessingScreen() {
   return (
     <PhoneFrame statusBarColor="#ffffff55" size="flow">
@@ -28,7 +30,10 @@ export function QRProcessingScreen() {
           </div>
           <div>
             <div className="text-[10px] text-[#ffffff88]">QR de entrada detectado</div>
-            <div className="text-[9px] text-[#ffffff33]">Hazel Gym · Sede principal</div>
+            <div className="flex items-center gap-2">
+              <BrandLogo className="h-3 w-16 opacity-30" />
+              <span className="text-[9px] text-[#ffffff33]">Sede principal</span>
+            </div>
           </div>
         </div>
 

@@ -1,12 +1,14 @@
 import { PhoneFrame } from './PhoneFrame';
 
+import { BrandLogo } from './BrandLogo';
+
 export function AdminHomeScreen() {
   return (
     <PhoneFrame statusBarColor="#00000066">
       <div className="bg-[#F2F5F2] min-h-[360px]">
         <div className="bg-[#0D2010] px-4 pt-3.5 pb-[18px] rounded-b-[20px]">
           <div className="text-[10px] text-[#ffffff44] mb-1">Panel de administración</div>
-          <div className="font-['Syne'] text-base font-extrabold text-white">GymApp</div>
+          <BrandLogo className="h-5 w-24" />
           <div className="inline-block bg-[#22CC66] rounded-full px-2 py-1 mt-1.5 text-[9px] text-[#0D2010] font-bold">
             Administrador
           </div>

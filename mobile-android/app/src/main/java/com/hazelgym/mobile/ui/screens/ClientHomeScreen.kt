@@ -397,7 +397,7 @@ private fun ClientQrTab(
                         OutlinedTextField(
                             value = uiState.qrCodeInput,
                             onValueChange = onQrCodeChange,
-                            label = { Text("Ejemplo: 1 o QR Hazel Gym") },
+                            label = { Text("Ejemplo: 1 o QR del gimnasio") },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp)
                         )

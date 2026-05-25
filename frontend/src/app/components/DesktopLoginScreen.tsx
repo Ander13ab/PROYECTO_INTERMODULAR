@@ -1,3 +1,5 @@
+import { BrandLogo } from './BrandLogo';
+
 interface DesktopLoginScreenProps {
   email: string;
   password: string;
@@ -22,8 +24,8 @@ export function DesktopLoginScreen({
       <div className="grid min-h-screen grid-cols-1 xl:grid-cols-[1.1fr_0.9fr]">
         <div className="flex flex-col justify-between bg-[radial-gradient(circle_at_top_left,_rgba(255,77,46,0.18),_transparent_32%),linear-gradient(180deg,_#0D0D14_0%,_#12131D_100%)] px-6 py-8 sm:px-8 xl:p-14">
           <div>
-          <div className="inline-flex rounded-full border border-[#FF4D2E33] bg-[#FF4D2E1F] px-4 py-2 text-sm font-semibold text-[#FF8B73] shadow-[0_10px_24px_rgba(255,77,46,0.12)]">
-              Hazel Gym
+          <div className="inline-flex rounded-full border border-[#FF4D2E33] bg-[#FF4D2E1F] px-5 py-3 shadow-[0_10px_24px_rgba(255,77,46,0.12)]">
+              <BrandLogo className="h-6 w-32" />
             </div>
           </div>
 

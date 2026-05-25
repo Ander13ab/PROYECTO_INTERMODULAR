@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.hazelgym.mobile.data.model.AttendanceResponse
 import com.hazelgym.mobile.data.model.QrCodeResponse
 import com.hazelgym.mobile.data.model.UserSummaryResponse
+import com.hazelgym.mobile.ui.components.HazelGymLogo
 import com.hazelgym.mobile.ui.viewmodel.AdminHomeUiState
 
 private enum class AdminTab(val label: String, val icon: ImageVector) {
@@ -160,7 +161,7 @@ private fun AdminHomeTab(
         item {
             HeroHeader(
                 eyebrow = "Panel de administracion",
-                title = "GymApp",
+                title = "",
                 pillLabel = "Administrador",
                 pillColor = Color(0xFF1DAA64),
                 onLogout = onLogout
@@ -597,12 +598,16 @@ private fun HeroHeader(
                 verticalAlignment = Alignment.Top
             ) {
                 Column {
-                    Text(
-                        text = title,
-                        color = Color.White,
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.ExtraBold
-                    )
+                    if (title.isBlank()) {
+                        HazelGymLogo(modifier = Modifier.height(34.dp))
+                    } else {
+                        Text(
+                            text = title,
+                            color = Color.White,
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
                     Spacer(modifier = Modifier.height(10.dp))
                     RolePill(pillLabel, pillColor)
                 }

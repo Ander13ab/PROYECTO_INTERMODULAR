@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
+import { BrandLogo } from './BrandLogo';
 import {
   createGymClass,
   createMembershipFee,
@@ -1832,9 +1833,7 @@ export function DesktopAdminDashboard({
       <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)]">
         <aside className="border-b border-[#1F4D2F] bg-[linear-gradient(180deg,#0D2010_0%,#12311A_100%)] px-4 py-6 sm:px-5 sm:py-7 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-between lg:border-r lg:border-b-0">
           <div>
-          <h2 className="font-['Syne'] text-3xl font-extrabold text-white">
-            Hazel Gym
-          </h2>
+          <BrandLogo className="h-11 w-36" />
           <p className="mt-2 text-sm text-[#A7F3D0]">Administracion</p>
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:mt-10 lg:grid-cols-1">
             <AdminSidebarItem

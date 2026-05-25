@@ -83,9 +83,41 @@ Configuracion esperada:
 - App root: `frontend`
 - Build command: `pnpm build`
 - Output directory: `dist`
-- Variable de entorno: `VITE_API_BASE_URL=http://hazelgym-backend.eu-west-1.elasticbeanstalk.com`
+- Variable de entorno recomendada en Amplify: `VITE_API_BASE_URL=/api-proxy`
 
 Cuando Amplify genere la URL publica, hay que anadirla en Elastic Beanstalk dentro de `APP_CORS_ALLOWED_ORIGINS`.
+
+### Evitar bloqueo HTTPS/HTTP en navegador
+
+Amplify sirve la web por HTTPS, pero Elastic Beanstalk esta sirviendo la API por HTTP. Si el navegador intenta llamar directamente desde:
+
+```text
+https://main.d1mithns8dqv1b.amplifyapp.com
+```
+
+a:
+
+```text
+http://hazelgym-backend.eu-west-1.elasticbeanstalk.com
+```
+
+puede bloquear la llamada por `Mixed Content`.
+
+Para la entrega se usa un proxy de Amplify:
+
+```text
+Source address: /api-proxy/<*>
+Target address: http://hazelgym-backend.eu-west-1.elasticbeanstalk.com/<*>
+Type: 200 (Rewrite)
+```
+
+Con esa regla, el frontend desplegado debe usar:
+
+```text
+VITE_API_BASE_URL=/api-proxy
+```
+
+Asi el navegador llama al mismo dominio HTTPS de Amplify y Amplify reenvia la peticion al backend.
 
 ## Nota sobre compilacion
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { BrandLogo } from './BrandLogo';
 import { getClientDashboardData } from '../services/clientDashboardService';
 import type {
   ClientAttendance,
@@ -571,7 +572,7 @@ export function DesktopClientDashboard({
   const renderProfile = () => (
     <div className="grid grid-cols-1 gap-6 2xl:grid-cols-[0.95fr_1.05fr]">
       <ClientListCard
-        description="Resumen general de tu cuenta en la web de Hazel Gym."
+        description="Resumen general de tu cuenta en la web."
         title="Perfil"
       >
         <div className="rounded-[22px] bg-[#0D0D14] p-6 text-white">
@@ -679,9 +680,7 @@ export function DesktopClientDashboard({
       <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)]">
         <aside className="border-b border-[#202432] bg-[linear-gradient(180deg,#0D0D14_0%,#161924_100%)] px-4 py-6 sm:px-5 sm:py-7 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-between lg:border-r lg:border-b-0">
           <div>
-          <h2 className="font-['Syne'] text-3xl font-extrabold text-white">
-            Hazel Gym
-          </h2>
+          <BrandLogo className="h-11 w-36" />
           <p className="mt-2 text-sm text-[#98A2B3]">Panel cliente</p>
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:mt-10 lg:grid-cols-1">
             <SidebarItem

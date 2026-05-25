@@ -1,5 +1,7 @@
 import { PhoneFrame } from './PhoneFrame';
 
+import { BrandLogo } from './BrandLogo';
+
 export function QRSuccessEntrada() {
   return (
     <PhoneFrame statusBarColor="#ffffff55" size="flow">
@@ -11,7 +13,9 @@ export function QRSuccessEntrada() {
           </svg>
         </div>
         <div className="font-['Syne'] text-[15px] font-extrabold text-white mb-1">¡Entrada registrada!</div>
-        <p className="text-[10px] text-[#ffffff44] mb-3.5">Bienvenido a Hazel Gym</p>
+        <div className="mb-3.5 flex justify-center">
+          <BrandLogo className="h-4 w-24 opacity-50" />
+        </div>
 
         <div className="bg-[#1A2E1E] border-[0.5px] border-[#22CC6633] rounded-xl px-3 py-2.5 mb-2.5 text-left">
           <div className="flex justify-between items-center py-1">

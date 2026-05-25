@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import { BrandLogo } from './BrandLogo';
 import {
   createClassSession,
   createRoutineAssignment,
@@ -1115,9 +1116,7 @@ export function DesktopTrainerDashboard({
       <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)]">
         <aside className="border-b border-[#213067] bg-[linear-gradient(180deg,#0A1A4A_0%,#122A70_100%)] px-4 py-6 sm:px-5 sm:py-7 lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-between lg:border-r lg:border-b-0">
           <div>
-          <h2 className="font-['Syne'] text-3xl font-extrabold text-white">
-            Hazel Gym
-          </h2>
+          <BrandLogo className="h-11 w-36" />
           <p className="mt-2 text-sm text-[#C7D7FE]">Panel entrenador</p>
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:mt-10 lg:grid-cols-1">
             <TrainerSidebarItem
