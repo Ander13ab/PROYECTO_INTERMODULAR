@@ -10,6 +10,13 @@ frontend/.env
 frontend/.env.local
 frontend/.env.*.local
 
+# Generated report / final dossier artifacts
+docs/HazelGym_Dossier_Maestro_Proyecto.docx
+docs/build_dossier_docx.py
+docs/dossier_render/
+docs/build_use_case_diagram.py
+docs/diagrama_casos_uso_actualizado.*
+
 # IDE
 .idea/
 .vscode/

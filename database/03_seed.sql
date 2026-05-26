@@ -22,7 +22,7 @@ INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel,
   '1. Ajusta el banco a posicion horizontal\n2. Agarre a la anchura de hombros, codos a 45 grados\n3. Baja controlado hasta el pecho, empuja sin bloquear codos',
   'Medio',
   'No uses cargas elevadas sin un companero.',
-  'https://www.wodcat.com/ejercicios/press-de-banca',
+  'https://www.nike.com/es/a/como-y-por-que-hacer-press-de-banca',
   'ACTIVA'
 ),
 (
@@ -42,7 +42,7 @@ INSERT INTO maquinas (nombre, descripcion, grupo_muscular, instrucciones, nivel,
   '1. Sientate con los pies apoyados\n2. Agarra el mango con las palmas hacia dentro\n3. Tira hacia el abdomen manteniendo la espalda recta',
   'Medio',
   'No arquees la espalda al tirar.',
-  'https://www.inspireusafoundation.org/seated-cable-row/',
+  'https://www.myprotein.es/thezone/entrenamiento/remo-en-polea-baja-sentado/',
   'ACTIVA'
 );
 
