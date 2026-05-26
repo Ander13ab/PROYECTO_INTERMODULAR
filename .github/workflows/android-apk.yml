@@ -6,7 +6,7 @@ on:
       api_base_url:
         description: "Backend API URL for the APK"
         required: false
-        default: "http://10.0.2.2:8080/"
+        default: "https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com/"
 
 jobs:
   build-apk:
@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hazelgym-debug-apk
-          path: mobile-android/app/build/outputs/apk/debug/app-debug.apk
+          path: mobile-android/app/build/outputs/apk/debug/HazelGym-1.0-debug.apk

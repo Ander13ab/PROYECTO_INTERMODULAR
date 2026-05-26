@@ -56,31 +56,33 @@ Objetivo deseable:
 
 ### 4. Despliegue AWS
 
-Estado: pendiente.
+Estado: desplegado y en fase de validacion final.
 
-Arquitectura recomendada para esta entrega:
+Arquitectura final de entrega:
 
-- Frontend web: S3 + CloudFront.
-- Backend Spring Boot: Elastic Beanstalk o App Runner.
-- Base de datos: RDS MySQL.
+- Frontend web: AWS Amplify.
+- Proxy HTTPS: Amazon API Gateway.
+- Backend Spring Boot: AWS Elastic Beanstalk.
+- Base de datos: Amazon RDS MySQL.
 - Secretos: variables de entorno en AWS, no en Git.
 
-Orden recomendado:
+Flujo final:
 
-1. Preparar backend para leer todo por variables de entorno.
-2. Preparar frontend para usar una URL de API configurable.
-3. Crear workflows de GitHub Actions.
-4. Desplegar primero manualmente una vez.
-5. Activar despliegue automatico con GitHub Actions.
+```text
+Usuario web -> Amplify HTTPS -> /api-proxy -> API Gateway HTTPS -> Elastic Beanstalk HTTP -> RDS MySQL
+Android APK -> API Gateway HTTPS -> Elastic Beanstalk HTTP -> RDS MySQL
+```
+
+Esta solucion evita el bloqueo de contenido mixto del navegador, porque la web de Amplify siempre consume una URL HTTPS.
 
 ### 5. CI/CD GitHub Actions
 
-Estado: pendiente.
+Estado: preparado.
 
 Workflows necesarios:
 
 - `ci.yml`: valida backend, web y Android.
-- `deploy-frontend.yml`: compila web y despliega a S3.
+- Amplify despliega la web automaticamente desde GitHub al detectar cambios en `main`.
 - `deploy-backend.yml`: empaqueta backend y despliega a AWS.
 - `android-apk.yml`: genera APK como artifact descargable.
 
@@ -155,6 +157,6 @@ El proyecto se considerara listo cuando se cumpla:
 - Web compilable y usable por los tres roles.
 - Android instalable mediante APK.
 - QR de maquina o sesion demostrable de extremo a extremo.
-- Despliegue en AWS accesible publicamente.
-- GitHub Actions ejecutando validaciones y al menos un despliegue.
+- Despliegue en AWS accesible publicamente mediante Amplify, API Gateway, Elastic Beanstalk y RDS.
+- GitHub Actions ejecutando validaciones y generando APK cuando sea necesario.
 - Documentacion final actualizada en `/docs` y Notion.

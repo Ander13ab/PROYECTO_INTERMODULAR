@@ -5,7 +5,8 @@
 Preparar Hazel Gym para:
 
 - validar el proyecto automaticamente con GitHub Actions;
-- desplegar la web en AWS S3 + CloudFront;
+- desplegar la web mediante AWS Amplify conectado a GitHub;
+- exponer la API mediante API Gateway para evitar contenido mixto HTTPS/HTTP;
 - desplegar el backend Spring Boot en AWS Elastic Beanstalk;
 - generar una APK Android instalable como artifact.
 
@@ -45,11 +46,19 @@ Para movil fisico o demo externa:
 
 ### Despliegue frontend
 
-Archivo: `.github/workflows/deploy-frontend-s3.yml`
+El despliegue principal de la web se realiza con AWS Amplify.
 
-Compila React/Vite y sube `frontend/dist` a S3.
+Amplify esta conectado al repositorio GitHub y reconstruye la app cuando se suben cambios a `main`.
 
-Si se configura CloudFront, invalida cache automaticamente.
+Configuracion usada:
+
+- `appRoot`: `frontend`
+- instalacion: `pnpm install --frozen-lockfile`
+- build: `pnpm build`
+- variable de entorno en Amplify: `VITE_API_BASE_URL=/api-proxy`
+- rewrite: `/api-proxy/<*>` hacia API Gateway
+
+El workflow `.github/workflows/deploy-frontend-s3.yml` queda como alternativa tecnica si se decide usar S3 + CloudFront en el futuro, pero no es la ruta principal de entrega.
 
 ### Despliegue backend
 
@@ -80,9 +89,13 @@ Estos secretos se configuran en:
 - `AWS_CLOUDFRONT_DISTRIBUTION_ID`
 - `VITE_API_BASE_URL`
 
-`VITE_API_BASE_URL` debe apuntar al backend desplegado, por ejemplo:
+`VITE_API_BASE_URL` para Amplify debe ser:
 
-- `https://api.hazelgym...`
+- `/api-proxy`
+
+El proxy de Amplify reenvia a API Gateway:
+
+- `https://k7edn14r3k.execute-api.eu-west-1.amazonaws.com`
 
 ### Backend Elastic Beanstalk
 
@@ -110,7 +123,7 @@ jdbc:mysql://hazelgym-db.xxxxxx.eu-west-1.rds.amazonaws.com:3306/hazelgym?useSSL
 Ejemplo de `APP_CORS_ALLOWED_ORIGINS`:
 
 ```text
-https://tu-dominio-cloudfront.cloudfront.net,http://localhost:5173
+http://localhost:5173,http://localhost:3000,http://localhost:8081,https://main.d1mithns8dqv1b.amplifyapp.com
 ```
 
 ## Comandos locales utiles
@@ -175,20 +188,20 @@ Con el script:
 ## Orden recomendado de despliegue
 
 1. Crear RDS MySQL.
-2. Cargar esquema y seed inicial.
+2. Cargar esquema, seed y datos de entrega.
 3. Crear Elastic Beanstalk para backend.
 4. Configurar variables de entorno del backend.
-5. Ejecutar workflow `deploy-backend-eb.yml`.
-6. Crear bucket S3 para frontend.
-7. Crear CloudFront apuntando al bucket.
-8. Configurar `VITE_API_BASE_URL` en GitHub.
-9. Ejecutar workflow `deploy-frontend-s3.yml`.
-10. Generar APK con `android-apk.yml` usando la URL publica del backend.
+5. Validar Swagger y smoke test contra Elastic Beanstalk.
+6. Crear API Gateway HTTP API como proxy HTTPS hacia Elastic Beanstalk.
+7. Crear Amplify Hosting conectado a GitHub.
+8. Configurar `VITE_API_BASE_URL=/api-proxy` en Amplify.
+9. Configurar rewrite de Amplify hacia API Gateway.
+10. Generar APK con `android-apk.yml` usando la URL publica de API Gateway.
 
 ## Criterio de demo lista
 
-- La web abre desde URL publica.
+- La web abre desde URL publica de Amplify.
 - Login funciona con admin, entrenador y cliente.
 - La APK se instala en un dispositivo o emulador.
-- La APK puede iniciar sesion contra el backend desplegado.
+- La APK puede iniciar sesion contra API Gateway.
 - Se puede registrar asistencia mediante QR de maquina o sesion.

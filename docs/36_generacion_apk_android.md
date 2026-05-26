@@ -9,7 +9,13 @@ Generar una APK debug instalable de Hazel Gym para poder probar la app fuera del
 La APK debug se genera en:
 
 ```text
-C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/mobile-android/app/build/outputs/apk/debug/app-debug.apk
+C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/mobile-android/app/build/outputs/apk/debug/HazelGym-1.0-debug.apk
+```
+
+El script local tambien crea una copia con nombre de entrega:
+
+```text
+C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/mobile-android/app/build/outputs/apk/debug/HazelGym-demo-aws.apk
 ```
 
 ## Opcion A: Android Studio
@@ -72,7 +78,7 @@ La URL debe terminar en `/`.
 Con el emulador abierto:
 
 ```powershell
-adb install -r C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/mobile-android/app/build/outputs/apk/debug/app-debug.apk
+adb install -r C:/Users/ander/Documents/2DAM/PROYECTO_INTERMODULAR/mobile-android/app/build/outputs/apk/debug/HazelGym-1.0-debug.apk
 ```
 
 Si `adb` no esta disponible en PowerShell, tambien puedes arrastrar el archivo `.apk` encima del emulador.
@@ -80,7 +86,7 @@ Si `adb` no esta disponible en PowerShell, tambien puedes arrastrar el archivo `
 ## Instalacion en movil fisico
 
 1. Genera la APK contra una URL publica del backend, no contra `10.0.2.2`.
-2. Pasa el archivo `app-debug.apk` al movil.
+2. Pasa el archivo `HazelGym-1.0-debug.apk` o `HazelGym-demo-aws.apk` al movil.
 3. Activa la instalacion desde origenes desconocidos si Android lo pide.
 4. Instala la APK.
 
