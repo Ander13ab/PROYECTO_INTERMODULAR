@@ -14,12 +14,16 @@ object ApiClient {
         explicitNulls = false
     }
 
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-
     private val httpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
+        .apply {
+            if (BuildConfig.DEBUG) {
+                addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    }
+                )
+            }
+        }
         .build()
 
     private val retrofit: Retrofit = Retrofit.Builder()
