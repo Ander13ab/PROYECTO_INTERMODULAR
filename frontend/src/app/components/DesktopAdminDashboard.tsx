@@ -1268,17 +1268,6 @@ export function DesktopAdminDashboard({
             ) : null}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <AdminInfoCard
-              subtitle="Registro rapido de asistencia y escaneo con camara del telefono."
-              title="Movil: escaneo principal"
-            />
-            <AdminInfoCard
-              subtitle="Seguimiento de actividad, control de recursos y organizacion interna."
-              title="Web: supervision y gestion"
-            />
-          </div>
-
           {qrMessage ? (
             <div className="rounded-[20px] border border-[#CFEAD6] bg-[#F0FFF4] px-4 py-3 text-sm text-[#166534]">
               {qrMessage}

@@ -195,10 +195,13 @@ export function DesktopClientDashboard({
   const assignments = data?.assignments ?? [];
   const machines = data?.machines ?? [];
   const classes = data?.classes ?? [];
+  const trackableAttendances = attendances.filter((attendance) =>
+    ['ENTRY', 'CLASS_SESSION'].includes(attendance.qrType),
+  );
 
-  const streak = buildCurrentStreak(attendances);
+  const streak = buildCurrentStreak(trackableAttendances);
   const nextClasses = buildNextClasses(classes);
-  const recentAttendances = buildRecentAttendances(attendances);
+  const recentAttendances = buildRecentAttendances(trackableAttendances);
   const filteredAttendances = recentAttendances.filter((attendance) => {
     const matchesType =
       attendanceTypeFilter === 'ALL' || attendance.qrType === attendanceTypeFilter;
@@ -229,7 +232,7 @@ export function DesktopClientDashboard({
           accent="#FF4D2E"
           helper={isLoading ? 'cargando...' : 'entradas registradas'}
           label="Visitas totales"
-          value={isLoading ? '...' : String(attendances.length)}
+          value={isLoading ? '...' : String(trackableAttendances.length)}
         />
         <StatCard
           accent="#2266FF"
@@ -340,7 +343,6 @@ export function DesktopClientDashboard({
             >
               <option value="ALL">Todos</option>
               <option value="ENTRY">Entrada</option>
-              <option value="MACHINE">Maquina</option>
               <option value="CLASS_SESSION">Sesion de clase</option>
             </select>
           </label>
@@ -387,7 +389,7 @@ export function DesktopClientDashboard({
           <div className="rounded-[22px] border border-[#EEF2F7] bg-[#F8FAFC] p-5">
             <p className="text-sm font-semibold text-[#667085]">Visitas</p>
             <p className="mt-3 font-['Syne'] text-4xl font-extrabold text-[#101828]">
-              {isLoading ? '...' : attendances.length}
+              {isLoading ? '...' : trackableAttendances.length}
             </p>
           </div>
           <div className="rounded-[22px] border border-[#EEF2F7] bg-[#F8FAFC] p-5">
@@ -592,11 +594,7 @@ export function DesktopClientDashboard({
             title="Rol: Cliente"
           />
           <ClientRow
-            subtitle="El registro rapido de asistencia mediante QR sigue siendo mas natural desde movil."
-            title="Uso recomendado"
-          />
-          <ClientRow
-            subtitle={isLoading ? 'cargando...' : `${attendances.length} visitas registradas`}
+            subtitle={isLoading ? 'cargando...' : `${trackableAttendances.length} visitas registradas`}
             title="Historial disponible"
           />
           <ClientRow
@@ -614,7 +612,7 @@ export function DesktopClientDashboard({
           <div className="rounded-[22px] border border-[#EEF2F7] bg-[#F8FAFC] p-5">
             <p className="text-sm font-semibold text-[#667085]">Visitas</p>
             <p className="mt-3 font-['Syne'] text-4xl font-extrabold text-[#101828]">
-              {isLoading ? '...' : attendances.length}
+              {isLoading ? '...' : trackableAttendances.length}
             </p>
           </div>
           <div className="rounded-[22px] border border-[#EEF2F7] bg-[#F8FAFC] p-5">
@@ -629,23 +627,6 @@ export function DesktopClientDashboard({
               {isLoading ? '...' : assignments.length}
             </p>
           </div>
-        </div>
-
-        <div className="rounded-[22px] border border-[#EEF2F7] bg-[#F8FAFC] p-5">
-          <p className="text-base font-semibold text-[#101828]">Resumen de uso web</p>
-          <p className="mt-3 text-sm text-[#667085]">
-            La version de escritorio esta orientada a lectura comoda y seguimiento
-            de tu plan. Aqui puedes consultar tus rutinas, revisar tu historial de
-            asistencia y ver el catalogo del gimnasio sin depender del telefono.
-          </p>
-        </div>
-
-        <div className="rounded-[22px] border border-[#EEF2F7] bg-[#FFF3EF] p-5">
-          <p className="text-base font-semibold text-[#B93815]">Nota sobre QR</p>
-          <p className="mt-3 text-sm text-[#B93815]">
-            El flujo principal de escaneo se mantiene en la app movil para que la
-            entrada al gimnasio siga siendo mas rapida y coherente con el uso real.
-          </p>
         </div>
       </ClientListCard>
     </div>

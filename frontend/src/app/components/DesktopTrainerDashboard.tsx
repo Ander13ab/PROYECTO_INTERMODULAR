@@ -532,9 +532,6 @@ export function DesktopTrainerDashboard({
           )}
         </div>
 
-        <button className="mt-6 w-full rounded-[20px] bg-[#2266FF] px-5 py-4 font-['Syne'] text-lg font-bold text-white">
-          Escanear QR de sesion
-        </button>
       </section>
 
       <div className="space-y-6">
