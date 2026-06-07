@@ -579,7 +579,7 @@ export function DesktopAdminDashboard({
     }
 
     if (!selectedUserId && userDraft.password.trim().length < 6) {
-      setUserMessage('La contrasena inicial debe tener al menos 6 caracteres.');
+      setUserMessage('La contraseña inicial debe tener al menos 6 caracteres.');
       return;
     }
 
@@ -1005,7 +1005,7 @@ export function DesktopAdminDashboard({
             }
           />
           <AdminTextField
-            label={selectedUserId ? 'Nueva contrasena (opcional)' : 'Contrasena inicial'}
+            label={selectedUserId ? 'Nueva contraseña (opcional)' : 'Contraseña inicial'}
             placeholder="Minimo 6 caracteres"
             type="password"
             value={userDraft.password}

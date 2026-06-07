@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -38,6 +39,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,6 +54,7 @@ import com.hazelgym.mobile.data.model.QrCodeResponse
 import com.hazelgym.mobile.data.model.UserSummaryResponse
 import com.hazelgym.mobile.ui.components.HazelGymLogo
 import com.hazelgym.mobile.ui.viewmodel.AdminHomeUiState
+import kotlinx.coroutines.launch
 
 private enum class AdminTab(val label: String, val icon: ImageVector) {
     HOME("Inicio", Icons.Default.Home),
@@ -206,7 +209,7 @@ private fun AdminHomeTab(
                     onClick = onNavigateToUsers
                 )
                 QuickActionCard(
-                    title = "Generar QR",
+                    title = "QR generados",
                     subtitle = "${uiState.qrCodes.size} codigos disponibles para entrada, maquinas y clases",
                     icon = Icons.Default.QrCode2,
                     accent = Color(0xFFDDF8E6),
@@ -303,8 +306,11 @@ private fun AdminQrTab(
     val entryCount = uiState.qrCodes.count { it.esEntradaGimnasio }
     val machineQrCount = uiState.qrCodes.count { it.tipo.equals("MACHINE", ignoreCase = true) }
     val sessionQrCount = uiState.qrCodes.count { it.tipo.equals("CLASS_SESSION", ignoreCase = true) }
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     LazyColumn(
+        state = listState,
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -337,7 +343,11 @@ private fun AdminQrTab(
                     subtitle = "Los codigos vinculados a maquinas o sesiones se muestran con su referencia.",
                     icon = Icons.Default.SportsGymnastics,
                     accent = Color(0xFFDDF8E6),
-                    onClick = onRefresh
+                    onClick = {
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(5)
+                        }
+                    }
                 )
             }
         }

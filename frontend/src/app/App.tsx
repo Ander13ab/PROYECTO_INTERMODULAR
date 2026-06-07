@@ -47,7 +47,7 @@ export default function App() {
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
-      setErrorMessage('Completa el email y la contrasena para continuar.');
+      setErrorMessage('Completa el email y la contraseña para continuar.');
       return;
     }
 

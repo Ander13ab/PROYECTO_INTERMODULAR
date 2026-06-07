@@ -102,7 +102,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = onPasswordChange,
-                    label = { Text("Contrasena", color = Color.White.copy(alpha = 0.8f)) },
+                    label = { Text("Contraseña", color = Color.White.copy(alpha = 0.8f)) },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = loginFieldColors(),
@@ -120,9 +120,9 @@ fun LoginScreen(
                                     Icons.Default.Visibility
                                 },
                                 contentDescription = if (isPasswordVisible) {
-                                    "Ocultar contrasena"
+                                    "Ocultar contraseña"
                                 } else {
-                                    "Mostrar contrasena"
+                                    "Mostrar contraseña"
                                 },
                                 tint = Color.White
                             )

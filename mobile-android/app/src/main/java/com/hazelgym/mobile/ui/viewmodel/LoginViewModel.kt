@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 enum class LoginRole(
     val label: String,
@@ -66,10 +67,20 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = error.message ?: "No se pudo iniciar sesion"
+                        errorMessage = loginErrorMessage(error)
                     )
                 }
             }
+        }
+    }
+
+    private fun loginErrorMessage(error: Throwable): String {
+        return when {
+            error is HttpException && error.code() == 400 -> "Correo incorrecto."
+            error is HttpException && error.code() == 401 -> "Contraseña incorrecta."
+            error.message?.contains("400") == true -> "Correo incorrecto."
+            error.message?.contains("401") == true -> "Contraseña incorrecta."
+            else -> error.message ?: "No se pudo iniciar sesión"
         }
     }
 

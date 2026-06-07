@@ -86,11 +86,11 @@ export function DesktopLoginScreen({
 
               <label className="block">
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-[#6B7280]">
-                  Contrasena
+                  Contraseña
                 </span>
                 <input
                   className="w-full rounded-2xl border border-white/5 bg-[#1F2230] px-5 py-4 text-base text-white outline-none transition placeholder:text-white/30 focus:border-[#FF4D2E]"
-                  placeholder="Introduce tu contrasena"
+                  placeholder="Introduce tu contraseña"
                   type="password"
                   value={password}
                   onChange={(event) => onPasswordChange(event.target.value)}

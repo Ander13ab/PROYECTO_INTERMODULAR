@@ -1194,7 +1194,12 @@ private fun SearchableSelectionField(
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
+        onExpandedChange = { shouldExpand ->
+            expanded = shouldExpand
+            if (shouldExpand) {
+                query = ""
+            }
+        }
     ) {
         OutlinedTextField(
             value = if (expanded) query else selectedOption?.title.orEmpty(),
@@ -1283,7 +1288,12 @@ private fun SearchableChoiceField(
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
+        onExpandedChange = { shouldExpand ->
+            expanded = shouldExpand
+            if (shouldExpand) {
+                query = ""
+            }
+        }
     ) {
         OutlinedTextField(
             value = if (expanded) query else selectedOption?.title.orEmpty(),
@@ -1487,7 +1497,7 @@ private fun AdminUserFormCard(
             OutlinedTextField(
                 value = uiState.userPasswordInput,
                 onValueChange = onUserPasswordChange,
-                label = { Text(if (uiState.userEditingId == null) "Contrasena" else "Nueva contrasena opcional") },
+                label = { Text(if (uiState.userEditingId == null) "Contraseña" else "Nueva contraseña opcional") },
                 modifier = Modifier.fillMaxWidth()
             )
 

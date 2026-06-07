@@ -7,7 +7,7 @@ Base Android nativa para Hazel Gym usando Kotlin + Jetpack Compose.
 - Proyecto Android creado dentro de `mobile-android`
 - Login conectado a `POST /api/auth/login`
 - Login sin selector manual de rol: la app detecta automaticamente el rol devuelto por el backend
-- Contrasena oculta por defecto con icono de ojo para mostrarla o esconderla
+- Contraseña oculta por defecto con icono de ojo para mostrarla o esconderla
 - Sesion guardada con DataStore
 - Arranque forzado en login en cada nueva ejecucion para probar los tres roles con facilidad
 - Panel admin con consumo real de usuarios, maquinas, sesiones, QR y asistencias

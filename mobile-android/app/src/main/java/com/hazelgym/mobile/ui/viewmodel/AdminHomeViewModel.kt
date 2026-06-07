@@ -204,7 +204,7 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
             return
         }
         if (editingId == null && password.length < 6) {
-            _uiState.update { it.copy(userSaveMessage = "La contrasena debe tener al menos 6 caracteres.") }
+            _uiState.update { it.copy(userSaveMessage = "La contraseña debe tener al menos 6 caracteres.") }
             return
         }
 
