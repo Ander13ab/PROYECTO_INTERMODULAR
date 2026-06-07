@@ -1,6 +1,7 @@
 package com.hazelgym.model;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,7 +36,7 @@ public class Attendance {
     @PrePersist
     void onCreate() {
         if (fechaHora == null) {
-            fechaHora = LocalDateTime.now();
+            fechaHora = LocalDateTime.now(ZoneOffset.UTC);
         }
     }
 

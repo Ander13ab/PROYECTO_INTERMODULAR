@@ -1,5 +1,8 @@
 package com.hazelgym.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -23,6 +26,8 @@ import com.hazelgym.service.AttendanceService;
 @Service
 @Transactional
 public class AttendanceServiceImpl implements AttendanceService {
+
+    private static final ZoneId DISPLAY_TIME_ZONE = ZoneId.of("Europe/Madrid");
 
     private final AttendanceRepository attendanceRepository;
     private final UserRepository userRepository;
@@ -109,7 +114,16 @@ public class AttendanceServiceImpl implements AttendanceService {
                 attendance.getUsuario().getNombre(),
                 attendance.getQrCode().getId(),
                 attendance.getQrCode().getTipo().name(),
-                attendance.getFechaHora()
+                toDisplayTime(attendance.getFechaHora())
         );
+    }
+
+    private LocalDateTime toDisplayTime(LocalDateTime fechaHoraUtc) {
+        if (fechaHoraUtc == null) {
+            return null;
+        }
+        return fechaHoraUtc.atZone(ZoneOffset.UTC)
+                .withZoneSameInstant(DISPLAY_TIME_ZONE)
+                .toLocalDateTime();
     }
 }
