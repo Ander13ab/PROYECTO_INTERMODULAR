@@ -534,7 +534,7 @@ export function DesktopAdminDashboard({
   const selectQrCode = (qrCode: QrCodeSummary) => {
     setSelectedQrId(qrCode.id);
     setQrDraft(qrCodeToDraft(qrCode));
-    setQrMessage(`Editando el QR #${qrCode.id}.`);
+    setQrMessage(`Editando el ID QR: ${qrCode.id}.`);
   };
 
   const handleMachineSave = async () => {
@@ -1155,7 +1155,7 @@ export function DesktopAdminDashboard({
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="text-base font-semibold text-[#0D2010]">
-                      QR #{qrCode.id} · {qrTypeLabel[qrCode.tipo]}
+                      ID QR: {qrCode.id} - {qrTypeLabel[qrCode.tipo]}
                     </p>
                     <p className="mt-2 text-sm text-[#667085]">
                       {qrCode.esEntradaGimnasio
@@ -1294,7 +1294,7 @@ export function DesktopAdminDashboard({
               <div className="grid grid-cols-1 gap-5 xl:grid-cols-[260px_1fr] xl:items-center">
                 <div className="rounded-[24px] border border-[#DCFCE7] bg-white p-4 shadow-[0_18px_40px_rgba(16,185,129,0.12)]">
                   <img
-                    alt={`Codigo QR #${selectedQrCode.id}`}
+                    alt={`ID QR: ${selectedQrCode.id}`}
                     className="mx-auto h-[220px] w-[220px] rounded-2xl object-contain"
                     src={buildQrImageUrl(selectedQrCode, 260)}
                   />
@@ -1305,19 +1305,11 @@ export function DesktopAdminDashboard({
                       QR escaneable
                     </p>
                     <h5 className="mt-2 font-['Syne'] text-2xl font-bold text-[#0D2010]">
-                      QR #{selectedQrCode.id} - {qrTypeLabel[selectedQrCode.tipo]}
+                      ID QR: {selectedQrCode.id} - {qrTypeLabel[selectedQrCode.tipo]}
                     </h5>
                     <p className="mt-2 text-sm leading-6 text-[#667085]">
                       Código escaneable para clientes con la app móvil
                     </p>
-                  </div>
-                  <div className="rounded-[18px] border border-[#E5E7EB] bg-white px-4 py-3">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#98A2B3]">
-                      Contenido del QR
-                    </p>
-                    <code className="mt-2 block break-all text-sm text-[#0D2010]">
-                      {buildQrScanPayload(selectedQrCode)}
-                    </code>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     <a
@@ -1328,15 +1320,6 @@ export function DesktopAdminDashboard({
                     >
                       Abrir QR grande
                     </a>
-                    <button
-                      className="rounded-full bg-[#0D2010] px-5 py-3 text-sm font-semibold text-white"
-                      onClick={() =>
-                        void navigator.clipboard.writeText(buildQrScanPayload(selectedQrCode))
-                      }
-                      type="button"
-                    >
-                      Copiar contenido
-                    </button>
                   </div>
                 </div>
               </div>
