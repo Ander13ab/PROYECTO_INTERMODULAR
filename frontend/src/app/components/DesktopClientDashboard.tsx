@@ -255,7 +255,7 @@ export function DesktopClientDashboard({
               Acciones y seguimiento
             </h4>
             <p className="text-sm text-[#98A2B3]">
-              La asistencia por QR se registra mejor desde la app movil
+              La asistencia por QR se registra desde la app movil
             </p>
           </div>
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
@@ -263,19 +263,19 @@ export function DesktopClientDashboard({
               <p className="text-lg font-semibold">Usar QR en movil</p>
               <p className="mt-3 text-sm text-white/55">
                 Desde web puedes consultar tu historial, pero el escaneo principal
-                se hace desde el telefono.
+                se hace desde el teléfono.
               </p>
             </div>
             <div className="rounded-[22px] bg-[#F8FAFC] p-6">
-              <p className="text-lg font-semibold text-[#101828]">Ver maquinas</p>
+              <p className="text-lg font-semibold text-[#101828]">Máquinas disponibles</p>
               <p className="mt-3 text-sm text-[#98A2B3]">
                 {isLoading
                   ? 'Preparando catalogo'
-                  : `${machines.length} maquinas visibles en el catalogo`}
+                  : `${machines.length} máquinas visibles en el catalogo`}
               </p>
             </div>
             <div className="rounded-[22px] bg-[#F8FAFC] p-6">
-              <p className="text-lg font-semibold text-[#101828]">Mis rutinas</p>
+              <p className="text-lg font-semibold text-[#101828]">Rutinas asignadas</p>
               <p className="mt-3 text-sm text-[#98A2B3]">
                 {isLoading
                   ? 'Preparando rutinas'
@@ -410,7 +410,7 @@ export function DesktopClientDashboard({
           <div className="rounded-[22px] bg-[#0D0D14] p-6 text-white">
             <p className="text-lg font-semibold">Registro seleccionado</p>
             <p className="mt-4 text-sm text-white/65">
-              Identificador: #{selectedAttendance.id}
+              Identificador: ID{selectedAttendance.id}
             </p>
             <p className="mt-2 text-sm text-white/65">
               Fecha: {formatDate(selectedAttendance.fechaHora)}
@@ -419,7 +419,7 @@ export function DesktopClientDashboard({
               Tipo: QR {selectedAttendance.qrType.toLowerCase()}
             </p>
             <p className="mt-4 text-sm text-white/55">
-              Este panel esta pensado para consulta y seguimiento. El registro de la asistencia sigue siendo mas natural desde la app movil con QR.
+              Información identificativa de este acceso.
             </p>
           </div>
         ) : (
@@ -434,13 +434,13 @@ export function DesktopClientDashboard({
 
   const renderMachines = () => (
     <ClientListCard
-      description="Consulta del catalogo visible de maquinas del gimnasio."
-      title="Maquinas"
+      description="Consulta del catalogo visible de máquinas del gimnasio."
+      title="Máquinas"
     >
       {isLoading ? (
         <ClientRow
-          subtitle="Estamos cargando el catalogo de maquinas."
-          title="Cargando maquinas"
+          subtitle="Estamos cargando el catalogo de máquinas."
+          title="Cargando máquinas"
         />
       ) : machines.length > 0 ? (
         machines.map((machine: ClientMachine) => (
@@ -454,8 +454,8 @@ export function DesktopClientDashboard({
         ))
       ) : (
         <ClientRow
-          subtitle="No hay maquinas registradas para mostrar."
-          title="Sin maquinas"
+          subtitle="No hay máquinas registradas para mostrar."
+          title="Sin máquinas"
         />
       )}
     </ClientListCard>
@@ -590,7 +590,7 @@ export function DesktopClientDashboard({
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <ClientRow
-            subtitle="Acceso a historial, maquinas, rutinas y seguimiento general."
+            subtitle="Acceso a historial, máquinas, rutinas y seguimiento general."
             title="Rol: Cliente"
           />
           <ClientRow
