@@ -279,6 +279,23 @@ function qrCodeToDraft(qrCode: QrCodeSummary): QrCodeDraft {
   };
 }
 
+function buildQrScanPayload(qrCode: QrCodeSummary) {
+  const params = [
+    `type=${qrCode.tipo}`,
+    qrCode.esEntradaGimnasio ? 'entry=true' : null,
+    qrCode.maquinaId ? `machineId=${qrCode.maquinaId}` : null,
+    qrCode.sesionClaseId ? `sessionId=${qrCode.sesionClaseId}` : null,
+  ].filter(Boolean);
+
+  return `hazelgym://qr/${qrCode.id}${params.length ? `?${params.join('&')}` : ''}`;
+}
+
+function buildQrImageUrl(qrCode: QrCodeSummary, size = 260) {
+  const data = encodeURIComponent(buildQrScanPayload(qrCode));
+
+  return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=16&data=${data}`;
+}
+
 interface DesktopAdminDashboardProps {
   userName: string;
   onLogout: () => void;
@@ -434,6 +451,10 @@ export function DesktopAdminDashboard({
         .includes(search),
     );
   }, [data, qrSearch]);
+  const selectedQrCode = useMemo(
+    () => data?.qrCodes.find((qrCode) => qrCode.id === selectedQrId) ?? null,
+    [data, selectedQrId],
+  );
 
   const userRoleLabel: Record<UserDraft['roleName'], string> = {
     ADMIN: 'Administrador',
@@ -1267,6 +1288,65 @@ export function DesktopAdminDashboard({
               </label>
             ) : null}
           </div>
+
+          {selectedQrCode ? (
+            <div className="rounded-[24px] border border-[#BBF7D0] bg-[#F8FFFB] p-5">
+              <div className="grid grid-cols-1 gap-5 xl:grid-cols-[260px_1fr] xl:items-center">
+                <div className="rounded-[24px] border border-[#DCFCE7] bg-white p-4 shadow-[0_18px_40px_rgba(16,185,129,0.12)]">
+                  <img
+                    alt={`Codigo QR #${selectedQrCode.id}`}
+                    className="mx-auto h-[220px] w-[220px] rounded-2xl object-contain"
+                    src={buildQrImageUrl(selectedQrCode, 260)}
+                  />
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[#16A34A]">
+                      QR escaneable
+                    </p>
+                    <h5 className="mt-2 font-['Syne'] text-2xl font-bold text-[#0D2010]">
+                      QR #{selectedQrCode.id} - {qrTypeLabel[selectedQrCode.tipo]}
+                    </h5>
+                    <p className="mt-2 text-sm leading-6 text-[#667085]">
+                      Código escaneable para clientes con la app móvil
+                    </p>
+                  </div>
+                  <div className="rounded-[18px] border border-[#E5E7EB] bg-white px-4 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#98A2B3]">
+                      Contenido del QR
+                    </p>
+                    <code className="mt-2 block break-all text-sm text-[#0D2010]">
+                      {buildQrScanPayload(selectedQrCode)}
+                    </code>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <a
+                      className="rounded-full bg-[#22CC66] px-5 py-3 text-sm font-semibold text-[#0D2010]"
+                      href={buildQrImageUrl(selectedQrCode, 520)}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Abrir QR grande
+                    </a>
+                    <button
+                      className="rounded-full bg-[#0D2010] px-5 py-3 text-sm font-semibold text-white"
+                      onClick={() =>
+                        void navigator.clipboard.writeText(buildQrScanPayload(selectedQrCode))
+                      }
+                      type="button"
+                    >
+                      Copiar contenido
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <AdminInfoCard
+              subtitle="Selecciona un codigo de la lista para verlo en formato escaneable."
+              title="Vista previa del QR"
+            />
+          )}
 
           {qrMessage ? (
             <div className="rounded-[20px] border border-[#CFEAD6] bg-[#F0FFF4] px-4 py-3 text-sm text-[#166534]">

@@ -64,6 +64,9 @@ import com.hazelgym.mobile.ui.viewmodel.ClientHomeUiState
 import com.hazelgym.mobile.ui.viewmodel.TrainerHomeUiState
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ClientRoutinesDetailScreen(
@@ -71,7 +74,7 @@ fun ClientRoutinesDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Detalle de rutinas",
+        eyebrow = "",
         title = "Rutinas disponibles",
         pillLabel = "Cliente",
         pillColor = Color(0xFFFF6B50),
@@ -92,7 +95,7 @@ fun ClientClassesDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Detalle de clases",
+        eyebrow = "",
         title = "Clases activas",
         pillLabel = "Cliente",
         pillColor = Color(0xFFFF6B50),
@@ -113,14 +116,14 @@ fun ClientMachinesDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Detalle de maquinas",
-        title = "Maquinas del gimnasio",
+        eyebrow = "",
+        title = "Máquinas del gimnasio",
         pillLabel = "Cliente",
         pillColor = Color(0xFFFF6B50),
         onBack = onBack
     ) {
         item {
-            DetailSectionHeader("Catalogo completo", "${uiState.machines.size} maquinas")
+            DetailSectionHeader("Catálogo completo", "${uiState.machines.size} máquinas")
         }
         items(uiState.machines) { machine ->
             MachineDetailCard(machine)
@@ -134,7 +137,7 @@ fun ClientAttendancesDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Historial personal",
+        eyebrow = "",
         title = "Mis asistencias",
         pillLabel = "Cliente",
         pillColor = Color(0xFFFF6B50),
@@ -163,7 +166,7 @@ fun TrainerClassesDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Detalle operativo",
+        eyebrow = "",
         title = "Clases de hoy",
         pillLabel = "Entrenador",
         pillColor = Color(0xFF6B8DFF),
@@ -206,7 +209,7 @@ fun TrainerRoutinesDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Detalle operativo",
+        eyebrow = "",
         title = "Mis rutinas",
         pillLabel = "Entrenador",
         pillColor = Color(0xFF6B8DFF),
@@ -249,7 +252,7 @@ fun TrainerAssignmentsDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Detalle operativo",
+        eyebrow = "",
         title = "Mis clientes",
         pillLabel = "Entrenador",
         pillColor = Color(0xFF6B8DFF),
@@ -285,18 +288,29 @@ fun TrainerAttendancesDetailScreen(
     uiState: TrainerHomeUiState,
     onBack: () -> Unit
 ) {
+    val classSessionAttendances = uiState.attendances.filter { it.isClassSessionAttendance() }
+
     DetailScreenScaffold(
-        eyebrow = "Detalle operativo",
+        eyebrow = "",
         title = "Asistencias recientes",
         pillLabel = "Entrenador",
         pillColor = Color(0xFF6B8DFF),
         onBack = onBack
     ) {
         item {
-            DetailSectionHeader("Registros recientes", "${uiState.attendances.size} asistencias")
+            DetailSectionHeader("Registros recientes", "${classSessionAttendances.size} asistencias de clase")
         }
-        items(uiState.attendances) { attendance ->
-            AttendanceDetailCard(attendance)
+        if (classSessionAttendances.isEmpty()) {
+            item {
+                EmptyDetailCard(
+                    title = "Sin asistencias de clase",
+                    message = "Aún no hay registros recientes de sesiones de clase."
+                )
+            }
+        } else {
+            items(classSessionAttendances) { attendance ->
+                AttendanceDetailCard(attendance)
+            }
         }
     }
 }
@@ -316,7 +330,7 @@ fun AdminUsersDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Gestion de usuarios",
+        eyebrow = "",
         title = "Usuarios y roles",
         pillLabel = "Administrador",
         pillColor = Color(0xFF1DAA64),
@@ -366,8 +380,8 @@ fun AdminMachinesDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Gestion de maquinas",
-        title = "Maquinas del gimnasio",
+        eyebrow = "",
+        title = "Máquinas del gimnasio",
         pillLabel = "Administrador",
         pillColor = Color(0xFF1DAA64),
         onBack = onBack
@@ -389,7 +403,7 @@ fun AdminMachinesDetailScreen(
             )
         }
         item {
-            DetailSectionHeader("Catalogo completo", "${uiState.machines.size} maquinas")
+            DetailSectionHeader("Catálogo completo", "${uiState.machines.size} máquinas")
         }
         items(uiState.machines) { machine ->
             MachineDetailCard(
@@ -407,7 +421,7 @@ fun AdminQrDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Generacion y consulta",
+        eyebrow = "",
         title = "Codigos QR",
         pillLabel = "Administrador",
         pillColor = Color(0xFF1DAA64),
@@ -428,7 +442,7 @@ fun AdminActivityDetailScreen(
     onBack: () -> Unit
 ) {
     DetailScreenScaffold(
-        eyebrow = "Actividad del gimnasio",
+        eyebrow = "",
         title = "Asistencias QR",
         pillLabel = "Administrador",
         pillColor = Color(0xFF1DAA64),
@@ -540,6 +554,23 @@ private fun DetailSectionHeader(title: String, subtitle: String) {
 }
 
 @Composable
+private fun EmptyDetailCard(title: String, message: String) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text(text = title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(text = message, color = Color(0xFF667085))
+        }
+    }
+}
+
+@Composable
 private fun RoutineDetailCard(
     routine: RoutineResponse,
     isSelected: Boolean = false,
@@ -558,9 +589,9 @@ private fun RoutineDetailCard(
         Column(modifier = Modifier.padding(18.dp)) {
             Text(text = routine.nombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(6.dp))
-            Text(text = routine.descripcion ?: "Rutina sin descripcion", color = Color(0xFF667085))
+            Text(text = routine.descripcion ?: "Rutina sin descripción", color = Color(0xFF667085), style = MaterialTheme.typography.bodySmall)
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Entrenador: ${routine.entrenadorNombre}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
+            Text(text = "Entrenador: ${routine.entrenadorNombre}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodySmall)
             if (onClick != null) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
@@ -601,10 +632,10 @@ private fun GymClassDetailCard(
         Column(modifier = Modifier.padding(18.dp)) {
             Text(text = gymClass.nombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(6.dp))
-            Text(text = gymClass.descripcion ?: "Clase sin descripcion", color = Color(0xFF667085))
+            Text(text = gymClass.descripcion ?: "Clase sin descripción", color = Color(0xFF667085), style = MaterialTheme.typography.bodySmall)
             Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Entrenador: ${gymClass.entrenadorNombre}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Text(text = "Estado: $statusText", color = statusColor)
             if (onClick != null) {
                 Spacer(modifier = Modifier.height(10.dp))
@@ -653,30 +684,34 @@ private fun TrainerClassFormCard(
             )
             Text(
                 text = "Completa los datos de la clase y define su estado.",
-                color = Color(0xFF667085)
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
             )
 
-            FormSectionLabel("Datos basicos")
+            FormSectionLabel("Datos básicos")
 
             OutlinedTextField(
                 value = uiState.classNameInput,
                 onValueChange = onClassNameChange,
                 label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.classDescriptionInput,
                 onValueChange = onClassDescriptionChange,
-                label = { Text("Descripcion") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("Descripción") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.classDurationInput,
                 onValueChange = onClassDurationChange,
-                label = { Text("Duracion en minutos") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("Duración en minutos") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             FormSectionLabel("Disponibilidad")
@@ -732,29 +767,32 @@ private fun TrainerRoutineFormCard(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = if (uiState.routineEditingId == null) "Nueva rutina" else "Editar rutina #${uiState.routineEditingId}",
+                text = if (uiState.routineEditingId == null) "Nueva rutina" else "Editar rutina ${uiState.routineEditingId}",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Organiza aqui la informacion principal de la rutina.",
-                color = Color(0xFF667085)
+                text = "Organiza la información principal.",
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
             )
 
-            FormSectionLabel("Datos basicos")
+            FormSectionLabel("Datos básicos")
 
             OutlinedTextField(
                 value = uiState.routineNameInput,
                 onValueChange = onRoutineNameChange,
                 label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.routineDescriptionInput,
                 onValueChange = onRoutineDescriptionChange,
-                label = { Text("Descripcion") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("Descripción") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             FormActionsRow(
@@ -791,33 +829,35 @@ private fun MachineDetailCard(
             modifier = Modifier
                 .padding(18.dp)
         ) {
-            Text(text = machine.nombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Text(text = machine.nombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(6.dp))
-            Text(text = machine.descripcion ?: "Maquina sin descripcion", color = Color(0xFF667085))
+            Text(text = machine.descripcion ?: "Máquina sin descripción", color = Color(0xFF667085),style = MaterialTheme.typography.bodySmall)
             Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Grupo muscular: ${machine.grupoMuscular ?: "-"}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
             machine.nivel?.takeIf { it.isNotBlank() }?.let { nivel ->
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Nivel: $nivel", color = Color(0xFF667085))
+                Text(text = "Nivel: $nivel", color = Color(0xFF667085), style = MaterialTheme.typography.bodySmall)
             }
             machine.instrucciones?.takeIf { it.isNotBlank() }?.let { instrucciones ->
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Uso: $instrucciones", color = Color(0xFF667085))
+                Text(text = "Uso:\n $instrucciones", color = Color(0xFF667085))
             }
             machine.advertenciaSeguridad?.takeIf { it.isNotBlank() }?.let { advertencia ->
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Seguridad: $advertencia", color = Color(0xFFD92D20))
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = "Seguridad: $advertencia", color = Color(0xFFD92D20), style = MaterialTheme.typography.bodySmall)
             }
+            /*
             machine.imagenUrl?.takeIf { it.isNotBlank() }?.let { url ->
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = "Recurso: $url", color = Color(0xFF667085))
             }
-            Spacer(modifier = Modifier.height(4.dp))
+            */
+            Spacer(modifier = Modifier.height(12.dp))
             Text(text = "Estado: ${machine.estado}", color = Color(0xFFFF4D2E), fontWeight = FontWeight.SemiBold)
             if (onClick != null) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = if (isSelected) "Editando esta maquina" else "Toca para editar",
+                    text = if (isSelected) "Editando esta maquiná" else "Toca para editar",
                     color = if (isSelected) Color(0xFF1DAA64) else Color(0xFF667085),
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
@@ -864,65 +904,73 @@ private fun AdminMachineFormCard(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Mantiene el catalogo del gimnasio actualizado desde el movil.",
-                color = Color(0xFF667085)
+                text = "Mantiene el catálogo del gimnasio actualizado.",
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
             )
 
-            FormSectionLabel("Datos basicos")
+            FormSectionLabel("Datos básicos")
 
             OutlinedTextField(
                 value = uiState.machineNameInput,
                 onValueChange = onMachineNameChange,
                 label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.machineDescriptionInput,
                 onValueChange = onMachineDescriptionChange,
-                label = { Text("Descripcion") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("Descripción") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.machineMuscleGroupInput,
                 onValueChange = onMachineMuscleGroupChange,
                 label = { Text("Grupo muscular") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.machineInstructionsInput,
                 onValueChange = onMachineInstructionsChange,
                 label = { Text("Instrucciones de uso") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.machineLevelInput,
                 onValueChange = onMachineLevelChange,
                 label = { Text("Nivel recomendado") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.machineSafetyWarningInput,
                 onValueChange = onMachineSafetyWarningChange,
                 label = { Text("Advertencia de seguridad") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.machineMediaUrlInput,
                 onValueChange = onMachineMediaUrlChange,
                 label = { Text("URL de video o recurso") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
-            FormSectionLabel("Estado de operacion")
+            FormSectionLabel("Estado de operación")
 
             SearchableChoiceField(
-                label = "Estado de la maquina",
+                label = "Estado de la máquina",
                 placeholder = "Selecciona el estado",
                 selectedKey = uiState.machineStatusInput,
                 options = listOf(
@@ -934,7 +982,8 @@ private fun AdminMachineFormCard(
 
             Text(
                 text = "Estado seleccionado: ${uiState.machineStatusInput}",
-                color = Color(0xFF667085)
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
             )
 
             FormActionsRow(
@@ -973,13 +1022,13 @@ private fun RoutineAssignmentDetailCard(
         Column(modifier = Modifier.padding(18.dp)) {
             Text(text = assignment.routineName, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(6.dp))
-            Text(text = "Cliente: ${assignment.clientName}", color = Color(0xFF667085))
+            Text(text = "Cliente: ${assignment.clientName}", color = Color(0xFF667085), style = MaterialTheme.typography.bodySmall)
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "Asignacion #${assignment.id}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
+            //Text(text = "ID asignado: ${assignment.id}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold, style = MaterialTheme.typography.bodySmall)
             if (onClick != null) {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = if (isSelected) "Seleccionada para borrar" else "Toca para seleccionar",
+                    text = if (isSelected) "Editando" else "Editar",
                     color = if (isSelected) Color(0xFF1DAA64) else Color(0xFF667085),
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
@@ -1017,14 +1066,15 @@ private fun TrainerAssignmentFormCard(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = if (uiState.assignmentEditingId == null) "Nueva asignacion" else "Asignacion #${uiState.assignmentEditingId}",
+                text = if (uiState.assignmentEditingId == null) "Nueva asignación" else "ID cliente${uiState.assignmentEditingId}",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )
 
             Text(
                 text = "Selecciona una rutina tuya y un cliente.",
-                color = Color(0xFF667085)
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
             )
 
             FormSectionLabel("Rutina")
@@ -1033,7 +1083,7 @@ private fun TrainerAssignmentFormCard(
                 icon = Icons.Default.TaskAlt,
                 title = "Rutina seleccionada",
                 value = uiState.routines.firstOrNull { it.id.toString() == uiState.assignmentRoutineIdInput }?.nombre
-                    ?: "Todavia no has elegido una rutina"
+                    ?: "Todavía no has elegido una rutina"
             )
 
             SearchableSelectionField(
@@ -1044,7 +1094,7 @@ private fun TrainerAssignmentFormCard(
                     SearchOption(
                         id = it.id,
                         title = it.nombre,
-                        subtitle = it.descripcion ?: "Rutina sin descripcion"
+                        subtitle = it.descripcion ?: "Rutina sin descripción"
                     )
                 },
                 emptyMessage = "No hay rutinas disponibles",
@@ -1085,14 +1135,16 @@ private fun TrainerAssignmentFormCard(
                     value = uiState.assignmentRoutineIdInput,
                     onValueChange = onAssignmentRoutineIdChange,
                     label = { Text("ID de rutina") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
                 )
 
                 OutlinedTextField(
                     value = uiState.assignmentClientIdInput,
                     onValueChange = onAssignmentClientIdChange,
                     label = { Text("ID de cliente") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
                 )
             }
 
@@ -1212,13 +1264,14 @@ private fun SearchableSelectionField(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             supportingText = {
                 Text(
-                    text = selectedOption?.let { "ID seleccionado: ${it.id}" } ?: "Sin seleccion actual",
+                    text = selectedOption?.let { "ID seleccionado: ${it.id}" } ?: "Sin selección actual",
                     color = Color(0xFF667085)
                 )
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor()
+                .menuAnchor(),
+            shape = RoundedCornerShape(16.dp)
         )
 
         ExposedDropdownMenu(
@@ -1306,13 +1359,14 @@ private fun SearchableChoiceField(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             supportingText = {
                 Text(
-                    text = selectedOption?.subtitle ?: "Sin seleccion actual",
+                    text = selectedOption?.subtitle ?: "Sin selección actual",
                     color = Color(0xFF667085)
                 )
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor()
+                .menuAnchor(),
+            shape = RoundedCornerShape(16.dp)
         )
 
         ExposedDropdownMenu(
@@ -1390,16 +1444,27 @@ private fun AttendanceDetailCard(attendance: AttendanceResponse) {
         shape = RoundedCornerShape(22.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
-            Text(text = attendance.usuarioNombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Text(text = attendance.usuarioNombre, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(6.dp))
-            Text(text = "Tipo QR: ${attendance.qrType}", color = Color(0xFF667085))
+            Text(text = "Tipo QR: ${attendance.qrType}", color = Color(0xFF667085), style = MaterialTheme.typography.bodySmall)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "QR #${attendance.qrCodeId}", color = Color(0xFF667085))
+            Text(text = "ID QR: ${attendance.qrCodeId}", color = Color(0xFF667085), style = MaterialTheme.typography.bodySmall)
             if (attendance.fechaHora != null) {
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Fecha: ${attendance.fechaHora}", color = Color(0xFF667085))
+                Text(text = "Fecha: ${formatAttendanceDateTime(attendance.fechaHora)}", color = Color(0xFF667085), style = MaterialTheme.typography.bodySmall)
             }
         }
+    }
+}
+
+private fun formatAttendanceDateTime(value: String): String {
+    val outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy • HH:mm")
+    return runCatching {
+        LocalDateTime.parse(value).format(outputFormatter)
+    }.recoverCatching {
+        OffsetDateTime.parse(value).toLocalDateTime().format(outputFormatter)
+    }.getOrElse {
+        value
     }
 }
 
@@ -1474,31 +1539,35 @@ private fun AdminUserFormCard(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Gestiona altas, cambios de rol y acceso desde una sola vista.",
-                color = Color(0xFF667085)
+                text = "Gestiona altas, cambios de rol y acceso.",
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
             )
 
-            FormSectionLabel("Datos basicos")
+            FormSectionLabel("Datos básicos")
 
             OutlinedTextField(
                 value = uiState.userNameInput,
                 onValueChange = onUserNameChange,
                 label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.userEmailInput,
                 onValueChange = onUserEmailChange,
                 label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             OutlinedTextField(
                 value = uiState.userPasswordInput,
                 onValueChange = onUserPasswordChange,
                 label = { Text(if (uiState.userEditingId == null) "Contraseña" else "Nueva contraseña opcional") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp)
             )
 
             FormSectionLabel("Permisos y acceso")
@@ -1520,7 +1589,7 @@ private fun AdminUserFormCard(
                 placeholder = "Selecciona el estado",
                 selectedKey = uiState.userActiveInput.toString(),
                 options = listOf(
-                    ChoiceOption("true", "Activo", "Puede iniciar sesion y usar la app"),
+                    ChoiceOption("true", "Activo", "Puede iniciar sesión y usar la app"),
                     ChoiceOption("false", "Inactivo", "No puede acceder temporalmente")
                 ),
                 onOptionSelected = { option -> onUserActiveChange(option.key.toBoolean()) }
@@ -1528,7 +1597,8 @@ private fun AdminUserFormCard(
 
             Text(
                 text = "Rol: ${uiState.userRoleInput} | Estado: ${if (uiState.userActiveInput) "Activo" else "Inactivo"}",
-                color = Color(0xFF667085)
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
             )
 
             FormActionsRow(
@@ -1558,7 +1628,7 @@ private fun QrCodeDetailCard(qrCode: QrCodeResponse) {
         shape = RoundedCornerShape(22.dp)
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
-            Text(text = "QR #${qrCode.id}", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Text(text = "ID QR: ${qrCode.id}", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(6.dp))
             Text(text = "Tipo: ${qrCode.tipo}", color = Color(0xFF667085))
             Spacer(modifier = Modifier.height(10.dp))
@@ -1590,15 +1660,18 @@ private fun QrCodeDetailCard(qrCode: QrCodeResponse) {
                 style = MaterialTheme.typography.bodySmall
             )
             Spacer(modifier = Modifier.height(4.dp))
+            /*
             Text(
                 text = qrPayload,
                 color = Color(0xFF0F172A),
                 fontWeight = FontWeight.Medium
             )
+            */
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "Prueba rapida en emulador: tambien puedes usar el ID ${qrCode.id} manualmente en el lector.",
-                color = Color(0xFF667085)
+                text = "Si no puedes usar el lecto, usa el ID ${qrCode.id} manualmente en el lector.",
+                color = Color(0xFF667085),
+                style = MaterialTheme.typography.bodySmall
             )
         }
     }
@@ -1621,6 +1694,9 @@ private fun buildQrBitmap(value: String, size: Int = 768): Bitmap? {
     }.getOrNull()
 }
 
+private fun AttendanceResponse.isClassSessionAttendance(): Boolean =
+    qrType.equals("CLASS_SESSION", ignoreCase = true)
+
 @Composable
 private fun RolePill(label: String, color: Color) {
     Box(
@@ -1636,4 +1712,3 @@ private fun RolePill(label: String, color: Color) {
         )
     }
 }
-

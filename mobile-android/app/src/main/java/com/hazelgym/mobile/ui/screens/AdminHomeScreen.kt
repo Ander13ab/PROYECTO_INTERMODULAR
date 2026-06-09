@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Groups
@@ -163,8 +164,8 @@ private fun AdminHomeTab(
     ) {
         item {
             HeroHeader(
-                eyebrow = "Panel de administracion",
-                title = "",
+                eyebrow = "",
+                title = uiState.userName.ifBlank { "Administrador" },
                 pillLabel = "Administrador",
                 pillColor = Color(0xFF1DAA64),
                 onLogout = onLogout
@@ -183,7 +184,7 @@ private fun AdminHomeTab(
                     MetricCard("Entrenadores", trainers.toString(), Modifier.weight(1f))
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    MetricCard("Maquinas", machines.toString(), Modifier.weight(1f))
+                    MetricCard("Máquinas", machines.toString(), Modifier.weight(1f))
                     MetricCard("Asistencias", attendances.toString(), Modifier.weight(1f))
                 }
             }
@@ -197,7 +198,7 @@ private fun AdminHomeTab(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
-                    text = "Acciones rapidas",
+                    text = "Acciones rápidas",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -210,14 +211,14 @@ private fun AdminHomeTab(
                 )
                 QuickActionCard(
                     title = "QR generados",
-                    subtitle = "${uiState.qrCodes.size} codigos disponibles para entrada, maquinas y clases",
+                    subtitle = "${uiState.qrCodes.size} códigos disponibles para entrada, máquinas y clases",
                     icon = Icons.Default.QrCode2,
                     accent = Color(0xFFDDF8E6),
                     onClick = onNavigateToQr
                 )
                 QuickActionCard(
-                    title = "Maquinas",
-                    subtitle = "$machines maquinas registradas",
+                    title = "Máquinas",
+                    subtitle = "$machines máquinas registradas",
                     icon = Icons.Default.SportsGymnastics,
                     accent = Color(0xFFFFE1DA),
                     onClick = onNavigateToMachines
@@ -270,7 +271,7 @@ private fun AdminUsersTab(
     ) {
         item {
             HeroHeader(
-                eyebrow = "Gestion de usuarios",
+                eyebrow = "",
                 title = "Usuarios y roles",
                 pillLabel = "Administrador",
                 pillColor = Color(0xFF1DAA64),
@@ -316,8 +317,8 @@ private fun AdminQrTab(
     ) {
         item {
             HeroHeader(
-                eyebrow = "Generacion y consulta",
-                title = "Codigos QR",
+                eyebrow = "",
+                title = "Códigos QR",
                 pillLabel = "Administrador",
                 pillColor = Color(0xFF1DAA64),
                 onLogout = onLogout
@@ -333,14 +334,14 @@ private fun AdminQrTab(
             ) {
                 QuickActionCard(
                     title = "Entrada al gimnasio",
-                    subtitle = "Los codigos QR de entrada aparecen listados abajo.",
+                    subtitle = "Genera códigos QR automáticamente.",
                     icon = Icons.Default.QrCode2,
                     accent = Color(0xFFDCE8FF),
                     onClick = onCreateEntryQr
                 )
                 QuickActionCard(
-                    title = "Maquinas y clases",
-                    subtitle = "Los codigos vinculados a maquinas o sesiones se muestran con su referencia.",
+                    title = "Máquinas y clases",
+                    subtitle = "Ver listado de códigos creados.",
                     icon = Icons.Default.SportsGymnastics,
                     accent = Color(0xFFDDF8E6),
                     onClick = {
@@ -361,7 +362,7 @@ private fun AdminQrTab(
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     MetricCard("Entrada", entryCount.toString(), Modifier.weight(1f))
-                    MetricCard("Maquinas", machineQrCount.toString(), Modifier.weight(1f))
+                    MetricCard("Maquinás", machineQrCount.toString(), Modifier.weight(1f))
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     MetricCard("Sesiones", sessionQrCount.toString(), Modifier.weight(1f))
@@ -372,7 +373,7 @@ private fun AdminQrTab(
 
         item {
             SectionHeader(
-                title = "Codigos QR reales",
+                title = "Códigos QR reales",
                 action = "Recargar",
                 onAction = onRefresh
             )
@@ -395,6 +396,7 @@ private fun AdminQrTab(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
+                    /*
                     if (uiState.classSessions.isNotEmpty()) {
                         Text(
                             text = "Sesiones disponibles: " + uiState.classSessions
@@ -403,6 +405,7 @@ private fun AdminQrTab(
                             color = Color(0xFF667085)
                         )
                     }
+                    */
                     Button(
                         onClick = onCreateEntryQr,
                         enabled = !uiState.isCreatingQr,
@@ -413,7 +416,7 @@ private fun AdminQrTab(
                     OutlinedTextField(
                         value = uiState.qrMachineIdInput,
                         onValueChange = onQrMachineIdChange,
-                        label = { Text("ID de maquina") },
+                        label = { Text("ID de máquina") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp)
                     )
@@ -422,12 +425,12 @@ private fun AdminQrTab(
                         enabled = !uiState.isCreatingQr,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(if (uiState.isCreatingQr) "Creando..." else "Crear QR de maquina")
+                        Text(if (uiState.isCreatingQr) "Creando..." else "Crear QR de máquina")
                     }
                     OutlinedTextField(
                         value = uiState.qrClassSessionIdInput,
                         onValueChange = onQrClassSessionIdChange,
-                        label = { Text("ID de sesion de clase") },
+                        label = { Text("ID de sesión de clase") },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(16.dp)
                     )
@@ -436,7 +439,7 @@ private fun AdminQrTab(
                         enabled = !uiState.isCreatingQr,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(if (uiState.isCreatingQr) "Creando..." else "Crear QR de sesion")
+                        Text(if (uiState.isCreatingQr) "Creando..." else "Crear QR de sesión")
                     }
                     uiState.qrCreateMessage?.let { message ->
                         Text(
@@ -455,7 +458,7 @@ private fun AdminQrTab(
         if (uiState.qrCodes.isEmpty()) {
             item {
                 Text(
-                    text = "Todavia no hay codigos QR cargados.",
+                    text = "Todavia no hay códigos QR cargados.",
                     color = Color(0xFF667085),
                     modifier = Modifier.padding(horizontal = 18.dp)
                 )
@@ -484,7 +487,7 @@ private fun AdminActivityTab(
     ) {
         item {
             HeroHeader(
-                eyebrow = "Actividad del gimnasio",
+                eyebrow = "",
                 title = "Asistencias QR",
                 pillLabel = "Administrador",
                 pillColor = Color(0xFF1DAA64),
@@ -501,7 +504,7 @@ private fun AdminActivityTab(
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     MetricCard("Entradas", entryAttendances.toString(), Modifier.weight(1f))
-                    MetricCard("Maquinas", machineAttendances.toString(), Modifier.weight(1f))
+                    MetricCard("Máquinas", machineAttendances.toString(), Modifier.weight(1f))
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     MetricCard("Clases", classAttendances.toString(), Modifier.weight(1f))
@@ -512,7 +515,7 @@ private fun AdminActivityTab(
 
         item {
             SectionHeader(
-                title = "Ultimos registros",
+                title = "Últimos registros",
                 action = "Recargar",
                 onAction = onRefresh
             )
@@ -521,7 +524,7 @@ private fun AdminActivityTab(
         if (uiState.attendances.isEmpty()) {
             item {
                 Text(
-                    text = "Todavia no hay asistencias registradas.",
+                    text = "Todavía no hay asistencias registradas.",
                     color = Color(0xFF667085),
                     modifier = Modifier.padding(horizontal = 18.dp)
                 )
@@ -545,7 +548,7 @@ private fun AdminProfileTab(
     ) {
         item {
             HeroHeader(
-                eyebrow = "Tu perfil",
+                eyebrow = "",
                 title = uiState.userName,
                 pillLabel = "Administrador",
                 pillColor = Color(0xFF1DAA64),
@@ -624,7 +627,7 @@ private fun HeroHeader(
 
                 IconButton(onClick = { showLogoutConfirmation = true }) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Volver al login",
                         tint = Color.White
                     )
@@ -637,7 +640,7 @@ private fun HeroHeader(
         AlertDialog(
             onDismissRequest = { showLogoutConfirmation = false },
             title = { Text("Salir al login") },
-            text = { Text("Se cerrara la sesion actual del administrador. Quieres continuar?") },
+            text = { Text("Se cerrará la sesión actual del administrador. Quieres continuar?") },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -824,7 +827,7 @@ private fun QrCodeCard(qrCode: QrCodeResponse, modifier: Modifier = Modifier) {
             }
             qrCode.sesionClaseResumen?.let { sessionSummary ->
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Sesion: $sessionSummary", color = Color(0xFF667085))
+                Text(text = "Sesión: $sessionSummary", color = Color(0xFF667085))
             }
         }
     }

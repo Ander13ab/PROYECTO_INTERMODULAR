@@ -57,6 +57,8 @@ fun LoginScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Box(
                     modifier = Modifier
                         .background(
@@ -161,7 +163,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
-                    text = "El rol se detecta automaticamente segun la cuenta que uses.",
+                    text = "Detección de rol automática.",
                     color = Color.White.copy(alpha = 0.52f),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium

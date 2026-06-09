@@ -89,7 +89,7 @@ class TrainerHomeViewModel(application: Application) : AndroidViewModel(applicat
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = error.message ?: "No se pudo recuperar la sesion del entrenador"
+                        errorMessage = error.message ?: "No se pudo recuperar la sesión del entrenador"
                     )
                 }
             }
@@ -152,7 +152,7 @@ class TrainerHomeViewModel(application: Application) : AndroidViewModel(applicat
                 assignmentEditingId = assignment.id,
                 assignmentRoutineIdInput = assignment.routineId.toString(),
                 assignmentClientIdInput = assignment.clientId.toString(),
-                assignmentSaveMessage = "Asignacion #${assignment.id} seleccionada"
+                //assignmentSaveMessage = "Asignación #${assignment.id} seleccionada"
             )
         }
     }
@@ -188,11 +188,11 @@ class TrainerHomeViewModel(application: Application) : AndroidViewModel(applicat
         val clientId = uiState.value.assignmentClientIdInput.trim().toLongOrNull()
 
         if (routineId == null) {
-            _uiState.update { it.copy(assignmentSaveMessage = "Selecciona una rutina valida.") }
+            _uiState.update { it.copy(assignmentSaveMessage = "Selecciona una rutina válida.") }
             return
         }
         if (clientId == null) {
-            _uiState.update { it.copy(assignmentSaveMessage = "Selecciona un cliente valido.") }
+            _uiState.update { it.copy(assignmentSaveMessage = "Selecciona un cliente válido.") }
             return
         }
 
@@ -314,7 +314,7 @@ class TrainerHomeViewModel(application: Application) : AndroidViewModel(applicat
             return
         }
         if (duration == null || duration !in 1..300) {
-            _uiState.update { it.copy(classSaveMessage = "La duracion debe estar entre 1 y 300 minutos.") }
+            _uiState.update { it.copy(classSaveMessage = "La duración debe estar entre 1 y 300 minutos.") }
             return
         }
 
@@ -412,7 +412,7 @@ class TrainerHomeViewModel(application: Application) : AndroidViewModel(applicat
                 routineEditingId = routine.id,
                 routineNameInput = routine.nombre,
                 routineDescriptionInput = routine.descripcion.orEmpty(),
-                routineSaveMessage = "Editando rutina #${routine.id}"
+                routineSaveMessage = "Editando rutina ${routine.id}"
             )
         }
     }

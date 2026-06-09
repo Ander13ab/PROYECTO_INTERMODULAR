@@ -477,7 +477,7 @@ class AdminHomeViewModel(application: Application) : AndroidViewModel(applicatio
     fun createClassSessionQrCode() {
         val classSessionId = uiState.value.qrClassSessionIdInput.toLongOrNull()
         if (classSessionId == null) {
-            _uiState.update { it.copy(qrCreateMessage = "Introduce un ID de sesion valido.") }
+            _uiState.update { it.copy(qrCreateMessage = "Introduce un ID de sesión valido.") }
             return
         }
 

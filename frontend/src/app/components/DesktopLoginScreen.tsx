@@ -29,13 +29,13 @@ export function DesktopLoginScreen({
             </div>
           </div>
 
-          <div className="max-w-[560px] py-10 sm:pl-6 xl:py-0 xl:pl-10 2xl:pl-16">
+          <div className="max-w-[660px] py-10 sm:pl-6 xl:py-0 xl:pl-10 2xl:pl-16">
             <h2 className="font-['Syne'] text-4xl font-extrabold leading-[1.02] text-white sm:text-5xl xl:text-6xl">
               Accede a tu gimnasio y sigue tu progreso.
             </h2>
-            <p className="mt-6 max-w-[420px] text-base leading-7 text-[#A7ACBA] sm:text-lg sm:leading-8">
-              Una misma plataforma para clientes, entrenadores y administracion,
-              conectada con el backend actual y preparada para crecer.
+            <p className="mt-6 max-w-[520px] text-base leading-7 text-[#A7ACBA] sm:text-lg sm:leading-8">
+              Una misma plataforma para clientes, entrenadores y administradores,
+              conectada y preparada para crecer todos juntos.
             </p>
           </div>
 
@@ -61,7 +61,7 @@ export function DesktopLoginScreen({
               Bienvenido de vuelta
             </h3>
             <p className="mt-3 text-base text-[#9CA3AF]">
-              Inicia sesion con tu cuenta real del backend para acceder a tu panel.
+              Inicia sesión con tu cuenta para acceder a tu panel.
             </p>
 
             <form
@@ -113,7 +113,7 @@ export function DesktopLoginScreen({
             </form>
 
             <p className="mt-6 text-center text-sm text-white/25">
-              El rol se detecta automaticamente segun la cuenta que uses.
+              Detección automática de rol en base a datos de login.
             </p>
           </div>
         </div>

@@ -76,12 +76,15 @@ import com.hazelgym.mobile.data.model.GymClassResponse
 import com.hazelgym.mobile.data.model.MachineResponse
 import com.hazelgym.mobile.data.model.RoutineResponse
 import com.hazelgym.mobile.ui.viewmodel.ClientHomeUiState
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.Executors
 
 private enum class ClientTab(val label: String, val icon: ImageVector) {
     HOME("Inicio", Icons.Default.FitnessCenter),
     QR("QR", Icons.Default.QrCode2),
-    MACHINES("Maquinas", Icons.Default.TaskAlt),
+    MACHINES("Máquinas", Icons.Default.TaskAlt),
     PROFILE("Perfil", Icons.Default.Person)
 }
 
@@ -186,7 +189,7 @@ private fun ClientHomeTab(
     ) {
         item {
             HeaderCard(
-                eyebrow = "Hola de nuevo",
+                eyebrow = "",
                 name = uiState.userName,
                 pillLabel = heroLabel,
                 pillColor = Color(0xFFFF6B50),
@@ -207,7 +210,7 @@ private fun ClientHomeTab(
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    MetricCard("Maquinas", uiState.machines.size.toString(), Modifier.weight(1f))
+                    MetricCard("Máquinas", uiState.machines.size.toString(), Modifier.weight(1f))
                     MetricCard("Asistencias", uiState.attendances.size.toString(), Modifier.weight(1f))
                 }
             }
@@ -221,7 +224,7 @@ private fun ClientHomeTab(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
-                    text = "Acciones rapidas",
+                    text = "Acciones rápidas",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -241,7 +244,7 @@ private fun ClientHomeTab(
                 )
                 QuickActionCard(
                     title = sectionTitle,
-                    subtitle = "${uiState.machines.size} maquinas preparadas para tu rutina",
+                    subtitle = "${uiState.machines.size} máquinas preparadas para tu rutina",
                     icon = Icons.Default.FitnessCenter,
                     accent = Color(0xFFDDF8E6),
                     onClick = onNavigateToMachines
@@ -309,7 +312,7 @@ private fun ClientHomeTab(
 
         item {
             Text(
-                text = "Ultimas asistencias",
+                text = "Últimas asistencias",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 18.dp)
@@ -319,7 +322,7 @@ private fun ClientHomeTab(
         if (uiState.attendances.isEmpty()) {
             item {
                 Text(
-                    text = "Aun no hay asistencias registradas para este cliente.",
+                    text = "Aún no hay asistencias registradas para este cliente.",
                     color = Color(0xFF667085),
                     modifier = Modifier.padding(horizontal = 18.dp)
                 )
@@ -349,7 +352,7 @@ private fun ClientQrTab(
     ) {
         item {
             HeaderCard(
-                eyebrow = "Acceso rapido por QR",
+                eyebrow = "",
                 name = uiState.userName,
                 pillLabel = "Cliente",
                 pillColor = Color(0xFFFF6B50),
@@ -366,7 +369,7 @@ private fun ClientQrTab(
             ) {
                 QuickActionCard(
                     title = "Registrar asistencia",
-                    subtitle = "Escanea un QR de entrada, maquina o sesion; tambien puedes usar el ID manual.",
+                    subtitle = "Escanea un QR de entrada, máquina o sesión; también puedes usar el ID manual.",
                     icon = Icons.Default.QrCode2,
                     accent = Color(0xFFDCE8FF),
                     onClick = { scannerOpen = true }
@@ -454,7 +457,7 @@ private fun ClientMachinesTab(
     ) {
         item {
             HeaderCard(
-                eyebrow = "Catalogo de maquinas",
+                eyebrow = "",
                 name = uiState.userName,
                 pillLabel = "Cliente",
                 pillColor = Color(0xFFFF6B50),
@@ -464,7 +467,7 @@ private fun ClientMachinesTab(
 
         item {
             SectionHeader(
-                title = "Maquinas del gimnasio",
+                title = "Máquinas del gimnasio",
                 action = "Recargar",
                 onAction = onRefresh
             )
@@ -521,7 +524,7 @@ private fun ClientMachinesTab(
         if (uiState.machines.isEmpty()) {
             item {
                 Text(
-                    text = "Todavia no hay maquinas cargadas.",
+                    text = "Todavia no hay máquinas cargadas.",
                     color = Color(0xFF667085),
                     modifier = Modifier.padding(horizontal = 18.dp)
                 )
@@ -586,7 +589,7 @@ private fun ClientProfileTab(
     ) {
         item {
             HeaderCard(
-                eyebrow = "Tu perfil",
+                eyebrow = "",
                 name = uiState.userName,
                 pillLabel = "Cliente",
                 pillColor = Color(0xFFFF6B50),
@@ -835,7 +838,7 @@ private fun ClientLogoutConfirmationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Salir al login") },
-        text = { Text("Se cerrara la sesion actual. Quieres volver a la pantalla de inicio de sesion?") },
+        text = { Text("Se cerrará la sesión actual. Quieres volver a la pantalla de inicio de sesión?") },
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 Text("Salir")
@@ -1062,7 +1065,7 @@ private fun GymClassCard(gymClass: GymClassResponse, modifier: Modifier = Modifi
             Text(text = "Entrenador: ${gymClass.entrenadorNombre}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
             gymClass.duracion?.let { duration ->
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Duracion: $duration min", color = Color(0xFF667085))
+                Text(text = "Duración: $duration min", color = Color(0xFF667085))
             }
         }
     }
@@ -1083,9 +1086,20 @@ private fun ClientAttendanceCard(attendance: AttendanceResponse, modifier: Modif
             Text(text = "QR #${attendance.qrCodeId}", color = Color(0xFF667085))
             if (attendance.fechaHora != null) {
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Fecha: ${attendance.fechaHora}", color = Color(0xFF667085))
+                Text(text = "Fecha: ${formatAttendanceDateTime(attendance.fechaHora)}", color = Color(0xFF667085))
             }
         }
+    }
+}
+
+private fun formatAttendanceDateTime(value: String): String {
+    val outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy • HH:mm")
+    return runCatching {
+        LocalDateTime.parse(value).format(outputFormatter)
+    }.recoverCatching {
+        OffsetDateTime.parse(value).toLocalDateTime().format(outputFormatter)
+    }.getOrElse {
+        value
     }
 }
 
@@ -1105,7 +1119,7 @@ private class QrCodeAnalyzer(
     private val scanner = BarcodeScanning.getClient()
     private var hasScanned = false
 
-    @OptIn(ExperimentalGetImage::class)
+    @ExperimentalGetImage
     override fun analyze(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image
         if (mediaImage == null || hasScanned) {

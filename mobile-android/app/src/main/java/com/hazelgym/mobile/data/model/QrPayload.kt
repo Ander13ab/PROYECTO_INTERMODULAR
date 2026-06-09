@@ -42,9 +42,9 @@ fun describeQrDestination(qrCode: QrCodeResponse): String {
     return when {
         qrCode.esEntradaGimnasio -> "Entrada general del gimnasio"
         qrCode.tipo.equals("MACHINE", ignoreCase = true) ->
-            qrCode.maquinaNombre?.let { "Maquina: $it" } ?: "Maquina del gimnasio"
+            qrCode.maquinaNombre?.let { "Maquina: $it" } ?: "Máquina del gimnasio"
         qrCode.tipo.equals("CLASS_SESSION", ignoreCase = true) ->
-            qrCode.sesionClaseResumen?.let { "Sesion: $it" } ?: "Sesion de clase"
+            qrCode.sesionClaseResumen?.let { "Sesión: $it" } ?: "Sesión de clase"
         else -> "QR asociado"
     }
 }

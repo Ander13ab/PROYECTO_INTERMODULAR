@@ -128,9 +128,9 @@ private fun TrainerHomeTab(
     ) {
         item {
             HeaderCard(
-                eyebrow = "Panel de entrenador",
+                eyebrow = "",
                 name = uiState.userName,
-                pillLabel = "Entrenadora certificada",
+                pillLabel = "Entrenador certificado",
                 pillColor = Color(0xFF6B8DFF),
                 onLogout = onLogout
             )
@@ -163,7 +163,7 @@ private fun TrainerHomeTab(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
-                    text = "Acciones rapidas",
+                    text = "Acciones rápidas",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -200,7 +200,7 @@ private fun TrainerHomeTab(
 
         item {
             SectionHeader(
-                title = "Resumen real del entrenador",
+                title = "Resumen del entrenador",
                 action = "Recargar",
                 onAction = onRefresh
             )
@@ -250,13 +250,15 @@ private fun TrainerActivityTab(
     onRefresh: () -> Unit,
     onLogout: () -> Unit
 ) {
+    val classSessionAttendances = uiState.attendances.filter { it.isClassSessionAttendance() }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
             HeaderCard(
-                eyebrow = "Actividad y seguimiento",
+                eyebrow = "",
                 name = uiState.userName,
                 pillLabel = "Entrenador",
                 pillColor = Color(0xFF6B8DFF),
@@ -294,8 +296,18 @@ private fun TrainerActivityTab(
             )
         }
 
-        items(uiState.attendances.take(4)) { attendance ->
-            AttendanceCard(attendance = attendance, modifier = Modifier.padding(horizontal = 18.dp))
+        if (classSessionAttendances.isEmpty()) {
+            item {
+                EmptyTrainerCard(
+                    title = "Sin asistencias de clase",
+                    message = "Aún no hay registros recientes de sesiones de clase.",
+                    modifier = Modifier.padding(horizontal = 18.dp)
+                )
+            }
+        } else {
+            items(classSessionAttendances.take(4)) { attendance ->
+                AttendanceCard(attendance = attendance, modifier = Modifier.padding(horizontal = 18.dp))
+            }
         }
     }
 }
@@ -311,7 +323,7 @@ private fun TrainerProfileTab(
     ) {
         item {
             HeaderCard(
-                eyebrow = "Tu perfil",
+                eyebrow = "",
                 name = uiState.userName,
                 pillLabel = "Entrenador",
                 pillColor = Color(0xFF6B8DFF),
@@ -400,7 +412,7 @@ private fun HeaderCard(
         AlertDialog(
             onDismissRequest = { showLogoutConfirmation = false },
             title = { Text("Salir al login") },
-            text = { Text("Se cerrara la sesion actual del entrenador. Quieres continuar?") },
+            text = { Text("Se cerrara la sesión actual del entrenador. Quieres continuar?") },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -524,7 +536,7 @@ private fun GymClassCard(gymClass: GymClassResponse, modifier: Modifier = Modifi
             Text(text = "Entrenador: ${gymClass.entrenadorNombre}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
             gymClass.duracion?.let { duration ->
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Duracion: $duration min", color = Color(0xFF667085))
+                Text(text = "Duración: $duration min", color = Color(0xFF667085))
             }
         }
     }
@@ -539,10 +551,12 @@ private fun RoutineAssignmentCard(assignment: RoutineAssignmentResponse, modifie
     ) {
         Column(modifier = Modifier.padding(18.dp)) {
             Text(text = assignment.routineName, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(15.dp))
             Text(text = "Cliente: ${assignment.clientName}", color = Color(0xFF667085))
+            /*
             Spacer(modifier = Modifier.height(10.dp))
             Text(text = "Asignacion #${assignment.id}", color = Color(0xFF0F172A), fontWeight = FontWeight.SemiBold)
+            */
         }
     }
 }
@@ -584,6 +598,21 @@ private fun AttendanceCard(attendance: AttendanceResponse, modifier: Modifier = 
 }
 
 @Composable
+private fun EmptyTrainerCard(title: String, message: String, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(22.dp)
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Text(text = title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(text = message, color = Color(0xFF667085))
+        }
+    }
+}
+
+@Composable
 private fun ProfileLine(label: String, value: String) {
     Column {
         Text(text = label, color = Color(0xFF98A2B3))
@@ -592,3 +621,6 @@ private fun ProfileLine(label: String, value: String) {
         Spacer(modifier = Modifier.height(12.dp))
     }
 }
+
+private fun AttendanceResponse.isClassSessionAttendance(): Boolean =
+    qrType.equals("CLASS_SESSION", ignoreCase = true)
